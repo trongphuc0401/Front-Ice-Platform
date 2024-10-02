@@ -9,6 +9,8 @@ public interface BaseService<E,I,O> {
 
     Optional<O> updateInfo(String id, I i);
 
+
+
     List<O> saveAll(List<E> ts);
 
     void delete(String id);
