@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(restAPIResponse);
     }
 
-
+    // Anh Nhựt giúp em làm lại cái hàm này nhaa anh
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity handlingValidation(MethodArgumentNotValidException exception) {
 

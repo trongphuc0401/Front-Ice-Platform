@@ -6,10 +6,7 @@ import java.util.Optional;
 public interface BaseService<E,I,O> {
     Optional<O> create(I t);
 
-
     Optional<O> updateInfo(String id, I i);
-
-
 
     List<O> saveAll(List<E> ts);
 

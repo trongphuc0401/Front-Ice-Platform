@@ -35,8 +35,6 @@ public class RestAPIResponse <T extends Object>  implements Serializable {
 
     }
 
-
-
     public RestAPIResponse(RestAPIStatus restApiStatus, ErrorCode errorCode) {
 
         if (restApiStatus == null) {
