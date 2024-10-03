@@ -1,8 +1,6 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.AccountType;
@@ -24,24 +22,32 @@ import vn.edu.likelion.front_ice.common.enums.AccountType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountEntity extends BaseEntity {
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 50)
     String email;
 
-    @Column()
+    @Column(nullable = false, length = 50)
     String password;
 
-    @Column()
+    @Enumerated(EnumType.STRING) // Sử dụng EnumType.STRING để lưu giá trị enum dưới dạng chuỗi trong DB
+    @Column(nullable = false)
     AccountType accountType;
 
-    @Column
-    int status;
+    @Column(nullable = false)
+    int status; // Kiểu dữ liệu bool tương ứng với boolean trong Java
 
+    @Column(length = 50) // Banner có thể null
+    String banner;
 
+    @Column(length = 50) // Avatar có thể null
+    String avatar;
 
+    @Column(length = 50) // Phone có thể null
+    String phone;
 
+    @Column(nullable = false, length = 50)
+    String firstName;
 
-
-
-
+    @Column(nullable = false, length = 50)
+    String lastName;
 
 }
