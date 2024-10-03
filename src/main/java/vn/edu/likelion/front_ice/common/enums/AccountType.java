@@ -8,12 +8,13 @@ public enum AccountType {
     ;
 
 
-    private String accountType;
+    private final String accounType;
 
-    AccountType(String staff) {
+    AccountType(String accounType) {
+        this.accounType = accounType;
     }
 
     public String getAccountType() {
-        return accountType;
+        return accounType;
     }
 }

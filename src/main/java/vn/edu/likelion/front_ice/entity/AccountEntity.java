@@ -22,18 +22,35 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountEntity extends BaseEntity implements UserDetails {
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 50)
     String email;
+
 
     @Column(nullable = false)
     String password;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // Sử dụng EnumType.STRING để lưu giá trị enum dưới dạng chuỗi trong DB
     @Column(nullable = false)
     AccountType accountType;
 
     @Column(nullable = false)
-    int status;  // 0 = inactive, 1 = active
+    int status; // Kiểu dữ liệu bool tương ứng với boolean trong Java
+
+    @Column(length = 50) // Banner có thể null
+    String banner;
+
+    @Column(length = 50) // Avatar có thể null
+    String avatar;
+
+    @Column(length = 50) // Phone có thể null
+    String phone;
+
+    @Column(nullable = false, length = 50)
+    String firstName;
+
+    @Column(nullable = false, length = 50)
+    String lastName;
+
 
     // Implementing UserDetails methods properly
 
