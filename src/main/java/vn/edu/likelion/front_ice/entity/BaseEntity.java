@@ -26,7 +26,6 @@ public abstract class BaseEntity implements Serializable {
     @UuidGenerator
     String id;
 
-
     @Column(nullable = false, updatable = false)
     LocalDateTime createAt;
 
@@ -43,7 +42,7 @@ public abstract class BaseEntity implements Serializable {
             id = UniqueID.getUUID();
         }
         this.createAt = LocalDateTime.now();
-//        this.updateAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
     }
 
     @PreUpdate
