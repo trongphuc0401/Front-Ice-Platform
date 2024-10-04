@@ -58,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
 
             return Optional.of(accountMapper.toRegisterResponse(accountEntity));
         }else {
-            throw new AppException(ErrorCode.USER_EXIST);
+            throw new AppException(ErrorCode.ACCOUNT_EXIST);
         }
 
 
@@ -93,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
 
 
         AccountEntity accountEntity = accountRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_OR_PASSWORD_INCORRECT)); // customize lại ErrorCode
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_OR_PASSWORD_INCORRECT)); // customize lại ErrorCode
 
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
