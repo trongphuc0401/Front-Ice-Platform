@@ -30,7 +30,7 @@ public class ChallengerEntity extends BaseEntity {
     String level_id;
 
     @Column(unique = true, nullable = false)
-    Boolean is_premium = false;
+    int is_premium ;
 
     @Column
     String url_github;

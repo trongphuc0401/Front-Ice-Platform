@@ -49,7 +49,7 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "score", nullable = false)
     Integer score;
 
-    @Column(name = "description", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "description", nullable = false)
     String description;
 
     @Enumerated(EnumType.STRING)
