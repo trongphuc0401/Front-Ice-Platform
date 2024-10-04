@@ -28,6 +28,6 @@ public class ResourceEntity extends BaseEntity {
 
     @Column
     String url_resource;
-    
+
 }
 
