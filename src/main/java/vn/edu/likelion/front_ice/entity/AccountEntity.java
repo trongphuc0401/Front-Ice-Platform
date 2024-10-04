@@ -34,12 +34,12 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     AccountType accountType;
 
     @Column(nullable = false)
-    int status; // Kiểu dữ liệu bool tương ứng với boolean trong Java
+    int status;
 
-    @Column(length = 50) // Banner có thể null
+    @Column(columnDefinition = "TEXT") // Banner có thể null
     String banner;
 
-    @Column(length = 50) // Avatar có thể null
+    @Column(columnDefinition = "TEXT") // Avatar có thể null
     String avatar;
 
     @Column(length = 50) // Phone có thể null
@@ -50,6 +50,9 @@ public class AccountEntity extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, length = 50)
     String lastName;
+
+    @Column(columnDefinition = "TEXT")
+    String refreshToken;
 
     // Implementing UserDetails methods properly
 
