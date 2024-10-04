@@ -30,6 +30,9 @@ public class AccountController {
     AccountService accountService;
     @Autowired private SecurityUtil securityUtil;
 
+    @PostMapping("/register")
+    public Optional<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
+        return accountService.create(registerRequest);
 
     @PostMapping(ApiEndpoints.LOGIN)
     public ResponseEntity<RestAPIResponse<Object>> login(@RequestBody LoginRequest loginRequest) {

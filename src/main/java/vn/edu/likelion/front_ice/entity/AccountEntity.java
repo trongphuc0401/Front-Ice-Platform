@@ -20,11 +20,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
 public class AccountEntity extends BaseEntity implements UserDetails {
 
     @Column(unique = true, nullable = false, length = 50)
     String email;
-
 
     @Column(nullable = false)
     String password;
