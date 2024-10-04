@@ -30,7 +30,6 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     String password;
 
-    @Enumerated(EnumType.STRING) // Sử dụng EnumType.STRING để lưu giá trị enum dưới dạng chuỗi trong DB
     @Column(nullable = false)
     AccountType accountType;
 

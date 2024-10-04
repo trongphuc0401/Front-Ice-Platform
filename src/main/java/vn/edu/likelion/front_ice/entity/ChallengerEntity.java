@@ -24,15 +24,15 @@ import lombok.experimental.FieldDefaults;
 public class ChallengerEntity extends BaseEntity {
 
     @Column
-    String account_id;
+    String accountId;
 
     @Column
-    String level_id;
+    String levelId;
 
     @Column(unique = true, nullable = false)
-    int is_premium ;
+    int isPremium ;
 
     @Column
-    String url_github;
+    String urlGithub;
 
 }

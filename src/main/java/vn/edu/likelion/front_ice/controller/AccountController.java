@@ -9,8 +9,12 @@ import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.dto.request.LoginRequest;
+import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
+import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
+
+import java.util.Optional;
 
 /**
  * AccountController -
@@ -28,11 +32,14 @@ public class AccountController {
 
     @Autowired
     AccountService accountService;
-    @Autowired private SecurityUtil securityUtil;
 
-    @PostMapping("/register")
+    @Autowired SecurityUtil securityUtil;
+
+    @PostMapping(ApiEndpoints.SIGN_UP)
     public Optional<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
+
         return accountService.create(registerRequest);
+    }
 
     @PostMapping(ApiEndpoints.LOGIN)
     public ResponseEntity<RestAPIResponse<Object>> login(@RequestBody LoginRequest loginRequest) {

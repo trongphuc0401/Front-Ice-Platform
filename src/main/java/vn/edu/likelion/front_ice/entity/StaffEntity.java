@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vn.edu.likelion.front_ice.common.enums.Role;
 
 
 /**
@@ -24,8 +25,8 @@ import lombok.experimental.FieldDefaults;
 public class StaffEntity extends BaseEntity {
 
     @Column
-    String account_id;
+    String accountId;
 
-//    @Column
-//    RoleEnum name;
+    @Column
+    Role name;
 }

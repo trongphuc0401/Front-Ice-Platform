@@ -4,19 +4,21 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.enums.AccountType;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.LoginRequest;
+import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
+import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
@@ -42,34 +44,49 @@ public class AccountServiceImpl implements AccountService {
     @Autowired private AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Autowired SecurityUtil securityUtil;
+    @Autowired private AccountMapper accountMapper;
 
 
-    @Override public Optional create(Object t) {
+    @Override public Optional<RegisterResponse> create(RegisterRequest registerRequest) {
+
+        if(accountRepository.findByEmail(registerRequest.getEmail()).isEmpty()){
+            AccountEntity accountEntity =  accountMapper.toAccount(registerRequest);
+            accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+            accountEntity.setIsDeleted(0);
+            accountEntity.setStatus(1);
+            accountRepository.save(accountEntity);
+
+            return Optional.of(accountMapper.toRegisterResponse(accountEntity));
+        }else {
+            throw new AppException(ErrorCode.USER_EXIST);
+        }
+
+
+    }
+
+    @Override public Optional<RegisterResponse> updateInfo(String id, RegisterRequest registerRequest) {
         return Optional.empty();
     }
 
-    @Override public Optional updateInfo(String id, Object o) {
-        return Optional.empty();
-    }
-
-    @Override public List saveAll(List ts) {
+    @Override public List<RegisterResponse> saveAll(List<AccountEntity> ts) {
         return List.of();
     }
+
 
     @Override public void delete(String id) {
 
     }
 
-    @Override public Optional findById(String id) {
+    @Override public void deleteAll(List<String> listId) {
+
+    }
+
+    @Override public Optional<RegisterResponse> findById(String id) {
         return Optional.empty();
     }
 
-    @Override public List findAll() {
+    @Override public List<RegisterResponse> findAll() {
         return List.of();
-    }
-
-    @Override public void deleteAll(List listId) {
-
     }
 
     @Override public Optional<LoginResponse> login(LoginRequest loginRequest) {

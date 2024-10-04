@@ -24,8 +24,8 @@ import lombok.experimental.FieldDefaults;
 public class FollowEntity extends BaseEntity {
 
     @Column
-    String challenger_id;
+    String challengerId;
 
     @Column
-    String recruiter_id;
+    String recruiterId;
 }
