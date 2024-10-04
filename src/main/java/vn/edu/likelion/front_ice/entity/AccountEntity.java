@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.edu.likelion.front_ice.common.enums.AccountType;
+import vn.edu.likelion.front_ice.common.enums.Role;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,8 +31,11 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     String password;
 
+    // @Column(nullable = false)
+    // AccountType accountType; ?? chi ta
+
     @Column(nullable = false)
-    AccountType accountType;
+    Role role;
 
     @Column(nullable = false)
     int status;
@@ -58,7 +62,7 @@ public class AccountEntity extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + accountType.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

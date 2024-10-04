@@ -86,6 +86,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override public List<RegisterResponse> findAll() {
+
         return List.of();
     }
 
