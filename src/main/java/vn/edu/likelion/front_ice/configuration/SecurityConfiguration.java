@@ -46,6 +46,7 @@ public class SecurityConfiguration {
             HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/api/v1/auth/**")
