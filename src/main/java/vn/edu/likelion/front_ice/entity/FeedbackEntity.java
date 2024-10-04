@@ -24,10 +24,10 @@ import lombok.experimental.FieldDefaults;
 public class FeedbackEntity extends BaseEntity {
 
     @Column
-    String solution_id;
+    String solutionId;
 
     @Column
-    String account_id;
+    String accountId;
 
     @Column
     String message;

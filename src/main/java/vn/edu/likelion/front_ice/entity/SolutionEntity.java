@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 
 
 /**
@@ -24,16 +25,16 @@ import lombok.experimental.FieldDefaults;
 public class SolutionEntity extends BaseEntity {
 
     @Column
-    String challenger_id;
+    String challengerId;
 
     @Column
-    String challenge_id;
+    String challengeId;
 
     @Column
-    String url_product;
+    String urlProduct;
 
     @Column
-    String url_repo;
+    String urlRepository;
 
     @Column
     String title;
@@ -44,8 +45,8 @@ public class SolutionEntity extends BaseEntity {
     @Column
     String note;
 
-//    @Column
-//    Enum status;
+   @Column
+   StatusSolution statusSolution;
 
 }
 

@@ -24,13 +24,13 @@ import lombok.experimental.FieldDefaults;
 public class ReportEntity extends BaseEntity {
 
     @Column
-    String solution_id;
+    String solutionId;
 
     @Column
-    String account_id;
+    String accountId;
 
     @Column
-    String feedback_id;
+    String feedbackId;
 
     @Column
     String reason;

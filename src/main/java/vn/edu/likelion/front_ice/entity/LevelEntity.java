@@ -27,9 +27,9 @@ public class LevelEntity extends BaseEntity {
     String title;
 
     @Column
-    int min_score;
+    int minScore;
 
     @Column
-    int max_score;
+    int maxScore;
 }
 

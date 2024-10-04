@@ -24,7 +24,7 @@ import lombok.experimental.FieldDefaults;
 public class RecruiterEntity extends BaseEntity {
 
     @Column
-    String account_id;
+    String accountId;
 
     @Column
     String name;
@@ -33,7 +33,7 @@ public class RecruiterEntity extends BaseEntity {
     String description;
 
     @Column
-    String url_website;
+    String urlWebsite;
 
     @Column
     String address;
