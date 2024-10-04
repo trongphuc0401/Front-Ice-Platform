@@ -51,7 +51,6 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column(nullable = false, length = 50)
     String lastName;
 
-
     // Implementing UserDetails methods properly
 
     @Override

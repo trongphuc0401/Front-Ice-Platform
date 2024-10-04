@@ -6,6 +6,6 @@ import vn.edu.likelion.front_ice.entity.AccountEntity;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AccountRepository extends JpaRepository<AccountEntity, UUID> {
+public interface AccountRepository extends JpaRepository<AccountEntity, String> {
     Optional<AccountEntity> findByEmail(String email);
 }

@@ -9,7 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
-import vn.edu.likelion.front_ice.dto.response.ResLoginDTO;
+import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.dto.request.LoginRequest;
+import vn.edu.likelion.front_ice.dto.response.LoginResponse;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,6 +19,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+@Service
 public class SecurityUtil {
     @Autowired
     private JwtEncoder jwtEncoder;
@@ -32,7 +35,7 @@ public class SecurityUtil {
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public String createAccessToken(String email, ResLoginDTO.UserLogin dto) {
+    public String createAccessToken(String email, LoginRequest dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
@@ -48,7 +51,7 @@ public class SecurityUtil {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String createRefreshToken(String email, ResLoginDTO dto) {
+    public String createRefreshToken(String email, LoginRequest dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
@@ -114,4 +117,12 @@ public class SecurityUtil {
                 .filter(authentication -> authentication.getCredentials() instanceof String)
                 .map(authentication -> (String) authentication.getCredentials());
     }
+
+    public long getExpirationTime() {
+        return accessTokenExpiration;
+    }
+    public long getRefreshTokenExpiration() {
+        return refreshTokenExpiration;
+    }
+
 }
