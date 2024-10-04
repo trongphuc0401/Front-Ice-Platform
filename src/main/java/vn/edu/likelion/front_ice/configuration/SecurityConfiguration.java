@@ -49,8 +49,12 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/api/v1/auth/**")
-                                .permitAll()
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/challenger/**").hasAnyAuthority("ROLE_CHALLENGER,ROLE_ADMIN")
+                                .requestMatchers("/api/v1/recruiter/**").hasAnyAuthority("ROLE_RECRUITER,ROLE_ADMIN")
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
+                                .requestMatchers("/api/v1/manager/**").hasAuthority("ROLE_MANAGER")
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .formLogin(AbstractHttpConfigurer::disable)
