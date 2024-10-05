@@ -20,6 +20,7 @@ public interface ApiEndpoints {
     String SIGNUP_VERIFY = "/signup-verify";  // POST
     String FORGOT_PASSWORD = "/forgot-password";  // POST
     String REFRESH_TOKEN = "/refresh-token";  // POST
+    String SEND_OTP = "/send-otp";  // POST
 
 
     String ID  = "{id}";
