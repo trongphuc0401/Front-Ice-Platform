@@ -23,4 +23,9 @@ public interface AccountService extends BaseService<AccountEntity,RegisterReques
 
     Optional<LoginResponse> login(LoginRequest loginRequest);
 
+    String generateOTP(String email);
+
+    boolean verifyOTP(String email, String otp);
+
+    void clearOTP(String email);
 }

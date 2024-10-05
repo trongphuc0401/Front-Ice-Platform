@@ -10,6 +10,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.dto.request.LoginRequest;
 import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
+import vn.edu.likelion.front_ice.dto.request.VerifyEmailRequest;
 import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
@@ -33,7 +34,8 @@ public class AccountController {
     @Autowired
     AccountService accountService;
 
-    @Autowired SecurityUtil securityUtil;
+    @Autowired
+    SecurityUtil securityUtil;
 
     @PostMapping(ApiEndpoints.SIGN_UP)
     public Optional<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
@@ -54,7 +56,23 @@ public class AccountController {
                 .maxAge(securityUtil.getRefreshTokenExpiration())
                 .build();
 
-        return responseUtil.successResponse(accountService.login(loginRequest),resCookies.toString());
+        return responseUtil.successResponse(accountService.login(loginRequest), resCookies.toString());
     }
 
+    @PostMapping(ApiEndpoints.SEND_OTP)
+    public ResponseEntity<RestAPIResponse<Object>> sendOTP(@RequestParam String gmail) {
+        return responseUtil.successResponse(accountService.generateOTP(gmail));
+    }
+
+    @PostMapping(ApiEndpoints.VERIFY_EMAIL)
+    public ResponseEntity<RestAPIResponse<Object>> OTP(@RequestBody VerifyEmailRequest verifyEmailRequest) {
+        boolean flag = accountService.verifyOTP(verifyEmailRequest.getEmail(), verifyEmailRequest.getOtp());
+
+        if (flag) {
+            accountService.clearOTP(verifyEmailRequest.getEmail());
+            return responseUtil.successResponse("OTP verified");
+        } else {
+            return responseUtil.successResponse("OTP not verified");
+        }
+    }
 }
