@@ -35,6 +35,7 @@ public enum ErrorCode {
     PASSWORD_MISSING_DIGIT(RestAPIStatus.FAIL,-112,"Password must contain at least one digit","Fail","Mật khẩu phải chứa ít nhất một chữ số"),
     PASSWORD_MISSING_SPECIAL(RestAPIStatus.FAIL,-113,"Password must contain at least one special character","Fail","Mật khẩu phải chứa ít nhất một ký tự đặc biệt"),
     PASSWORD_CONTAINS_WHITESPACE(RestAPIStatus.FAIL,-114,"Password must not contain whitespace","Fail","Mật khẩu không được chứa khoảng trắng"),
+    CONFIRM_PASSWORD_NOT_MATCH(RestAPIStatus.BAD_REQUEST, -116, "Confirm Password not match", "Bad Request", "Mật khẩu xác thực không trùng khớp"),
 
 
 

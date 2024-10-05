@@ -10,8 +10,10 @@ package vn.edu.likelion.front_ice.common.enums;
 public enum Role {
 
     ADMIN("admin"), //root
-    CHALLENGE_MANAGER("challenge manager"),
+    MANAGER("manager"),
     MENTOR("mentor"),
+    RECRUITER("recruiter"),
+    CHALLENGER("challenger");
     ;
 
     private final String role;

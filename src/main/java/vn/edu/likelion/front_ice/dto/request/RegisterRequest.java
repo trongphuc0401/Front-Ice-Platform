@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.AccountType;
+import vn.edu.likelion.front_ice.common.enums.Role;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class RegisterRequest {
     String email;
     String password;
     String confirmPassword;
+    Role role;
 
-    AccountType accountType;
 
 }

@@ -7,6 +7,7 @@ public enum AccountType {
     RECRUITER("recruiter")
     ;
     private final String accountType;
+    
 
     AccountType(String accountType) {
         this.accountType = accountType;
