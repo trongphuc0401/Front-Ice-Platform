@@ -29,7 +29,7 @@ public class ChallengerEntity extends BaseEntity {
     @Column
     String levelId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     int isPremium ;
 
     @Column

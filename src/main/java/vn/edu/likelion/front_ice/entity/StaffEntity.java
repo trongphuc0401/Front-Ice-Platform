@@ -27,5 +27,11 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffEntity extends BaseEntity {
     @Column
+    String accountId;
+
+    @Column
     String nameStaff;
+
+    @Column
+    Role role;
 }
