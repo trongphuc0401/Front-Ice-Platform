@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
                                 .requestMatchers("/api/v1/manager/**").hasAuthority("ROLE_MANAGER")
-                                .anyRequest().authenticated())
+                                .anyRequest().permitAll())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
