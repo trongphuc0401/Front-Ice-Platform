@@ -42,4 +42,6 @@ public interface AccountService extends BaseService<AccountEntity,RegisterReques
     void updateAccountToken(String token, String email);
 
     Optional<LoginResponse> refreshToken(String refreshToken);
+
+    void clearRefreshToken(String email);
 }

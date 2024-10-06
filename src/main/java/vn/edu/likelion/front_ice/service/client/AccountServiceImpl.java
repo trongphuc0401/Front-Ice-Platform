@@ -341,6 +341,19 @@ public class AccountServiceImpl implements AccountService {
                 .build());
     }
 
+    @Override
+    public void clearRefreshToken(String email) {
+        Optional<AccountEntity> accountOptional = accountRepository.findByEmail(email);
+
+        if (accountOptional.isPresent()) {
+            AccountEntity account = accountOptional.get();
+            account.setRefreshToken(null);
+            accountRepository.save(account);
+        } else {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
+        }
+    }
+
     private String validateResetToken(String resetToken) {
         // Kiểm tra token và trả về email
         return resetTokenStorage.entrySet().stream()
