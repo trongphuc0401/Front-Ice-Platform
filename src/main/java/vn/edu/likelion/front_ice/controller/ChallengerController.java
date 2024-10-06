@@ -13,6 +13,8 @@ import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.api.RestAPIStatus;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
+import vn.edu.likelion.front_ice.common.exceptions.AppException;
+import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
@@ -38,12 +40,16 @@ public class ChallengerController {
     ResponseUtil responseUtil;
 
     @PostMapping("/upload")
-    public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(@RequestParam("image") MultipartFile file) throws
-            IOException, GeneralException {
-
+    public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
+            @RequestParam("accountId") String accountId,
+            @RequestParam("image") MultipartFile file) throws
+            IOException {
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
         File tempFile = File.createTempFile("temp", null);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(accountId,tempFile));
     }
 }

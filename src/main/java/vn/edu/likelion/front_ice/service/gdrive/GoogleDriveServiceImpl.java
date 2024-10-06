@@ -7,8 +7,14 @@ import com.google.api.client.http.FileContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.Permission;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.exceptions.AppException;
+import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
+import vn.edu.likelion.front_ice.entity.AccountEntity;
+import vn.edu.likelion.front_ice.repository.AccountRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * GoogleDriveServiceImpl -
@@ -31,6 +38,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     private static String SERVIEC_ACCOUNT_KEY_PATH = getPathToGoodleCredentials();
+    private final AccountRepository accountRepository;
+
+    public GoogleDriveServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     private static String getPathToGoodleCredentials() {
 
@@ -40,9 +52,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-    @Override public UploadAvatarResponse uploadChallengerAvatar(File file) {
+    @Override public UploadAvatarResponse uploadChallengerAvatar(String accountChallengerId,File file) {
 
         UploadAvatarResponse response = new UploadAvatarResponse();
+
+        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
         try {
             String folderId = "1dD24z_IAgyaY7bPbCPlx2m23jyQXELaQ";
             Drive drive = createDriveService();
@@ -54,13 +70,18 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
             System.out.println("IMAGE URL: " + imageUrl);
+            // Đặt quyền chia sẻ công khai cho tệp
+            Permission permission = new Permission();
+            permission.setType("anyone");
+            permission.setRole("reader");
+            drive.permissions().create(uploadedFile.getId(), permission).execute();
             file.delete();
             response.setUrl(imageUrl);
+            accountEntity.setAvatar(imageUrl);
+            accountRepository.save(accountEntity);
         }catch (Exception e){
             System.out.println(e.getMessage());
-
         }
-
         return response;
     }
 
