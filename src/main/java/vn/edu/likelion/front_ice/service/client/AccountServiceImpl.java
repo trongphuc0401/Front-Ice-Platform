@@ -72,6 +72,14 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private TemplateEngine templateEngine;
 
+    // stores reset token
+    private Map<String, String> resetTokenStorage = new HashMap<>();
+
+    // stores expiration reset token
+    private Map<String, Long> resetTokenExpiry = new HashMap<>();
+
+    private final long RESET_TOKEN_EXPIRY_DURATION = 10 * 60 * 1000;
+
     @Override
     public Optional<RegisterResponse> create(RegisterRequest registerRequest) {
 
@@ -221,5 +229,106 @@ public class AccountServiceImpl implements AccountService {
     // Xóa OTP sau khi xác thực thành công
     public void clearOTP(String email) {
         otpStorage.remove(email);
+    }
+
+    public void sendEmailWithTemplate(String email, String subject, String templateName, Map<String, Object> variables) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+            helper.setTo(email);
+            helper.setSubject(subject);
+
+            Context context = new Context();
+            variables.forEach(context::setVariable);  // Đặt các biến vào context
+
+            String htmlContent = templateEngine.process(templateName, context);
+            helper.setText(htmlContent, true);  // true là để gửi nội dung HTML
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AppException(ErrorCode.EMAIL_SENDING_FAILED);
+        }
+    }
+
+    // create otp forgot password
+    @Override
+    public String generateForgotPasswordOTP(String email) {
+        String otp = String.format("%06d", random.nextInt(999999));
+
+        otpStorage.put(email, otp);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("otp", otp);
+
+        sendEmailWithTemplate(email, "Forgot Password OTP", "forgotPasswordOTP", variables);
+
+        return "OTP cho quên mật khẩu đã được gửi về mail.";
+    }
+
+    @Override
+    public String generateResetToken(String email) {
+        String resetToken = UUID.randomUUID().toString();
+        resetTokenStorage.put(email, resetToken);
+        resetTokenExpiry.put(email, System.currentTimeMillis() + RESET_TOKEN_EXPIRY_DURATION); // Lưu thời gian hết hạn
+        return resetToken;
+    }
+
+    @Override
+    public boolean verifyForgotPasswordOTP(String email, String otp) {
+        String storedOtp = otpStorage.get(email);
+
+        if (storedOtp != null && storedOtp.equals(otp)) {
+            otpStorage.remove(email);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean resetPassword(String resetToken, String newPassword) {
+        // Kiểm tra và tìm email bằng resetToken
+        String email = validateResetToken(resetToken);
+
+        // Tìm tài khoản theo email
+        AccountEntity account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        // Mã hóa mật khẩu mới và lưu thay đổi
+        account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+
+        // Xóa reset token
+        clearResetToken(email);
+
+        return true;
+    }
+
+    private String validateResetToken(String resetToken) {
+        // Kiểm tra token và trả về email
+        return resetTokenStorage.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(resetToken))
+                .findFirst()
+                .map(entry -> {
+                    String email = entry.getKey();
+                    if (resetTokenExpiry.get(email) > System.currentTimeMillis()) {
+                        return email;
+                    } else {
+                        clearResetToken(email);
+                        throw new AppException(ErrorCode.RESET_TOKEN_EXPIRED);
+                    }
+                })
+                .orElseThrow(() -> new AppException(ErrorCode.RESET_TOKEN_INVALID));
+    }
+
+    private void clearResetToken(String email) {
+        resetTokenStorage.remove(email);
+        resetTokenExpiry.remove(email);
+    }
+
+    @Override
+    public Optional<AccountEntity> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
     }
 }
