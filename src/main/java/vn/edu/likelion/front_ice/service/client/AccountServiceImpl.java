@@ -170,7 +170,7 @@ public class AccountServiceImpl implements AccountService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         LoginResponse loginResponse = LoginResponse.builder()
-                .accessToken(securityUtil.createAccessToken(loginRequest.getEmail(), loginRequest))
+                .accessToken(securityUtil.createAccessToken(authentication))
                 .account(accountEntity)
                 .expiresIn(securityUtil.getExpirationTime())
                 .build();

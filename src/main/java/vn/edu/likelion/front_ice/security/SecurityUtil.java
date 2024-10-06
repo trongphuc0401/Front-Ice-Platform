@@ -4,6 +4,7 @@ import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SecurityUtil {
@@ -35,16 +40,27 @@ public class SecurityUtil {
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public String createAccessToken(String email, LoginRequest dto) {
+    public String createAccessToken(Authentication authentication) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
-        // @formatter:off
+        // Trích xuất các thuộc tính cần thiết từ đối tượng Principal (hoặc UserDetails)
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+        Map<String, Object> userClaim = new HashMap<>();
+        userClaim.put("username", username);
+        userClaim.put("authorities", authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
+        // Tạo JWT claims
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(email)
-                .claim("user", dto)
+                .subject(username)
+                .claim("user", userClaim)  // Chỉ lưu các thuộc tính đơn giản
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

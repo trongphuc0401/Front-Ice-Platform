@@ -21,7 +21,7 @@ import vn.edu.likelion.front_ice.service.challenger.ChallengerService;
 @RestController
 @RequestMapping(ApiEndpoints.CHALLENGER_API)
 @RequiredArgsConstructor
-public class ChallengerController {
+public class   ChallengerController {
 
     @Autowired
     ChallengerService challengerService;
@@ -29,13 +29,15 @@ public class ChallengerController {
     private ResponseUtil responseUtil;
 
     @PostMapping(ApiEndpoints.FOLLOW)
-    @PreAuthorize("hasAnyRole('ROLE_CHALLENGER','ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> follow(@RequestBody FollowRequest followRequest) {
         return responseUtil.successResponse(challengerService.follow(followRequest));
     }
 
     @GetMapping(ApiEndpoints.GET_FOLLOW)
-    public ResponseEntity<RestAPIResponse<Object>> login(@RequestParam String id) {
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam String id) {
         return responseUtil.successResponse(challengerService.getFollow(id));
     }
+
 }
