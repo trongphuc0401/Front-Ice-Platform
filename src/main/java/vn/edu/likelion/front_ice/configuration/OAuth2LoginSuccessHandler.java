@@ -88,7 +88,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             loginRequest.setEmail(email);
             loginRequest.setPassword("OAuth2Password");
 
-            String accessToken = securityUtil.createAccessToken(email, loginRequest);
+            String accessToken = securityUtil.createAccessToken(authentication);
             String refreshToken = securityUtil.createRefreshToken(email, loginRequest);
 
             accountEntity.setRefreshToken(refreshToken);
