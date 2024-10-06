@@ -139,4 +139,25 @@ public class AccountController {
 
         return responseUtil.successResponse(loginResponse, refreshCookie.toString());
     }
+
+    @PostMapping(ApiEndpoints.LOGOUT)
+    public ResponseEntity<RestAPIResponse<Object>> logout() {
+        Optional<String> currentUserEmail = SecurityUtil.getCurrentUserLogin();
+
+        if (currentUserEmail.isEmpty()) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
+        }
+
+        accountService.clearRefreshToken(currentUserEmail.get());
+
+        ResponseCookie deleteCookie = ResponseCookie
+                .from("refresh_token", null)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return responseUtil.successResponse(null, deleteCookie.toString());
+    }
 }
