@@ -39,7 +39,10 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-
+    @Bean
+    public OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler() {
+        return new OAuth2LoginSuccessHandler();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(
@@ -56,6 +59,8 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
                                 .requestMatchers("/api/v1/manager/**").hasAuthority("ROLE_MANAGER")
                                 .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler()))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
