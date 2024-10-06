@@ -28,4 +28,14 @@ public interface AccountService extends BaseService<AccountEntity,RegisterReques
     boolean verifyOTP(String email, String otp);
 
     void clearOTP(String email);
+
+    Optional<AccountEntity> findByEmail(String email);
+
+    String generateForgotPasswordOTP(String email);
+
+    String generateResetToken(String email);
+
+    boolean verifyForgotPasswordOTP(String email, String otp);
+
+    boolean resetPassword(String email, String newPassword);
 }

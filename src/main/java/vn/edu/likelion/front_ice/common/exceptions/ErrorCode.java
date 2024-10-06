@@ -20,9 +20,10 @@ public enum ErrorCode {
     USERNAME_TOO_SHORT(RestAPIStatus.BAD_REQUEST, -101, "Username must be at least {min} characters", "Bad Request", "Tên người dùng phải có ít nhất {min} ký tự"),
     PASSWORD_NO_NUMBER(RestAPIStatus.BAD_REQUEST, -102, "Password must contain at least one number", "Bad Request", "Mật khẩu phải chứa ít nhất một số"),
     EMAIL_INVALID(RestAPIStatus.BAD_REQUEST, -103, "Email is invalid", "Bad Request", "Email không hợp lệ"),
-    USER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -104, "User not exist", "Bad Request", "Người dùng không tồn tại"),
+    ACCOUNT_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -104, "User not exist", "Bad Request", "Người dùng không tồn tại"),
     ACCOUNT_EXIST(RestAPIStatus.EXISTED,-105,"Account exist in system","Bad Request","Người dùng đã tồn tại"),
     ACCOUNT_OR_PASSWORD_INCORRECT(RestAPIStatus.BAD_REQUEST,-106,"Account or password incorrect","Bad Request","Tên tài khoản hoặc mật khẩu không đúng"),
+    EMAIL_SENDING_FAILED(RestAPIStatus.BAD_REQUEST, -117, "Failed to send email", "Bad Request", "Gửi email thất bại"),
 
     PHOTO_UPLOAD_FAILED(RestAPIStatus.BAD_REQUEST, -106, "Failed to save photo", "Bad Request", "Upload ảnh thất bại"),
     INVALID_DATE_FORMAT(RestAPIStatus.BAD_REQUEST, -107, "Invalid date format", "Bad Request", "Định dạng ngày không hợp lệ"),
@@ -36,7 +37,11 @@ public enum ErrorCode {
     PASSWORD_MISSING_SPECIAL(RestAPIStatus.FAIL,-113,"Password must contain at least one special character","Fail","Mật khẩu phải chứa ít nhất một ký tự đặc biệt"),
     PASSWORD_CONTAINS_WHITESPACE(RestAPIStatus.FAIL,-114,"Password must not contain whitespace","Fail","Mật khẩu không được chứa khoảng trắng"),
     CONFIRM_PASSWORD_NOT_MATCH(RestAPIStatus.BAD_REQUEST, -116, "Confirm Password not match", "Bad Request", "Mật khẩu xác thực không trùng khớp"),
-
+    OLD_PASSWORD_INCORRECT(RestAPIStatus.BAD_REQUEST, -118, "Old password is incorrect", "Bad Request", "Mật khẩu cũ không chính xác"),
+    OTP_INVALID(RestAPIStatus.BAD_REQUEST, -119, "OTP không hợp lệ", "Bad Request", "OTP không hợp lệ"),
+    PASSWORD_RESET_FAILED(RestAPIStatus.FAIL, -120, "Đặt lại mật khẩu thất bại", "Fail", "Đặt lại mật khẩu thất bại"),
+    RESET_TOKEN_EXPIRED(RestAPIStatus.BAD_REQUEST, -121, "Reset token expired", "Bad Request", "Mã đặt lại mật khẩu đã hết hạn"),
+    RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
 
 
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),

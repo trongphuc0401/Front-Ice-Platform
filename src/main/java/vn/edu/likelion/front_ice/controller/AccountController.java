@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
-import vn.edu.likelion.front_ice.dto.request.LoginRequest;
-import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
-import vn.edu.likelion.front_ice.dto.request.VerifyEmailRequest;
+import vn.edu.likelion.front_ice.common.exceptions.AppException;
+import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.dto.request.*;
 import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
+import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
 
@@ -73,6 +74,44 @@ public class AccountController {
             return responseUtil.successResponse("OTP verified");
         } else {
             return responseUtil.successResponse("OTP not verified");
+        }
+    }
+
+    @PostMapping(ApiEndpoints.FORGOT_PASSWORD)
+    public ResponseEntity<RestAPIResponse<Object>> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        Optional<AccountEntity> accountOptional = accountService.findByEmail(forgotPasswordRequest.getEmail());
+        if (accountOptional.isEmpty()) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
+        }
+
+        String otpMessage = accountService.generateForgotPasswordOTP(forgotPasswordRequest.getEmail());
+        return responseUtil.successResponse(otpMessage);
+    }
+
+    @PostMapping(ApiEndpoints.VERIFY_FORGOT_PASSWORD_OTP)
+    public ResponseEntity<RestAPIResponse<Object>> verifyForgotPasswordOTP(@RequestBody VerifyForgotPasswordOTPRequest verifyOtpRequest) {
+        boolean isOtpValid = accountService.verifyForgotPasswordOTP(verifyOtpRequest.getEmail(), verifyOtpRequest.getOtp());
+
+        if (isOtpValid) {
+            String resetToken = accountService.generateResetToken(verifyOtpRequest.getEmail());
+            return responseUtil.successResponse(resetToken);
+        } else {
+            throw new AppException(ErrorCode.OTP_INVALID);
+        }
+    }
+
+    @PostMapping(ApiEndpoints.RESET_PASSWORD)
+    public ResponseEntity<RestAPIResponse<Object>> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        if (!resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword())) {
+            throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+        }
+
+        boolean isPasswordReset = accountService.resetPassword(resetPasswordRequest.getResetToken(), resetPasswordRequest.getNewPassword());
+
+        if (isPasswordReset) {
+            return responseUtil.successResponse("Mật khẩu đã được đặt lại thành công.");
+        } else {
+            throw new AppException(ErrorCode.PASSWORD_RESET_FAILED);
         }
     }
 }
