@@ -26,6 +26,7 @@ import vn.edu.likelion.front_ice.security.SecurityUtil;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -66,14 +67,16 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 accountEntity.setFirstName(firstName);
                 accountEntity.setLastName(lastName);
                 accountEntity.setAvatar(avatar);
-                accountEntity.setStatus(1); // Kích hoạt tài khoản
+                accountEntity.setStatus(1);
             } else {
                 // Nếu người dùng chưa tồn tại, tạo mới
+                String dummyPassword = UUID.randomUUID().toString();
                 accountEntity = AccountEntity.builder()
                         .email(email)
                         .firstName(firstName)
                         .lastName(lastName)
                         .avatar(avatar)
+                        .password(dummyPassword)
                         .status(1)
                         .role(Role.CHALLENGER)
                         .build();
