@@ -141,4 +141,18 @@ public class SecurityUtil {
         return refreshTokenExpiration;
     }
 
+public String createAccessTokenFromEmail(String email) {
+    Instant now = Instant.now();
+    Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
+
+    // Build the claims using the email
+    JwtClaimsSet claims = JwtClaimsSet.builder()
+            .issuedAt(now)
+            .expiresAt(validity)
+            .subject(email)
+            .build();
+
+    JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+    return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
 }

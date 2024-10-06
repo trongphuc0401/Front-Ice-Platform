@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -303,6 +304,41 @@ public class AccountServiceImpl implements AccountService {
         clearResetToken(email);
 
         return true;
+    }
+
+    @Override
+    public void updateAccountToken(String token, String email) {
+       Optional<AccountEntity> currentAccount = accountRepository.findByEmail(email);
+
+       if (currentAccount.isPresent()) {
+           AccountEntity account = currentAccount.get();
+           account.setRefreshToken(token);
+           accountRepository.save(account);
+       }
+    }
+
+    @Override
+    public Optional<LoginResponse> refreshToken(String refreshToken) {
+        Jwt decodedToken = securityUtil.checkValidRefreshToken(refreshToken);
+        String email = decodedToken.getSubject();
+
+        AccountEntity account = accountRepository.findByEmailAndRefreshToken(email, refreshToken)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        // new access token
+        String newAccessToken = securityUtil.createAccessTokenFromEmail(email);
+        long expiresIn = securityUtil.getExpirationTime();
+
+        // new refresh token
+        String newRefreshToken = securityUtil.createRefreshToken(email, null);
+        account.setRefreshToken(newRefreshToken);
+        updateAccountToken(newRefreshToken, email);
+
+        return Optional.ofNullable(LoginResponse.builder()
+                .accessToken(newAccessToken)
+                .expiresIn(securityUtil.getExpirationTime())
+                .account(account)
+                .build());
     }
 
     private String validateResetToken(String resetToken) {

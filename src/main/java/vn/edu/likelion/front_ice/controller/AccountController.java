@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
@@ -11,6 +12,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.*;
+import vn.edu.likelion.front_ice.dto.response.LoginResponse;
 import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -47,6 +49,8 @@ public class AccountController {
     @PostMapping(ApiEndpoints.LOGIN)
     public ResponseEntity<RestAPIResponse<Object>> login(@RequestBody LoginRequest loginRequest) {
         String refreshToken = this.securityUtil.createRefreshToken(loginRequest.getEmail(), loginRequest);
+
+        this.accountService.updateAccountToken(refreshToken, loginRequest.getEmail());
 
         // set cookies
         ResponseCookie resCookies = ResponseCookie
@@ -113,5 +117,26 @@ public class AccountController {
         } else {
             throw new AppException(ErrorCode.PASSWORD_RESET_FAILED);
         }
+    }
+
+    @GetMapping(ApiEndpoints.REFRESH_TOKEN)
+    public ResponseEntity<RestAPIResponse<Object>> refreshToken(
+            @CookieValue(name = "refresh_token", defaultValue = "a") String refresh_token) {
+        if ("a".equals(refresh_token)) {
+            throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        Optional<LoginResponse> loginResponse = accountService.refreshToken(refresh_token);
+
+        // Create the new refresh token cookie
+        ResponseCookie refreshCookie = ResponseCookie
+                .from("refresh_token", loginResponse.get().getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(securityUtil.getRefreshTokenExpiration())
+                .build();
+
+        return responseUtil.successResponse(loginResponse, refreshCookie.toString());
     }
 }

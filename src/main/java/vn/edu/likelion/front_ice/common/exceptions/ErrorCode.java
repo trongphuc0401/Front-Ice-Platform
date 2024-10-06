@@ -42,7 +42,7 @@ public enum ErrorCode {
     PASSWORD_RESET_FAILED(RestAPIStatus.FAIL, -120, "Đặt lại mật khẩu thất bại", "Fail", "Đặt lại mật khẩu thất bại"),
     RESET_TOKEN_EXPIRED(RestAPIStatus.BAD_REQUEST, -121, "Reset token expired", "Bad Request", "Mã đặt lại mật khẩu đã hết hạn"),
     RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
-
+    INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, 1002, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
 
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
 
