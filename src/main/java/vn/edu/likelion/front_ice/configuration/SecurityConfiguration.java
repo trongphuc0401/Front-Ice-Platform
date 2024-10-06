@@ -11,8 +11,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -22,13 +25,18 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import vn.edu.likelion.front_ice.security.CustomAuthenticationEntryPoint;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true)
+@EnableWebSecurity
 public class SecurityConfiguration {
 
     @Value("${jwt.base64-secret}")
@@ -39,6 +47,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     public OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler() {
         return new OAuth2LoginSuccessHandler();
@@ -46,22 +55,24 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/v1/challenger/**").hasAnyAuthority("ROLE_CHALLENGER,ROLE_ADMIN")
-                                .requestMatchers("/api/v1/recruiter/**").hasAnyAuthority("ROLE_RECRUITER,ROLE_ADMIN")
+                                .requestMatchers("/api/v1/challenger/**").hasAuthority("ROLE_CHALLENGER")
+                                .requestMatchers("/api/v1/recruiter/**").hasAuthority("ROLE_RECRUITER")
                                 .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
                                 .requestMatchers("/api/v1/manager/**").hasAuthority("ROLE_MANAGER")
                                 .anyRequest().authenticated())
+
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler()))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+             .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
               ;
@@ -71,12 +82,23 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("permission");
-
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            Map<String, Object> userMap = jwt.getClaim("user");
+
+            if (userMap != null && userMap.get("authorities") != null) {
+                List<String> userAuthorities = (List<String>) userMap.get("authorities");
+                for (String role : userAuthorities) {
+                    if (role != null) {
+                        authorities.add(new SimpleGrantedAuthority(role));
+                    }
+                }
+            }
+
+            return authorities;
+        });
+
         return jwtAuthenticationConverter;
     }
 

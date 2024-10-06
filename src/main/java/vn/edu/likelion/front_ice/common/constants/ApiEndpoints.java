@@ -34,6 +34,8 @@ public interface ApiEndpoints {
 
     // Challenger API
     String CHALLENGER_API = BASE_API_URL + "/challenger";
+    String FOLLOW = "/follow"; // POST
+    String GET_FOLLOW = "/get-follow"; // GET
 
     // Recruiter API
     String RECRUITER_API = BASE_API_URL + "/recruiter";
