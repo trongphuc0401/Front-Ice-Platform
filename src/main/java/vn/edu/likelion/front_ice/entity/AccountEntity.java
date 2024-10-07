@@ -58,6 +58,9 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column(columnDefinition = "TEXT")
     String refreshToken;
 
+    @Column
+    int isAuthenticated = 0;
+
     // Implementing UserDetails methods properly
 
     @Override

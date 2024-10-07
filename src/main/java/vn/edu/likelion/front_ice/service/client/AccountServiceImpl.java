@@ -169,6 +169,10 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity accountEntity = accountRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_OR_PASSWORD_INCORRECT)); // customize lại ErrorCode
 
+        if (accountEntity.getIsAuthenticated() == 0) {
+            throw new AppException(ErrorCode.ACCOUNT_UNAUTHENTICATED);
+        }
+
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(), loginRequest.getPassword()
@@ -229,6 +233,12 @@ public class AccountServiceImpl implements AccountService {
 
     // Xóa OTP sau khi xác thực thành công
     public void clearOTP(String email) {
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        accountEntity.setIsAuthenticated(1);
+
+        accountRepository.save(accountEntity);
         otpStorage.remove(email);
     }
 

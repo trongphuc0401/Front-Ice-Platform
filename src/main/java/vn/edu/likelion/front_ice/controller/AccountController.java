@@ -70,7 +70,7 @@ public class AccountController {
     }
 
     @PostMapping(ApiEndpoints.VERIFY_EMAIL)
-    public ResponseEntity<RestAPIResponse<Object>> OTP(@RequestBody VerifyEmailRequest verifyEmailRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> verifyEmail(@RequestBody VerifyEmailRequest verifyEmailRequest) {
         boolean flag = accountService.verifyOTP(verifyEmailRequest.getEmail(), verifyEmailRequest.getOtp());
 
         if (flag) {

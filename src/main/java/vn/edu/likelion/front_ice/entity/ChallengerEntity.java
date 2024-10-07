@@ -35,4 +35,7 @@ public class ChallengerEntity extends BaseEntity {
     @Column
     String urlGithub;
 
+    @Column
+    int score;
+
 }
