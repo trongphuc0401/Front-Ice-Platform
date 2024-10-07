@@ -80,13 +80,12 @@ public class ChallengerServiceIml implements ChallengerService {
                 .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_EXIST));
 
         // check follow
-//        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
-////                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
-//                .ifPresent(follow -> {
-//                    throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-//                })
-//
-//        ;
+        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
+                .ifPresent(follow -> {
+                    throw new AppException(ErrorCode.CHALLENGER_HAS_FOLLOWED_RECRUITER);
+                })
+        ;
 
         FollowEntity followEntity = FollowEntity.builder()
                 .challengerId(t.getChallengerId())
@@ -110,13 +109,5 @@ public class ChallengerServiceIml implements ChallengerService {
             listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
         }
         return Optional.empty();
-    }
-
-    public boolean isFollowed(String challengerId, String recruiterId) {
-
-        if (followRepository.findByChallengerIdAndRecruiterId(challengerId, recruiterId).isPresent()) {
-            return true;
-        } else
-            return true;
     }
 }
