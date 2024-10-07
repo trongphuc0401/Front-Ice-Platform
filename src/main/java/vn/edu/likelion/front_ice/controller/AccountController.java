@@ -41,9 +41,9 @@ public class AccountController {
     SecurityUtil securityUtil;
 
     @PostMapping(ApiEndpoints.SIGN_UP)
-    public Optional<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
 
-        return accountService.create(registerRequest);
+        return responseUtil.successResponse(accountService.create(registerRequest));
     }
 
     @PostMapping(ApiEndpoints.LOGIN)
