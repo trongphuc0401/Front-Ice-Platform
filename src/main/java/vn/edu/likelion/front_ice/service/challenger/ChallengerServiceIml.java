@@ -70,15 +70,23 @@ public class ChallengerServiceIml implements ChallengerService {
         AccountEntity challenger;
         RecruiterEntity recruiter;
 
-        if (challengerRepository.findByAccountId(t.getChallengerId()).isPresent()) {
-            challenger = accountRepository.findById(
-                            challengerRepository.findByAccountId(t.getChallengerId()).get().getAccountId())
-                    .get();
-        } else throw new AppException(ErrorCode.CHALLENGER_NOT_EXIST);
+        challenger = accountRepository.findById(
+                        challengerRepository.findById(t.getChallengerId())
+                                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
+                                .getAccountId())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        if (recruiterRepository.findByAccountId(t.getRecruiterId()).isPresent()) {
-            recruiter = recruiterRepository.findByAccountId(t.getRecruiterId()).get();
-        } else throw new AppException(ErrorCode.RECRUITER_NOT_EXIST);
+        recruiter = recruiterRepository.findById(t.getRecruiterId())
+                .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_EXIST));
+
+        // check follow
+//        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
+////                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
+//                .ifPresent(follow -> {
+//                    throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+//                })
+//
+//        ;
 
         FollowEntity followEntity = FollowEntity.builder()
                 .challengerId(t.getChallengerId())
@@ -87,7 +95,7 @@ public class ChallengerServiceIml implements ChallengerService {
 
         followRepository.save(followEntity);
         FollowResponse response = new FollowResponse(challenger.getFirstName()
-                + challenger.getLastName(), recruiter.getName());
+                + " " + challenger.getLastName(), recruiter.getName());
 
         return Optional.of(response);
     }
@@ -102,5 +110,13 @@ public class ChallengerServiceIml implements ChallengerService {
             listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
         }
         return Optional.empty();
+    }
+
+    public boolean isFollowed(String challengerId, String recruiterId) {
+
+        if (followRepository.findByChallengerIdAndRecruiterId(challengerId, recruiterId).isPresent()) {
+            return true;
+        } else
+            return true;
     }
 }
