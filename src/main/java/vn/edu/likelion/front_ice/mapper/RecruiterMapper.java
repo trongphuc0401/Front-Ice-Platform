@@ -2,9 +2,7 @@ package vn.edu.likelion.front_ice.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
-import vn.edu.likelion.front_ice.dto.response.RecruiterResponse;
-import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
+import vn.edu.likelion.front_ice.dto.response.recruiter.RecruiterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 

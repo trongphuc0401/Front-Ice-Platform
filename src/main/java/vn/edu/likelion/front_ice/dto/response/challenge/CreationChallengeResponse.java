@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.request.challenge;
+package vn.edu.likelion.front_ice.dto.response.challenge;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreationChallengeRequest {
+public class CreationChallengeResponse {
     String challenge; // đặt cho có lệ nhớ thay đổi nha mấy anh
 }

@@ -4,16 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.*;
-import vn.edu.likelion.front_ice.dto.response.LoginResponse;
-import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
+import vn.edu.likelion.front_ice.dto.request.account.*;
+import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
@@ -83,7 +81,8 @@ public class AccountController {
 
 
     @PostMapping(ApiEndpoints.FORGOT_PASSWORD)
-    public ResponseEntity<RestAPIResponse<Object>> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> forgotPassword(@RequestBody
+                                                                  ForgotPasswordRequest forgotPasswordRequest) {
         Optional<AccountEntity> accountOptional = accountService.findByEmail(forgotPasswordRequest.getEmail());
         if (accountOptional.isEmpty()) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
@@ -94,7 +93,8 @@ public class AccountController {
     }
 
     @PostMapping(ApiEndpoints.VERIFY_FORGOT_PASSWORD_OTP)
-    public ResponseEntity<RestAPIResponse<Object>> verifyForgotPasswordOTP(@RequestBody VerifyForgotPasswordOTPRequest verifyOtpRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> verifyForgotPasswordOTP(@RequestBody
+                                                                           VerifyForgotPasswordOTPRequest verifyOtpRequest) {
         boolean isOtpValid = accountService.verifyForgotPasswordOTP(verifyOtpRequest.getEmail(), verifyOtpRequest.getOtp());
 
         if (isOtpValid) {

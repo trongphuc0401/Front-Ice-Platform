@@ -21,10 +21,11 @@ import org.thymeleaf.context.Context;
 import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.LoginRequest;
-import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
-import vn.edu.likelion.front_ice.dto.response.LoginResponse;
-import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
+import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
+
+import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
+import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.RecruiterEntity;

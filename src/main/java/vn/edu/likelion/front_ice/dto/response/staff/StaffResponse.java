@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.response;
+package vn.edu.likelion.front_ice.dto.response.staff;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -3,9 +3,10 @@ package vn.edu.likelion.front_ice.service.staff;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.response.RecruiterResponse;
-import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
-import vn.edu.likelion.front_ice.dto.response.StaffResponse;
+import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
+import vn.edu.likelion.front_ice.dto.response.recruiter.RecruiterResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
+import vn.edu.likelion.front_ice.dto.response.staff.StaffResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.StaffEntity;
 import vn.edu.likelion.front_ice.mapper.StaffMapper;
@@ -28,13 +29,11 @@ public class StaffServiceImpl implements StaffService {
         this.staffMapper = staffMapper;
     }
 
-    @Override
-    public Optional<RecruiterResponse> create(RegisterResponse t) {
+    @Override public Optional<RecruiterResponse> create(RegisterRequest t) {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<RecruiterResponse> updateInfo(String id, RegisterResponse registerResponse) {
+    @Override public Optional<RecruiterResponse> updateInfo(String id, RegisterRequest i) {
         return Optional.empty();
     }
 

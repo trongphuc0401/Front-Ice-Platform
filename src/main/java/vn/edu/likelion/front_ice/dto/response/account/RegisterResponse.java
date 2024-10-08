@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.response;
+package vn.edu.likelion.front_ice.dto.response.account;
 
 import lombok.AccessLevel;
 import lombok.Getter;

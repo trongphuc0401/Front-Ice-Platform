@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.request;
+package vn.edu.likelion.front_ice.dto.request.account;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

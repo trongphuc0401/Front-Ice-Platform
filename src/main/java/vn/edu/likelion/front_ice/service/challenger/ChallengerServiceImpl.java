@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.FollowRequest;
-import vn.edu.likelion.front_ice.dto.response.ChallengerResponse;
+import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreationChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
-import vn.edu.likelion.front_ice.dto.response.FollowResponse;
+import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
 import vn.edu.likelion.front_ice.repository.*;
@@ -42,20 +41,24 @@ public class ChallengerServiceImpl implements ChallengerService {
     @Autowired
     private ChallengerMapper challengerMapper;
 
-    @Override public Optional<ChallengerResponse> create(CreationChallengerRequest t) {
-        return Optional.empty();
-    }
 
-    @Override public Optional<ChallengerResponse> updateInfo(String id, UpdateChallengerRequest i) {
+    @Override public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> create(
+            CreationChallengerRequest t) {
         return Optional.empty();
-    }
-
-    @Override public List<ChallengerResponse> saveAll(List<ChallengerEntity> ts) {
-        return List.of();
     }
 
     @Override
-    public void delete(String id) {
+    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> updateInfo(String id,
+                                                                                                     UpdateChallengerRequest i) {
+        return Optional.empty();
+    }
+
+    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> saveAll(
+            List<ChallengerEntity> ts) {
+        return List.of();
+    }
+
+    @Override public void delete(String id) {
 
     }
 
@@ -63,11 +66,12 @@ public class ChallengerServiceImpl implements ChallengerService {
 
     }
 
-    @Override public Optional<ChallengerResponse> findById(String id) {
+    @Override
+    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findById(String id) {
         return Optional.empty();
     }
 
-    @Override public List<ChallengerResponse> findAll() {
+    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findAll() {
         return List.of();
     }
 
@@ -132,5 +136,6 @@ public class ChallengerServiceImpl implements ChallengerService {
 
         return Optional.of(challengerMapper.toChallengerResponse(account, challenger, level));
     }
+
 
 }
