@@ -17,7 +17,6 @@ import java.util.Optional;
 public class ChallengerServiceImpl implements ChallengerService {
 
 
-
     @Override public Optional<ChallengerResponse> create(UpdateChallengerRequest t) {
         return Optional.empty();
     }

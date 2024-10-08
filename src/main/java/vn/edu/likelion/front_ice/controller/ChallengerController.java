@@ -39,7 +39,7 @@ public class ChallengerController {
     @Autowired
     ResponseUtil responseUtil;
 
-    @PostMapping("/upload")
+    @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
             @RequestParam("accountId") String accountId,
             @RequestParam("image") MultipartFile file) throws

@@ -24,13 +24,14 @@ public interface ApiEndpoints {
 
 
     String ID  = "{id}";
+    String IMAGES = "/images";
 
     // Profile API
     String PROFILE_API = "/profile";
     String GET_BY_ID = "/{id}"; // GET
     String UPDATE_INFO = "/{id}";  // PUT
-    String UPLOAD_AVATAR = "/{id}/avatar";  // PUT
-    String UPLOAD_BANNER = "/{id}/banner";  // PUT
+    String UPLOAD_AVATAR = "/images";  // PUT
+    String UPLOAD_BANNER = "/banner";  // PUT
 
     // Challenger API
     String CHALLENGER_API = BASE_API_URL + "/challenger";
@@ -40,6 +41,9 @@ public interface ApiEndpoints {
 
     // ADMIN API
     String ADMIN_API = BASE_API_URL + "/admin";
+
+    // ADMIN API
+    String MANAGER = BASE_API_URL + "/manager";
 
     // Challenge API
     String CHALLENGE_API = BASE_API_URL + "/challenge";
