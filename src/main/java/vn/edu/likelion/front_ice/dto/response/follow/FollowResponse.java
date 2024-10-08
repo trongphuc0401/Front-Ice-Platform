@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.response;
+package vn.edu.likelion.front_ice.dto.response.follow;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChallengerResponse {
-    String accountId;
-    String levelId;
-    int isPremium ;
-    String urlGithub;
+public class FollowResponse {
+    String challengerName;
+    String recruiterName;
 }

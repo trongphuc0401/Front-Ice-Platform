@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.FollowRequest;
+import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreationChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
-import vn.edu.likelion.front_ice.dto.response.FollowResponse;
+import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
+import vn.edu.likelion.front_ice.entity.*;
+import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
+import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
@@ -33,16 +36,25 @@ public class ChallengerServiceImpl implements ChallengerService {
     private ChallengerRepository challengerRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private LevelRepository levelRepository;
+    @Autowired
+    private ChallengerMapper challengerMapper;
 
-    @Override public Optional<ChallengerResponse> create(CreationChallengerRequest t) {
+
+    @Override public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> create(
+            CreationChallengerRequest t) {
         return Optional.empty();
     }
 
-    @Override public Optional<ChallengerResponse> updateInfo(String id, UpdateChallengerRequest i) {
+    @Override
+    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> updateInfo(String id,
+                                                                                                     UpdateChallengerRequest i) {
         return Optional.empty();
     }
 
-    @Override public List<ChallengerResponse> saveAll(List<ChallengerEntity> ts) {
+    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> saveAll(
+            List<ChallengerEntity> ts) {
         return List.of();
     }
 
@@ -54,11 +66,12 @@ public class ChallengerServiceImpl implements ChallengerService {
 
     }
 
-    @Override public Optional<ChallengerResponse> findById(String id) {
+    @Override
+    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findById(String id) {
         return Optional.empty();
     }
 
-    @Override public List<ChallengerResponse> findAll() {
+    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findAll() {
         return List.of();
     }
 
@@ -107,6 +120,22 @@ public class ChallengerServiceImpl implements ChallengerService {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ChallengerResponse> getDetailsProfile(String accountId) {
+
+        AccountEntity account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ChallengerEntity challenger = challengerRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        LevelEntity level = Optional.ofNullable(challenger.getLevelId())
+                .map(levelId -> levelRepository.findById(levelId)
+                        .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
+                .orElse(null);
+
+        return Optional.of(challengerMapper.toChallengerResponse(account, challenger, level));
+    }
 
 
 }

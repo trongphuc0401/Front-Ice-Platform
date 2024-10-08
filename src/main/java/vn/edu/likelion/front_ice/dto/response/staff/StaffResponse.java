@@ -1,19 +1,20 @@
-package vn.edu.likelion.front_ice.dto.response;
+package vn.edu.likelion.front_ice.dto.response.staff;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.Role;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RegisterResponse {
+public class StaffResponse {
     String firstName;
     String lastName;
     String email;
-    String password;
     Role role;
-    int isAuthenticated;
+    String accountId;
+    String nameStaff;
 }

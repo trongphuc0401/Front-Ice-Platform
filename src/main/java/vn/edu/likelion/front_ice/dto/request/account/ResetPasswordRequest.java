@@ -1,4 +1,4 @@
-package vn.edu.likelion.front_ice.dto.request;
+package vn.edu.likelion.front_ice.dto.request.account;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ForgotPasswordRequest {
+public class ResetPasswordRequest {
+    String resetToken;
     String email;
+    String newPassword;
+    String confirmPassword;
 }

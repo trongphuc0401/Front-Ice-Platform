@@ -3,8 +3,8 @@ package vn.edu.likelion.front_ice.service.challenger;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreationChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
-import vn.edu.likelion.front_ice.dto.request.FollowRequest;
-import vn.edu.likelion.front_ice.dto.response.FollowResponse;
+import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
+import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import vn.edu.likelion.front_ice.service.BaseService;
@@ -25,4 +25,6 @@ public interface ChallengerService extends BaseService<ChallengerEntity, Creatio
     Optional<FollowResponse> follow(FollowRequest t);
 
     Optional<List<RecruiterEntity>> getFollow(String challengerId);
+
+    Optional<ChallengerResponse> getDetailsProfile(String accountId);
 }

@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.request;
+package vn.edu.likelion.front_ice.dto.request.solution;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * LoginRequest -
+ * CreationSolutionRequest -
  *
  * @param
  * @return
@@ -15,9 +15,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VerifyEmailRequest {
 
-    String email;
-
-    String otp;
+public class CreationSolutionRequest {
+    String title;
 }

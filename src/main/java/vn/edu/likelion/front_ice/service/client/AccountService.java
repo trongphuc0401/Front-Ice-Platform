@@ -1,10 +1,10 @@
 package vn.edu.likelion.front_ice.service.client;
 
-import org.springframework.stereotype.Service;
-import vn.edu.likelion.front_ice.dto.request.LoginRequest;
-import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
-import vn.edu.likelion.front_ice.dto.response.LoginResponse;
-import vn.edu.likelion.front_ice.dto.response.RegisterResponse;
+import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
+
+import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
+import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.service.BaseService;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
  * @throws
  */
 
-public interface AccountService extends BaseService<AccountEntity,RegisterRequest, RegisterResponse,RegisterRequest> {
+public interface AccountService extends BaseService<AccountEntity, RegisterRequest, RegisterResponse,RegisterRequest> {
 
 
     Optional<LoginResponse> login(LoginRequest loginRequest);

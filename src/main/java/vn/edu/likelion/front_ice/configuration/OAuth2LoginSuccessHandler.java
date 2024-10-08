@@ -16,10 +16,9 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
-import vn.edu.likelion.front_ice.common.enums.AccountType;
 import vn.edu.likelion.front_ice.common.enums.Role;
-import vn.edu.likelion.front_ice.dto.request.LoginRequest;
-import vn.edu.likelion.front_ice.dto.response.LoginResponse;
+import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
+import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.security.CustomOAuth2UserDetails;
