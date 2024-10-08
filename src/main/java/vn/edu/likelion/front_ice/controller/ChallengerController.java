@@ -50,6 +50,7 @@ public class ChallengerController {
         File tempFile = File.createTempFile("temp", null);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(accountId,tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadAvatar(accountId,tempFile));
+
     }
 }

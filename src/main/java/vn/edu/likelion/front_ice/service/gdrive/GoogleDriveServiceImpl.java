@@ -52,7 +52,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-    @Override public UploadAvatarResponse uploadChallengerAvatar(String accountChallengerId,File file) {
+    @Override public UploadAvatarResponse uploadAvatar(String accountChallengerId,File file) {
 
         UploadAvatarResponse response = new UploadAvatarResponse();
 

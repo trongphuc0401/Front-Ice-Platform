@@ -14,5 +14,5 @@ import java.io.File;
  */
 public interface GoogleDriveService{
 
-    UploadAvatarResponse uploadChallengerAvatar(String accountChallengerId,File file);
+    UploadAvatarResponse uploadAvatar(String accountChallengerId,File file);
 }
