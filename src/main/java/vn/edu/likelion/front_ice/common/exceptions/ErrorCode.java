@@ -58,6 +58,12 @@ public enum ErrorCode {
 
     RECRUITER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -601,"Recruiter not exist","Bad Request","Recruiter không tồn tại"),
 
+    MENTOR(RestAPIStatus.BAD_REQUEST,-701,"Mentor not exist","Bad Request","Mentor không tồn tại"),
+
+
+    // error manager
+    MANAGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-801,"Manager not exist","Bad Request","Manager không tồn tại"),
+
     DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),
 
     UPDATE_FAILED(RestAPIStatus.BAD_REQUEST,-9997,"Update failed","Not found","Cập nhật thất bại"),

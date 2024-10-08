@@ -38,7 +38,10 @@ import vn.edu.likelion.front_ice.service.challenger.ChallengerService;
  * @return
  * @throws
  */
-public class   ChallengerController {
+@RestController
+@RequestMapping(ApiEndpoints.CHALLENGER_API)
+@RequiredArgsConstructor
+public class ChallengerController {
 
     @Autowired
     ChallengerService challengerService;
@@ -60,7 +63,8 @@ public class   ChallengerController {
         return responseUtil.successResponse(challengerService.getFollow(id));
     }
     
-     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
+    @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
             @RequestParam("accountId") String accountId,
             @RequestParam("image") MultipartFile file) throws
@@ -68,10 +72,10 @@ public class   ChallengerController {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-        File tempFile = File.createTempFile("temp", null);
+        File tempFile = File.createTempFile("challenger_", accountId);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadAvatar(accountId,tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(accountId,tempFile));
 
     }
 
