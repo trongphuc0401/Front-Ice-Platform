@@ -37,7 +37,7 @@ public interface AccountService extends BaseService<AccountEntity,RegisterReques
 
     boolean verifyForgotPasswordOTP(String email, String otp);
 
-    boolean resetPassword(String email, String newPassword);
+    boolean resetPassword(String token, String newPassword);
 
     void updateAccountToken(String token, String email);
 
