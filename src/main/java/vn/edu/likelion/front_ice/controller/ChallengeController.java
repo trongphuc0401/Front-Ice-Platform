@@ -14,27 +14,20 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
 /**
- * ManagerController -
+ * ChallengeController -
  *
  * @param
  * @return
  * @throws
  */
 @RestController
-@RequestMapping(ApiEndpoints.MANAGER_API)
+@RequestMapping(ApiEndpoints.ADMIN_API)
 @RequiredArgsConstructor
-public class ManagerController {
+public class ChallengeController {
 
     @Autowired
     private ResponseUtil responseUtil;
 
-    @Autowired
-    private StaffService staffService;
 
-    @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
-        return responseUtil.successResponse(staffService.getDetailsProfile(id));
-    }
 
 }

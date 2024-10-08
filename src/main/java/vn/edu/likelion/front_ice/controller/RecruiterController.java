@@ -11,7 +11,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.service.recruiter.RecruiterService;
 
 /**
- * ChallengerController -
+ * RecruiterController -
  *
  * @param
  * @return

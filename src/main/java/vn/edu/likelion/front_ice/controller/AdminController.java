@@ -14,7 +14,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
 /**
- * ChallengerController -
+ * AdminController -
  *
  * @param
  * @return
