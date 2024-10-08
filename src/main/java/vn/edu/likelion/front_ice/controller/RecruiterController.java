@@ -16,6 +16,8 @@ import vn.edu.likelion.front_ice.service.recruiter.RecruiterService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * RecruiterController -
@@ -47,16 +49,40 @@ public class RecruiterController {
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
             @RequestParam("accountId") String accountId,
-            @RequestParam("image") MultipartFile file) throws
-            IOException {
+            @RequestParam("image") MultipartFile file) throws IOException {
+
+
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
+
+
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
+        }
+
+
         File tempFile = File.createTempFile("recruiter_", accountId);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadRecruiterAvatar(accountId,tempFile));
 
+        return responseUtil.successResponse(googleDriveService.uploadRecruiterAvatar(accountId, tempFile));
+    }
+
+
+    private boolean isImageFile(String fileName, String contentType) {
+        // Kiểm tra phần mở rộng của file
+        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
+
+        // Kiểm tra mime type (loại file)
+        List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png");
+
+        // Kiểm tra phần mở rộng và mime type của file
+        return allowedExtensions.contains(fileExtension) && allowedMimeTypes.contains(contentType);
     }
 
 }

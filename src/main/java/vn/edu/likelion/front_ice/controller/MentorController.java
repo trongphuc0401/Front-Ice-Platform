@@ -52,6 +52,7 @@ public class MentorController {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
+
         File tempFile = File.createTempFile("mentor", accountId);
         file.transferTo(tempFile);
 

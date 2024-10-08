@@ -33,6 +33,7 @@ public interface ApiEndpoints {
     String UPDATE_INFO = "/{id}";  // PUT
     String UPLOAD_AVATAR = "/images";  // PUT
     String UPLOAD_BANNER = "/banner";  // PUT
+    String UPLOAD_CV = "/cv";
 
     // Challenger API
     String CHALLENGER_API = BASE_API_URL + "/challenger";
