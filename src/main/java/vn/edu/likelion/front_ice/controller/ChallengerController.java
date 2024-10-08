@@ -25,6 +25,7 @@ public class   ChallengerController {
 
     @Autowired
     ChallengerService challengerService;
+
     @Autowired
     private ResponseUtil responseUtil;
 
@@ -38,6 +39,13 @@ public class   ChallengerController {
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam String id) {
         return responseUtil.successResponse(challengerService.getFollow(id));
+    }
+
+
+    @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
+        return responseUtil.successResponse(challengerService.getDetailsProfile(id));
     }
 
 }

@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     OK(RestAPIStatus.OK,1200,"Success","OK","Thành công"),
 
+    // error account
     INVALID_KEY(RestAPIStatus.BAD_REQUEST,-100,"Invalid input object type!","Bad Request","Dữ liệu đầu vào không hợp lệ"),
 
     USERNAME_TOO_SHORT(RestAPIStatus.BAD_REQUEST, -101, "Username must be at least {min} characters", "Bad Request", "Tên người dùng phải có ít nhất {min} ký tự"),
@@ -39,22 +40,30 @@ public enum ErrorCode {
     PASSWORD_CONTAINS_WHITESPACE(RestAPIStatus.FAIL,-114,"Password must not contain whitespace","Fail","Mật khẩu không được chứa khoảng trắng"),
     CONFIRM_PASSWORD_NOT_MATCH(RestAPIStatus.BAD_REQUEST, -116, "Confirm Password not match", "Bad Request", "Mật khẩu xác thực không trùng khớp"),
     OLD_PASSWORD_INCORRECT(RestAPIStatus.BAD_REQUEST, -118, "Old password is incorrect", "Bad Request", "Mật khẩu cũ không chính xác"),
-    OTP_INVALID(RestAPIStatus.BAD_REQUEST, -119, "OTP không hợp lệ", "Bad Request", "OTP không hợp lệ"),
+    OTP_INVALID(RestAPIStatus.BAD_REQUEST, -119, "OTP invalid", "Bad Request", "OTP không hợp lệ"),
     PASSWORD_RESET_FAILED(RestAPIStatus.FAIL, -120, "Đặt lại mật khẩu thất bại", "Fail", "Đặt lại mật khẩu thất bại"),
     RESET_TOKEN_EXPIRED(RestAPIStatus.BAD_REQUEST, -121, "Reset token expired", "Bad Request", "Mã đặt lại mật khẩu đã hết hạn"),
     RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
     INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, 1002, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
 
+    // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),
 
+    // error challenge
+    CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -301,"Challenge not exist","Bad Request","Challenge không tồn tại"),
 
-
-    RECRUITER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -301,"Recruiter not exist","Bad Request","Recruiter không tồn tại"),
-
+    // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
 
+    // error level
+    LEVEL_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -501,"Level not exist","Bad Request","Level không tồn tại"),
 
+    // error recruiter
+    RECRUITER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -601,"Recruiter not exist","Bad Request","Recruiter không tồn tại"),
+
+    // error mentor
+    MENTOR_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -701,"Mentor not exist","Bad Request","Mentor không tồn tại"),
 
 
     DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),

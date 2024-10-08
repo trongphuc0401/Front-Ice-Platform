@@ -2,7 +2,6 @@ package vn.edu.likelion.front_ice.service.client;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
+import vn.edu.likelion.front_ice.mapper.RecruiterMapper;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.RecruiterRepository;
@@ -80,6 +80,10 @@ public class AccountServiceImpl implements AccountService {
     private Map<String, Long> resetTokenExpiry = new HashMap<>();
 
     private final long RESET_TOKEN_EXPIRY_DURATION = 10 * 60 * 1000;
+    @Autowired
+    private ChallengerMapper challengerMapper;
+    @Autowired
+    private RecruiterMapper recruiterMapper;
 
     @Override
     public Optional<RegisterResponse> create(RegisterRequest registerRequest) {
@@ -318,13 +322,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccountToken(String token, String email) {
-       Optional<AccountEntity> currentAccount = accountRepository.findByEmail(email);
+        Optional<AccountEntity> currentAccount = accountRepository.findByEmail(email);
 
-       if (currentAccount.isPresent()) {
-           AccountEntity account = currentAccount.get();
-           account.setRefreshToken(token);
-           accountRepository.save(account);
-       }
+        if (currentAccount.isPresent()) {
+            AccountEntity account = currentAccount.get();
+            account.setRefreshToken(token);
+            accountRepository.save(account);
+        }
     }
 
     @Override

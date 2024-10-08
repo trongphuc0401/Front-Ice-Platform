@@ -15,12 +15,12 @@ public interface ApiEndpoints {
     String RESET_PASSWORD = "/reset-password";  // POST
     String AUTH_INFO = "/auth-info";  // GET
     String GOOGLE_LOGIN = "/google";  // POST
-    String VERIFY_EMAIL = "/verify-email";  // POST
+    String VERIFY_EMAIL = "/email-verification";  // POST
     String EMAIL_SIGNUP = "/email-signup";  // POST
     String SIGNUP_VERIFY = "/signup-verify";  // POST
     String FORGOT_PASSWORD = "/forgot-password";  // POST
     String REFRESH_TOKEN = "/refresh-token";  // POST
-    String SEND_OTP = "/send-otp";  // POST
+    String SEND_OTP = "/otp-sending";  // POST
     String VERIFY_FORGOT_PASSWORD_OTP = "/verify-forgot-password-otp"; //POST
 
 
@@ -52,6 +52,9 @@ public interface ApiEndpoints {
 
     // Mentor API
     String MENTOR_API = BASE_API_URL + "/mentor";
+
+    // Manager API
+    String MANAGER_API = BASE_API_URL + "/manager";
 
 
     // Notification API

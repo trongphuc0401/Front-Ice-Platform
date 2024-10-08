@@ -77,7 +77,7 @@ public class AccountController {
             accountService.clearOTP(verifyEmailRequest.getEmail());
             return responseUtil.successResponse("OTP verified");
         } else {
-            return responseUtil.successResponse("OTP not verified");
+            throw new AppException(ErrorCode.OTP_INVALID);
         }
     }
 

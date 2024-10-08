@@ -1,6 +1,5 @@
 package vn.edu.likelion.front_ice.service.client;
 
-import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.dto.request.LoginRequest;
 import vn.edu.likelion.front_ice.dto.request.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.LoginResponse;
