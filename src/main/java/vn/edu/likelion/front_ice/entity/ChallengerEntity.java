@@ -29,10 +29,13 @@ public class ChallengerEntity extends BaseEntity {
     @Column
     String levelId;
 
-    @Column(unique = true, nullable = false)
-    int isPremium ;
+    @Column(name = "is_premium", nullable = false, unique = false)
+    int isPremium;
 
     @Column
     String urlGithub;
+
+    @Column
+    int score;
 
 }

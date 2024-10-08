@@ -21,6 +21,7 @@ public interface ApiEndpoints {
     String FORGOT_PASSWORD = "/forgot-password";  // POST
     String REFRESH_TOKEN = "/refresh-token";  // POST
     String SEND_OTP = "/send-otp";  // POST
+    String VERIFY_FORGOT_PASSWORD_OTP = "/verify-forgot-password-otp"; //POST
 
 
     String ID  = "{id}";
@@ -35,6 +36,8 @@ public interface ApiEndpoints {
 
     // Challenger API
     String CHALLENGER_API = BASE_API_URL + "/challenger";
+    String FOLLOW = "/follow"; // POST
+    String GET_FOLLOW = "/get-follow"; // GET
 
     // Recruiter API
     String RECRUITER_API = BASE_API_URL + "/recruiter";

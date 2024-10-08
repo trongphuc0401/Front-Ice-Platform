@@ -15,4 +15,5 @@ public class RegisterResponse {
     String email;
     String password;
     Role role;
+    int isAuthenticated;
 }
