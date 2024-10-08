@@ -4,9 +4,11 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -43,7 +45,7 @@ import java.util.*;
  * @return
  * @throws
  */
-@Service
+@Slf4j @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AccountServiceImpl implements AccountService {
@@ -166,12 +168,11 @@ public class AccountServiceImpl implements AccountService {
         return List.of();
     }
 
-    @Override
     public Optional<LoginResponse> login(LoginRequest loginRequest) {
 
-
         AccountEntity accountEntity = accountRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_OR_PASSWORD_INCORRECT)); // customize lại ErrorCode
+                .orElseThrow(
+                        () -> new AppException(ErrorCode.ACCOUNT_OR_PASSWORD_INCORRECT)); // customize lại ErrorCode
 
         if (accountEntity.getIsAuthenticated() == 0) {
             throw new AppException(ErrorCode.ACCOUNT_UNAUTHENTICATED);
@@ -182,9 +183,10 @@ public class AccountServiceImpl implements AccountService {
                 loginRequest.getEmail(), loginRequest.getPassword()
         );
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .accessToken(securityUtil.createAccessToken(authentication))
@@ -192,9 +194,13 @@ public class AccountServiceImpl implements AccountService {
                 .expiresIn(securityUtil.getExpirationTime())
                 .build();
 
+            return Optional.of(loginResponse);
 
-        return Optional.of(loginResponse);
+        } catch (BadCredentialsException e) {
+            throw new AppException(ErrorCode.ACCOUNT_OR_PASSWORD_INCORRECT);
+        }
     }
+
 
     private Map<String, String> otpStorage = new HashMap<>(); // Lưu OTP theo email
     private Random random = new Random();

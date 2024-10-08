@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -21,6 +22,7 @@ import vn.edu.likelion.front_ice.dto.request.LoginRequest;
 import vn.edu.likelion.front_ice.dto.response.LoginResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
+import vn.edu.likelion.front_ice.security.CustomOAuth2UserDetails;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.io.IOException;
@@ -39,6 +41,9 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     @Autowired
     private ResponseUtil responseUtil;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
@@ -49,27 +54,25 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         if ("google".equals(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())) {
             DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
-            Map<String, Object> attributes = principal.getAttributes();
+            CustomOAuth2UserDetails userDetails = new CustomOAuth2UserDetails(principal);
 
-            // Lấy thông tin từ Google OAuth2
+            // Extract attributes from DefaultOAuth2User
+            Map<String, Object> attributes = principal.getAttributes();
             String email = attributes.get("email").toString();
             String firstName = attributes.getOrDefault("given_name", "").toString();
             String lastName = attributes.getOrDefault("family_name", "").toString();
             String avatar = attributes.getOrDefault("picture", "").toString();
 
-            // Kiểm tra xem người dùng đã tồn tại hay chưa
             Optional<AccountEntity> accountOptional = accountRepository.findByEmail(email);
             AccountEntity accountEntity;
 
             if (accountOptional.isPresent()) {
-                // Nếu người dùng đã tồn tại, cập nhật thông tin
                 accountEntity = accountOptional.get();
                 accountEntity.setFirstName(firstName);
                 accountEntity.setLastName(lastName);
                 accountEntity.setAvatar(avatar);
                 accountEntity.setStatus(1);
             } else {
-                // Nếu người dùng chưa tồn tại, tạo mới
                 String dummyPassword = UUID.randomUUID().toString();
                 accountEntity = AccountEntity.builder()
                         .email(email)
@@ -80,7 +83,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                         .status(1)
                         .role(Role.CHALLENGER)
                         .build();
-
                 accountRepository.save(accountEntity);
             }
 
@@ -88,7 +90,8 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             loginRequest.setEmail(email);
             loginRequest.setPassword("OAuth2Password");
 
-            String accessToken = securityUtil.createAccessToken(authentication);
+            // Generate tokens
+            String accessToken = securityUtil.createAccessToken(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
             String refreshToken = securityUtil.createRefreshToken(email, loginRequest);
 
             accountEntity.setRefreshToken(refreshToken);
@@ -100,7 +103,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                     .expiresIn(securityUtil.getExpirationTime())
                     .build();
 
-            // Tạo và set refreshToken vào cookie
+            // Set refresh token in cookie
             ResponseCookie resCookie = ResponseCookie
                     .from("refresh_token", refreshToken)
                     .httpOnly(true)
@@ -109,10 +112,16 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                     .maxAge(refreshTokenExpiration)
                     .build();
 
-            // Sử dụng ResponseUtil để trả về response với cookie
-            ResponseEntity<RestAPIResponse<Object>> responseEntity = responseUtil.successResponse(loginResponse, resCookie.toString());
+            response.addHeader("Set-Cookie", resCookie.toString());
+
+            ResponseEntity<RestAPIResponse<Object>> responseEntity = responseUtil.successResponse(loginResponse);
+            RestAPIResponse<Object> restAPIResponse = responseEntity.getBody();
+
+            response.addHeader("Set-Cookie", resCookie.toString());
             response.setContentType("application/json");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(responseEntity.getBody()));
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            objectMapper.writeValue(response.getWriter(), restAPIResponse);
         }
     }
 }

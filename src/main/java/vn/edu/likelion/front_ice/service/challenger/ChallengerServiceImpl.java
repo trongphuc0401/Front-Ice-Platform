@@ -6,17 +6,28 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.FollowRequest;
 import vn.edu.likelion.front_ice.dto.response.ChallengerResponse;
+import vn.edu.likelion.front_ice.dto.request.challenger.CreationChallengerRequest;
+import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.response.FollowResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
 import vn.edu.likelion.front_ice.repository.*;
+import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
+import vn.edu.likelion.front_ice.entity.AccountEntity;
+import vn.edu.likelion.front_ice.entity.ChallengerEntity;
+import vn.edu.likelion.front_ice.entity.FollowEntity;
+import vn.edu.likelion.front_ice.entity.RecruiterEntity;
+import vn.edu.likelion.front_ice.repository.AccountRepository;
+import vn.edu.likelion.front_ice.repository.ChallengerRepository;
+import vn.edu.likelion.front_ice.repository.FollowRepository;
+import vn.edu.likelion.front_ice.repository.RecruiterRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ChallengerServiceIml implements ChallengerService {
+public class ChallengerServiceImpl implements ChallengerService {
 
     @Autowired
     private FollowRepository followRepository;
@@ -31,18 +42,15 @@ public class ChallengerServiceIml implements ChallengerService {
     @Autowired
     private ChallengerMapper challengerMapper;
 
-    @Override
-    public Optional<FollowResponse> create(FollowRequest t) {
+    @Override public Optional<ChallengerResponse> create(CreationChallengerRequest t) {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<FollowResponse> updateInfo(String id, FollowRequest followRequest) {
+    @Override public Optional<ChallengerResponse> updateInfo(String id, UpdateChallengerRequest i) {
         return Optional.empty();
     }
 
-    @Override
-    public List<FollowResponse> saveAll(List<ChallengerEntity> ts) {
+    @Override public List<ChallengerResponse> saveAll(List<ChallengerEntity> ts) {
         return List.of();
     }
 
@@ -51,18 +59,15 @@ public class ChallengerServiceIml implements ChallengerService {
 
     }
 
-    @Override
-    public void deleteAll(List<String> listId) {
+    @Override public void deleteAll(List<String> listId) {
 
     }
 
-    @Override
-    public Optional<FollowResponse> findById(String id) {
+    @Override public Optional<ChallengerResponse> findById(String id) {
         return Optional.empty();
     }
 
-    @Override
-    public List<FollowResponse> findAll() {
+    @Override public List<ChallengerResponse> findAll() {
         return List.of();
     }
 

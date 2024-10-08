@@ -17,7 +17,7 @@ import java.util.Optional;
  * @throws
  */
 
-public interface AccountService extends BaseService<AccountEntity,RegisterRequest, RegisterResponse> {
+public interface AccountService extends BaseService<AccountEntity,RegisterRequest, RegisterResponse,RegisterRequest> {
 
 
     Optional<LoginResponse> login(LoginRequest loginRequest);
@@ -36,7 +36,7 @@ public interface AccountService extends BaseService<AccountEntity,RegisterReques
 
     boolean verifyForgotPasswordOTP(String email, String otp);
 
-    boolean resetPassword(String email, String newPassword);
+    boolean resetPassword(String token, String newPassword);
 
     void updateAccountToken(String token, String email);
 
