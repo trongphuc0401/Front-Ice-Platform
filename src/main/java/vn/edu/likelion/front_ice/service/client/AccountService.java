@@ -18,7 +18,7 @@ import java.util.Optional;
  * @throws
  */
 
-public interface AccountService extends BaseService<AccountEntity,RegisterRequest, RegisterResponse> {
+public interface AccountService extends BaseService<AccountEntity,RegisterRequest, RegisterResponse,RegisterRequest> {
 
 
     Optional<LoginResponse> login(LoginRequest loginRequest);
