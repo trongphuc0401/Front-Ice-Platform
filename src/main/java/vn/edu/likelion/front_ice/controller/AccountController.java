@@ -81,6 +81,7 @@ public class AccountController {
         }
     }
 
+
     @PostMapping(ApiEndpoints.FORGOT_PASSWORD)
     public ResponseEntity<RestAPIResponse<Object>> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         Optional<AccountEntity> accountOptional = accountService.findByEmail(forgotPasswordRequest.getEmail());

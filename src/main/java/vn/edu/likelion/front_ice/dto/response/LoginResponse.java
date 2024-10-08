@@ -12,6 +12,7 @@ import vn.edu.likelion.front_ice.entity.AccountEntity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginResponse {
     private String accessToken;
+    private String refreshToken;
     private AccountEntity account;
     long expiresIn;
 

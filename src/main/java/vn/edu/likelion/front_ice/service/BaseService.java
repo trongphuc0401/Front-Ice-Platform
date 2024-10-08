@@ -3,10 +3,10 @@ package vn.edu.likelion.front_ice.service;
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseService<E,I,O> {
+public interface BaseService<E,I,O,U> {
     Optional<O> create(I t);
 
-    Optional<O> updateInfo(String id, I i);
+    Optional<O> updateInfo(String id, U i);
 
     List<O> saveAll(List<E> ts);
 
