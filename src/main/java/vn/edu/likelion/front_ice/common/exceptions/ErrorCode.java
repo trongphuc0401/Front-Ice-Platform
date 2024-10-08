@@ -43,19 +43,20 @@ public enum ErrorCode {
     PASSWORD_RESET_FAILED(RestAPIStatus.FAIL, -120, "Đặt lại mật khẩu thất bại", "Fail", "Đặt lại mật khẩu thất bại"),
     RESET_TOKEN_EXPIRED(RestAPIStatus.BAD_REQUEST, -121, "Reset token expired", "Bad Request", "Mã đặt lại mật khẩu đã hết hạn"),
     RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
-    INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, 1002, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
+    INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, -123, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
 
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),
 
 
 
-    RECRUITER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -301,"Recruiter not exist","Bad Request","Recruiter không tồn tại"),
+
+    CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
 
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
 
 
-
+    RECRUITER_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -601,"Recruiter not exist","Bad Request","Recruiter không tồn tại"),
 
     DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),
 
