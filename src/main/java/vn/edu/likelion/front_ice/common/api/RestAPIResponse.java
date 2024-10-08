@@ -47,4 +47,13 @@ public class RestAPIResponse <T extends Object>  implements Serializable {
         this.timestamp = LocalDateTime.now();
 
     }
+
+    public RestAPIResponse(RestAPIStatus restApiStatus, T data, ErrorCode errorCode, String errorMessage) {
+        this.status = restApiStatus.getCode();
+        this.data = data;
+        this.code = errorCode.getCodeError();
+        this.messageEng = errorCode.getMessageEng();
+        this.messageVN = errorCode.getMessageVN();
+        this.timestamp = LocalDateTime.now();
+    }
 }

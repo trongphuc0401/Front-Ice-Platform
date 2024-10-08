@@ -14,6 +14,10 @@ import vn.edu.likelion.front_ice.common.api.RestAPIStatus;
 public enum ErrorCode {
 
     OK(RestAPIStatus.OK,1200,"Success","OK","Thành công"),
+    VERIFIED(RestAPIStatus.OK,1201,"OTP verified","OK","OTP đã được xác thực"),
+    SENT_OTP_EMAIL(RestAPIStatus.OK,1202,"Sent OTP Email","OK","OTP đã được gửi về mail"),
+    PASSWORD_CHANGED(RestAPIStatus.OK,1203,"Password changed successful","OK","OTP cho quên mật khẩu đã được gửi về mail."),
+
 
     INVALID_KEY(RestAPIStatus.BAD_REQUEST,-100,"Invalid input object type!","Bad Request","Dữ liệu đầu vào không hợp lệ"),
 

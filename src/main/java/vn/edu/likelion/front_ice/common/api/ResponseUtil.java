@@ -33,6 +33,10 @@ public class ResponseUtil {
         return new RestAPIResponse<>(restApiStatus, errorCode);
     }
 
+    private RestAPIResponse<Object> _createResponse(RestAPIStatus restApiStatus, ErrorCode errorCode,HttpStatus httpStatus) {
+        return new RestAPIResponse<>(restApiStatus, null, errorCode, errorCode.getMessageEng());
+    }
+
     /**
      * Build HTTP Response
      * @param restApiStatus
@@ -65,6 +69,9 @@ public class ResponseUtil {
     }
 
 
+
+
+
     /**
      * Return success HTTP Request
      * @param data
@@ -74,8 +81,8 @@ public class ResponseUtil {
         return buildResponse(RestAPIStatus.OK, data,HttpStatus.OK,responseCookies);
     }
 
-    public ResponseEntity<RestAPIResponse<Object>> successResponse() {
-        return buildResponse(RestAPIStatus.OK, ErrorCode.OK, HttpStatus.OK);
+    public ResponseEntity<RestAPIResponse<Object>> successResponse(ErrorCode errorCode) {
+        return buildResponse(RestAPIStatus.OK, errorCode, HttpStatus.OK);
     }
 
     public ResponseEntity<RestAPIResponse<Object>> successResponse(Object data) {

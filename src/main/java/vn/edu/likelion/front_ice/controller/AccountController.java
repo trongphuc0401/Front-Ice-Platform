@@ -64,7 +64,8 @@ public class AccountController {
 
     @PostMapping(ApiEndpoints.SEND_OTP)
     public ResponseEntity<RestAPIResponse<Object>> sendOTP(@RequestParam String gmail) {
-        return responseUtil.successResponse(accountService.generateOTP(gmail));
+        accountService.generateOTP(gmail);
+        return responseUtil.successResponse(ErrorCode.SENT_OTP_EMAIL);
     }
 
     @PostMapping(ApiEndpoints.VERIFY_EMAIL)
@@ -73,7 +74,7 @@ public class AccountController {
 
         if (flag) {
             accountService.clearOTP(verifyEmailRequest.getEmail());
-            return responseUtil.successResponse("OTP verified");
+            return responseUtil.successResponse(ErrorCode.VERIFIED);
         } else {
             throw new AppException(ErrorCode.OTP_INVALID);
         }
@@ -88,8 +89,8 @@ public class AccountController {
             throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
         }
 
-        String otpMessage = accountService.generateForgotPasswordOTP(forgotPasswordRequest.getEmail());
-        return responseUtil.successResponse(otpMessage);
+         accountService.generateForgotPasswordOTP(forgotPasswordRequest.getEmail());
+        return responseUtil.successResponse(ErrorCode.SENT_OTP_EMAIL);
     }
 
     @PostMapping(ApiEndpoints.VERIFY_FORGOT_PASSWORD_OTP)
@@ -114,7 +115,7 @@ public class AccountController {
         boolean isPasswordReset = accountService.resetPassword(resetPasswordRequest.getResetToken(), resetPasswordRequest.getNewPassword());
 
         if (isPasswordReset) {
-            return responseUtil.successResponse("Mật khẩu đã được đặt lại thành công.");
+            return responseUtil.successResponse(ErrorCode.PASSWORD_CHANGED);
         } else {
             throw new AppException(ErrorCode.PASSWORD_RESET_FAILED);
         }
