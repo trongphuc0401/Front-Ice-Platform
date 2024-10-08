@@ -41,8 +41,8 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     @Autowired
     private ResponseUtil responseUtil;
 
-//    @Autowired
-//    private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
@@ -112,10 +112,16 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                     .maxAge(refreshTokenExpiration)
                     .build();
 
-            // Write response
-            ResponseEntity<RestAPIResponse<Object>> responseEntity = responseUtil.successResponse(loginResponse, resCookie.toString());
+            response.addHeader("Set-Cookie", resCookie.toString());
+
+            ResponseEntity<RestAPIResponse<Object>> responseEntity = responseUtil.successResponse(loginResponse);
+            RestAPIResponse<Object> restAPIResponse = responseEntity.getBody();
+
+            response.addHeader("Set-Cookie", resCookie.toString());
             response.setContentType("application/json");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(responseEntity.getBody()));
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            objectMapper.writeValue(response.getWriter(), restAPIResponse);
         }
     }
 }
