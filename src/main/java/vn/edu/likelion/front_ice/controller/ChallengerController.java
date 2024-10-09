@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
 import java.io.File;
@@ -29,7 +31,10 @@ import vn.edu.likelion.front_ice.service.challenger.ChallengerService;
  * @return
  * @throws
  */
-public class   ChallengerController {
+@RestController
+@RequestMapping(ApiEndpoints.CHALLENGER_API)
+@RequiredArgsConstructor
+public class ChallengerController {
 
     @Autowired
     ChallengerService challengerService;
@@ -63,7 +68,7 @@ public class   ChallengerController {
         String originalFilename = file.getOriginalFilename();
         String contentType = file.getContentType();
 
-        if (originalFilename == null || !isImageFile(originalFilename, contentType)) {
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
             throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
         }
         File tempFile = File.createTempFile("challenger_", null);
@@ -80,30 +85,35 @@ public class   ChallengerController {
     }
 
     @PostMapping(ApiEndpoints.UPLOAD_CV)
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadCV(
             @RequestParam("accountId") String accountId,
-            @RequestParam("cv") MultipartFile file) throws
-            IOException {
+            @RequestParam("cv") MultipartFile file) throws IOException {
+
+        // Kiểm tra nếu file rỗng
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.CV_UPLOAD_FAILED);
         }
 
-        File tempFile = File.createTempFile("CV_", null);
-        file.transferTo(tempFile);
+        // Tạo file tạm thời với đuôi .pdf
+        File tempFile = File.createTempFile("CV_", ".pdf");
 
-        return responseUtil.successResponse(googleDriveService.uploadCV(accountId,tempFile));
+        try {
+            // Chuyển dữ liệu từ MultipartFile sang file tạm
+            file.transferTo(tempFile);
 
-    }
-    private boolean isImageFile(String fileName, String contentType) {
-        // Kiểm tra phần mở rộng của file
-        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
+            // Gọi service để upload file lên Google Drive
 
-        // Kiểm tra mime type (loại file)
-        List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png");
 
-        // Kiểm tra phần mở rộng và mime type của file
-        return allowedExtensions.contains(fileExtension) && allowedMimeTypes.contains(contentType);
+            // Xóa file tạm sau khi hoàn thành (dù thành công hay thất bại)
+            return responseUtil.successResponse(googleDriveService.uploadCV(accountId, tempFile));
+
+        } finally {
+            // Đảm bảo xóa file tạm sau khi sử dụng
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
     }
 
 

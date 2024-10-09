@@ -15,7 +15,9 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
+import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
+import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,14 +40,16 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    private static String SERVIEC_ACCOUNT_KEY_PATH = getPathToGoodleCredentials();
+    private static String SERVIEC_ACCOUNT_KEY_PATH = getPathToGoogleCredentials();
     private final AccountRepository accountRepository;
+    private final ChallengerRepository challengerRepository;
 
-    public GoogleDriveServiceImpl(AccountRepository accountRepository) {
+    public GoogleDriveServiceImpl(AccountRepository accountRepository, ChallengerRepository challengerRepository) {
         this.accountRepository = accountRepository;
+        this.challengerRepository = challengerRepository;
     }
 
-    private static String getPathToGoodleCredentials() {
+    private static String getPathToGoogleCredentials() {
 
         String currentDirectory = System.getProperty("user.dir");
         Path filePath= Paths.get(currentDirectory, "credentials.json");
@@ -63,10 +67,16 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         try {
             String folderId = "1dD24z_IAgyaY7bPbCPlx2m23jyQXELaQ";
             Drive drive = createDriveService();
+            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
+            }
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(file.getName());
+            fileMetaData.setName(newFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
-            FileContent mediaContent = new FileContent("image/jpeg", file);
+            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
@@ -95,13 +105,16 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         try {
             String folderId = "1vpYYN0SNilcKW89MF63ABvFr80HFQlyv";
             Drive drive = createDriveService();
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(file.getName());
-            fileMetaData.setParents(Collections.singletonList(folderId));
-            if (!file.getName().endsWith(".jpg") && !file.getName().endsWith(".jpeg")) {
-                throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
+            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
             }
-            FileContent mediaContent = new FileContent("image/jpeg", file);
+            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+            fileMetaData.setName(newFileName);
+            fileMetaData.setParents(Collections.singletonList(folderId));
+            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
@@ -130,11 +143,18 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         try {
             String folderId = "1H2NC6sEKLrFTMbA1GQjrUoHTdjS1gJEo";
             Drive drive = createDriveService();
+
+            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
+            }
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(file.getName());
+            fileMetaData.setName(newFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            FileContent mediaContent = new FileContent("image/jpeg", file);
+            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
@@ -169,11 +189,18 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         try {
             String folderId = "1YysRUafhz5seAY9Oa_LzCATYQyA1ZXcn";
             Drive drive = createDriveService();
+
+            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
+            }
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(file.getName());
+            fileMetaData.setName(newFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            FileContent mediaContent = new FileContent("image/jpeg", file);
+            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
@@ -194,27 +221,33 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
     @Override
-    public UploadAvatarResponse uploadCV(String accountChallengerId, File file) {
+    public UploadAvatarResponse uploadCV(String accountId, File file) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
         // Kiểm tra xem tài khoản có tồn tại hay không
-        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
+        ChallengerEntity challengerEntity = challengerRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-        // Kiểm tra file PDF
+        AccountEntity accountEntity = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_EXIST));
 
         try {
-            // Khởi tạo Google Drive API
             String folderId = "1sM4AJtU45u3Mg2X9Z0ZZozHXv7aNXIyi";
             Drive drive = createDriveService();
 
-            // Tạo metadata cho file
+            String originalFileName = file.getName();
+            String newFileName = "CV_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
+            }
+
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(file.getName());
+            fileMetaData.setName(newFileName);  // Đảm bảo tên file có đuôi .pdf
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            // Tạo FileContent với định dạng PDF
-            FileContent mediaContent = new FileContent("application/pdf", file);
+            FileContent mediaContent = new FileContent("application/pdf", renamedFile);
 
             // Upload file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files()
@@ -222,7 +255,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                     .setFields("id")
                     .execute();
 
-            // Tạo URL cho file PDF
+            // Tạo URL cho file PDF đã được upload
             String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
             System.out.println("FILE URL: " + fileUrl);
 
@@ -232,16 +265,14 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-            // Xóa file tạm sau khi upload thành công
-            file.delete();
+            renamedFile.delete();
 
             // Cập nhật URL cho file CV
             response.setUrl(fileUrl);
-            // accountEntity.setCvUrl(fileUrl);  // Giả sử bạn có trường để lưu URL CV
-            accountRepository.save(accountEntity);
-        } catch (Exception e) {
+            challengerEntity.setUrlCV(fileUrl);
+            challengerRepository.save(challengerEntity);
+        } catch (IOException | GeneralSecurityException e) {
             System.out.println(e.getMessage());
-            throw new AppException(ErrorCode.CV_UPLOAD_FAILED); // Ném lỗi nếu có lỗi xảy ra trong quá trình upload
         }
 
         return response;
