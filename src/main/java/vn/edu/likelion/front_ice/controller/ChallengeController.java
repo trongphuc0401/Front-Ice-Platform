@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
-import vn.edu.likelion.front_ice.service.staff.StaffService;
-
-import java.io.File;
-import java.io.IOException;
+import vn.edu.likelion.front_ice.service.challenge.ChallengeService;
 
 /**
  * ChallengeController -
