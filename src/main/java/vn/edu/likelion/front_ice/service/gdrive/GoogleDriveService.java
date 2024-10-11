@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.service.gdrive;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 
 import java.io.File;
 
@@ -26,4 +27,8 @@ public interface GoogleDriveService{
     UploadAvatarResponse uploadRecruiterAvatar(String accountChallengerId,File file);
 
     UploadAvatarResponse uploadCV(String accountId, File tempFile);
+
+    AssetsResponse uploadAssets(String challengeId , File file);
+
+
 }

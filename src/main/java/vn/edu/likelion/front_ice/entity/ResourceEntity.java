@@ -24,10 +24,16 @@ import lombok.experimental.FieldDefaults;
 public class ResourceEntity extends BaseEntity {
 
     @Column
-    String challenge_id;
+    String challengeId;
 
     @Column
-    String url_resource;
+    String assetsUrl;
+
+    @Column
+    String fileName;
+
+    @Column
+    long fileSize;
 
 }
 

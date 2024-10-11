@@ -60,6 +60,7 @@ public interface ApiEndpoints {
 
     // Manager API
     String MANAGER_API = BASE_API_URL + "/manager";
+    String UPLOAD_ASSETS = "/assets";
 
 
     // Notification API
