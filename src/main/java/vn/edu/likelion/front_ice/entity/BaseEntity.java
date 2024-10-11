@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UuidGenerator;
-import vn.edu.likelion.front_ice.common.utils.UniqueID;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public abstract class BaseEntity implements Serializable {
     protected void onCreate() {
 
         if (id == null) {
-            id = UniqueID.getUUID();
+            id = HelperUtil.getUUID();
         }
         this.createAt = LocalDateTime.now();
         this.updateAt = LocalDateTime.now();

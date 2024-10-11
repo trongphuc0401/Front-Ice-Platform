@@ -11,6 +11,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
@@ -51,6 +52,13 @@ public class MentorController {
             IOException {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
         }
 
         File tempFile = File.createTempFile("mentor", accountId);

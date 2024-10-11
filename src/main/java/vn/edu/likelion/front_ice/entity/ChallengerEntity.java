@@ -38,4 +38,7 @@ public class ChallengerEntity extends BaseEntity {
     @Column
     int score;
 
+    @Column(name = "url_cv")
+    String urlCV;
+
 }

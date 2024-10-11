@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 
+import java.util.Optional;
+
 @Repository
 public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String> {
     //    Optional<ChallengeEntity> findByAccountId(String id);
@@ -18,5 +20,5 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //    Page<Object[]> findPlantBySearchText1(@Param("searchText") String searchText, Pageable pageable);
 //
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
-    Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
+    Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);v
 }
