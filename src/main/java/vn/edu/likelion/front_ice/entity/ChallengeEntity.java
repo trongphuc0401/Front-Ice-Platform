@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * ChallengeEntity -
@@ -26,14 +27,14 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "title", length = 250, nullable = false)
     String title;
 
-    // @Column(name = "category_id", nullable = false)
-    // UUID categoryId;
-    //
-    // @Column(name = "technical_id", nullable = false)
-    // UUID technicalId;
-    //
-    // @Column(name = "level_id", nullable = false)
-    // UUID levelId;
+    @Column(name = "category_id", nullable = false)
+    String categoryId;
+
+    @Column(name = "technical_id", nullable = false)
+    String technicalId;
+
+    @Column(name = "level_id", nullable = false)
+    String levelId;
 
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

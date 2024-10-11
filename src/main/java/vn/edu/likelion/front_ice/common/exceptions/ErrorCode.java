@@ -55,6 +55,8 @@ public enum ErrorCode {
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
 
+    CATEGORY_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-303 ,"Category not exist","Bad Request","Category không tồn tại"),
+
     // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
 
