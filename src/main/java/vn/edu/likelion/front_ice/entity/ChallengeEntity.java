@@ -36,6 +36,12 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "challenge_point_id", nullable = false)  // chưa nối bảng khi làm ròi hãy nối
     String challengePointId;
 
+    @OneToOne(mappedBy = "challenge",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            optional = false)
+    ResourceEntity resource;
+
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime openDate;

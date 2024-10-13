@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class AssetsResponse {
     String assetsUrl;
 
-    String fileName;
+    String  assetsName;
 
-    long fileSize;
+    long assetsSize;
 }
