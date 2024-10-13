@@ -45,7 +45,7 @@ public class ChallengeEntity extends BaseEntity {
     LocalDateTime closeDate;
 
     @Column(name = "is_premium", nullable = false)
-    int isPremium;
+    boolean isPremium;
 
     @Column(name = "score", nullable = false)
     Integer score;

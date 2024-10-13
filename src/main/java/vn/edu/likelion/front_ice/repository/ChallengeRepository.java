@@ -20,5 +20,5 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //    Page<Object[]> findPlantBySearchText1(@Param("searchText") String searchText, Pageable pageable);
 //
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
-    Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);v
+    Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
 }
