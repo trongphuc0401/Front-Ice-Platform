@@ -66,10 +66,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/v1/challenger/**").hasAuthority("ROLE_CHALLENGER")
-                                .requestMatchers("/api/v1/recruiter/**").hasAuthority("ROLE_RECRUITER")
-                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
+                                // .requestMatchers("/api/v1/challenger/**").hasAuthority("ROLE_CHALLENGER")
+                                // .requestMatchers("/api/v1/recruiter/**").hasAuthority("ROLE_RECRUITER")
+                                // .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                                // .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
+                                .requestMatchers("/api/v1/challenger/**").permitAll()
+                                .requestMatchers("/api/v1/recruiter/**").permitAll()
+                                .requestMatchers("/api/v1/admin/**").permitAll()
+                                .requestMatchers("/api/v1/mentor/**").permitAll()
                                 .requestMatchers("/api/v1/manager/**").permitAll()
                                 .anyRequest().permitAll())
 

@@ -338,8 +338,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             response.setFileName(originalFileName);
             response.setFileSize(fileSize);
             resourceEntity.setAssetsUrl(fileUrl);
-            resourceEntity.setFileName(originalFileName);
-            resourceEntity.setFileSize(fileSize);
             resourceRepository.save(resourceEntity);
 
             // Thiết lập URL vào response
