@@ -32,7 +32,7 @@ public class ResourceEntity extends BaseEntity {
     String assetsName;
 
     @Column(name = "assets_size")
-    Integer assetsSize;
+    Long assetsSize;
 
     @Column(name = "assets_provider", columnDefinition = "TEXT")
     String assetsProvider;
@@ -45,8 +45,6 @@ public class ResourceEntity extends BaseEntity {
 
     @Column(name = "figma_size")
     Integer figmaSize;
-
-
 
 }
 

@@ -335,11 +335,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             // Xóa file cục bộ sau khi upload thành công (nếu cần)
             file.delete();
             response.setAssetsUrl(fileUrl);
-            response.setFileName(originalFileName);
-            response.setFileSize(fileSize);
+            response.setAssetsName(originalFileName);
+            response.setAssetsSize(fileSize);
             resourceEntity.setAssetsUrl(fileUrl);
-            resourceEntity.setFileName(originalFileName);
-            resourceEntity.setFileSize(fileSize);
+            resourceEntity.setAssetsName(originalFileName);
+            resourceEntity.setAssetsSize(fileSize);
             resourceRepository.save(resourceEntity);
 
             // Thiết lập URL vào response
