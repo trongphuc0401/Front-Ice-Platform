@@ -69,4 +69,32 @@ public class ManagerController {
 
     }
 
+    @PostMapping(ApiEndpoints.UPLOAD_ASSETS)
+    public ResponseEntity<RestAPIResponse<Object>> uploadAssets(
+            @RequestParam("challengeId") String challengeId,
+            @RequestParam("assets") MultipartFile file) throws IOException {
+
+        // Kiểm tra nếu file rỗng
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.ASSETS_UPLOAD_FAILED);
+        }
+
+        // Tạo file tạm thời với đuôi .pdf
+        File tempFile = File.createTempFile("Assets", ".zip");
+
+        try {
+            // Chuyển dữ liệu từ MultipartFile sang file tạm
+            file.transferTo(tempFile);
+
+            // Xóa file tạm sau khi hoàn thành (dù thành công hay thất bại)
+            return responseUtil.successResponse(googleDriveService.uploadAssets(challengeId, tempFile));
+
+        } finally {
+            // Đảm bảo xóa file tạm sau khi sử dụng
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
 }

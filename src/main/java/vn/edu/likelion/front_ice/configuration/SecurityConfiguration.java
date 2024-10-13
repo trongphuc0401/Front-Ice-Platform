@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/recruiter/**").hasAuthority("ROLE_RECRUITER")
                                 .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers("/api/v1/mentor/**").hasAuthority("ROLE_MENTOR")
-                                .requestMatchers("/api/v1/manager/**").hasAuthority("ROLE_MANAGER")
+                                .requestMatchers("/api/v1/manager/**").permitAll()
                                 .anyRequest().permitAll())
 
                 .oauth2Login(oauth2 -> oauth2

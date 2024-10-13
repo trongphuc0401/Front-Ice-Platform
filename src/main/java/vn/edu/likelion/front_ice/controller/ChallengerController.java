@@ -102,9 +102,6 @@ public class ChallengerController {
             // Chuyển dữ liệu từ MultipartFile sang file tạm
             file.transferTo(tempFile);
 
-            // Gọi service để upload file lên Google Drive
-
-
             // Xóa file tạm sau khi hoàn thành (dù thành công hay thất bại)
             return responseUtil.successResponse(googleDriveService.uploadCV(accountId, tempFile));
 

@@ -46,5 +46,7 @@ public class ResourceEntity extends BaseEntity {
     @Column(name = "figma_size")
     Integer figmaSize;
 
+
+
 }
 

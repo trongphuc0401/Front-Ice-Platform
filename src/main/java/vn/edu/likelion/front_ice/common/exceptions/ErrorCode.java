@@ -46,7 +46,7 @@ public enum ErrorCode {
     RESET_TOKEN_EXPIRED(RestAPIStatus.BAD_REQUEST, -121, "Reset token expired", "Bad Request", "Mã đặt lại mật khẩu đã hết hạn"),
     RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
     INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, -123, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
-    CV_UPLOAD_FAILED(RestAPIStatus.FAIL, -124, "Failed to upload CV", "Bad Request", "Upload CV thất bại"),
+    CV_UPLOAD_FAILED(RestAPIStatus.FAIL, -124, "Failed to upload CV", "Fail", "Upload CV thất bại"),
 
     // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
@@ -54,6 +54,7 @@ public enum ErrorCode {
 
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
+    ASSETS_UPLOAD_FAILED(RestAPIStatus.FAIL,-302 ,"Failed to upload Assets","Fail","Upload Assets thất bại"),
 
     CATEGORY_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-303 ,"Category not exist","Bad Request","Category không tồn tại"),
 
