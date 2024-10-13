@@ -1,8 +1,6 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,17 +21,32 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ResourceEntity extends BaseEntity {
 
-    @Column
-    String challengeId;
+    @OneToOne
+    @JoinColumn(name = "challenge_id", nullable = false)
+    ChallengeEntity challenge;
 
-    @Column
+    @Column(name = "assets_url", columnDefinition = "TEXT")
     String assetsUrl;
 
-    @Column
-    String fileName;
+    @Column(name = "assets_name", length = 255)
+    String assetsName;
 
-    @Column
-    long fileSize;
+    @Column(name = "assets_size")
+    Integer assetsSize;
+
+    @Column(name = "assets_provider", columnDefinition = "TEXT")
+    String assetsProvider;
+
+    @Column(name = "figma_url", length = 255)
+    String figmaUrl;
+
+    @Column(name = "figma_name", length = 255)
+    String figmaName;
+
+    @Column(name = "figma_size")
+    Integer figmaSize;
+
+
 
 }
 

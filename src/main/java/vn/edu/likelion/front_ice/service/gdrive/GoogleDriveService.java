@@ -1,7 +1,5 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
-import org.springframework.stereotype.Service;
-import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 
