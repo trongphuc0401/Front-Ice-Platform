@@ -27,14 +27,14 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "title", length = 250, nullable = false)
     String title;
 
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", nullable = false) // chưa nối bảng khi làm rồi hãy nối
     String categoryId;
 
-    @Column(name = "technical_id", nullable = false)
+    @Column(name = "technical_id", nullable = false) // chưa nối bảng khi làm ròi hãy nối
     String technicalId;
 
-    @Column(name = "level_id", nullable = false)
-    String levelId;
+    @Column(name = "challenge_point_id", nullable = false)  // chưa nối bảng khi làm ròi hãy nối
+    String challengePointId;
 
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,12 +45,9 @@ public class ChallengeEntity extends BaseEntity {
     LocalDateTime closeDate;
 
     @Column(name = "is_premium", nullable = false)
-    int isPremium;
+    boolean isPremium;
 
-    @Column(name = "score", nullable = false)
-    Integer score;
-
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     String description;
 
     @Enumerated(EnumType.STRING)
@@ -60,6 +57,21 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "price", nullable = false)
     Double price;
 
-    @Column(name = "message", length = 50, nullable = false)
+    @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     String message;
+
+    @Column(name = "banner", nullable = false, columnDefinition = "TEXT")
+    String banner;
+
+    @Column(name = "is_hidden", nullable = false)
+    boolean isHidden;
+
+    @Column(name = "mobile_design_image", columnDefinition = "TEXT NOT NULL")
+    String mobileDesignImage;
+
+    @Column(name = "tablet_design_image", columnDefinition = "TEXT NOT NULL")
+    String tabletDesignImage;
+
+    @Column(name = "desktop_design_image", columnDefinition = "TEXT NOT NULL")
+    String desktopDesignImage;
 }
