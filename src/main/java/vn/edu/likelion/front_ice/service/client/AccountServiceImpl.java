@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
     private RecruiterMapper recruiterMapper;
 
     @Override
-    public Optional<RegisterResponse> create(RegisterRequest registerRequest) {
+    public Optional<RegisterResponse> create_v1(RegisterRequest registerRequest) {
 
         if (accountRepository.findByEmail(registerRequest.getEmail()).isEmpty()) {
             if (registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
@@ -135,38 +135,6 @@ public class AccountServiceImpl implements AccountService {
         }
 
 
-    }
-
-    @Override
-    public Optional<RegisterResponse> updateInfo(String id, RegisterRequest registerRequest) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<RegisterResponse> saveAll(List<AccountEntity> ts) {
-        return List.of();
-    }
-
-
-    @Override
-    public void delete(String id) {
-
-    }
-
-    @Override
-    public void deleteAll(List<String> listId) {
-
-    }
-
-    @Override
-    public Optional<RegisterResponse> findById(String id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<RegisterResponse> findAll() {
-
-        return List.of();
     }
 
     public Optional<LoginResponse> login(LoginRequest loginRequest) {
@@ -400,5 +368,40 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<AccountEntity> findByEmail(String email) {
         return accountRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<AccountEntity> create(RegisterRequest t) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AccountEntity> updateInfo(String id, RegisterRequest i) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<AccountEntity> saveAll(List<AccountEntity> ts) {
+        return List.of();
+    }
+
+    @Override
+    public void delete(String id) {
+
+    }
+
+    @Override
+    public void deleteAll(List<String> listId) {
+
+    }
+
+    @Override
+    public Optional<AccountEntity> findById(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<AccountEntity> findAll() {
+        return List.of();
     }
 }

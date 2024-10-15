@@ -16,6 +16,6 @@ import vn.edu.likelion.front_ice.service.BaseService;
  */
 
 
-public interface ChallengeService extends BaseService<ChallengeEntity, CreationChallengeRequest, ChallengeResponse, UpdateChallengeRequest> {
+public interface ChallengeService extends BaseService<ChallengeEntity, CreationChallengeRequest, UpdateChallengeRequest> {
     PaginateChallengeResponse getPaginationChallengeByCategory(String category, int pageNo, int pagSize);
 }

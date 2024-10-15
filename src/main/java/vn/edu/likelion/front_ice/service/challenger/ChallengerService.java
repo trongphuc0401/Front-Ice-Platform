@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 
 
-public interface ChallengerService extends BaseService<ChallengerEntity, CreationChallengerRequest, ChallengerResponse,UpdateChallengerRequest> {
+public interface ChallengerService extends BaseService<ChallengerEntity, CreationChallengerRequest, UpdateChallengerRequest> {
     Optional<FollowResponse> follow(FollowRequest t);
 
     Optional<List<RecruiterEntity>> getFollow(String challengerId);
