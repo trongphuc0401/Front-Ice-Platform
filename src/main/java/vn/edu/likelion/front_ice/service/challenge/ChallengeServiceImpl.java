@@ -15,7 +15,6 @@ import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeRespons
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
-import vn.edu.likelion.front_ice.mapper.ChallengerMapperImpl;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 
@@ -36,17 +35,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 
     @Override
-    public Optional<ChallengeResponse> create(CreationChallengeRequest t) {
+    public Optional<ChallengeEntity> create(CreationChallengeRequest t) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<ChallengeResponse> updateInfo(String id, UpdateChallengeRequest i) {
+    public Optional<ChallengeEntity> updateInfo(String id, UpdateChallengeRequest i) {
         return Optional.empty();
     }
 
     @Override
-    public List<ChallengeResponse> saveAll(List<ChallengeEntity> ts) {
+    public List<ChallengeEntity> saveAll(List<ChallengeEntity> ts) {
         return List.of();
     }
 
@@ -61,12 +60,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Optional<ChallengeResponse> findById(String id) {
+    public Optional<ChallengeEntity> findById(String id) {
         return Optional.empty();
     }
 
     @Override
-    public List<ChallengeResponse> findAll() {
+    public List<ChallengeEntity> findAll() {
         return List.of();
     }
 

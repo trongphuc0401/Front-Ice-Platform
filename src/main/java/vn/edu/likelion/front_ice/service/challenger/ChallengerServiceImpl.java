@@ -41,20 +41,18 @@ public class ChallengerServiceImpl implements ChallengerService {
     @Autowired
     private ChallengerMapper challengerMapper;
 
-
-    @Override public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> create(
-            CreationChallengerRequest t) {
+    @Override
+    public Optional<ChallengerEntity> create(CreationChallengerRequest t) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> updateInfo(String id,
-                                                                                                     UpdateChallengerRequest i) {
+    public Optional<ChallengerEntity> updateInfo(String id, UpdateChallengerRequest i) {
         return Optional.empty();
     }
 
-    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> saveAll(
-            List<ChallengerEntity> ts) {
+    @Override
+    public List<ChallengerEntity> saveAll(List<ChallengerEntity> ts) {
         return List.of();
     }
 
@@ -67,11 +65,12 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public Optional<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findById(String id) {
+    public Optional<ChallengerEntity> findById(String id) {
         return Optional.empty();
     }
 
-    @Override public List<vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse> findAll() {
+    @Override
+    public List<ChallengerEntity> findAll() {
         return List.of();
     }
 

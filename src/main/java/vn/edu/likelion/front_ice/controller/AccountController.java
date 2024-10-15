@@ -41,7 +41,7 @@ public class AccountController {
     @PostMapping(ApiEndpoints.SIGN_UP)
     public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
 
-        return responseUtil.successResponse(accountService.create(registerRequest));
+        return responseUtil.successResponse(accountService.create_v1(registerRequest));
     }
 
     @PostMapping(ApiEndpoints.LOGIN)

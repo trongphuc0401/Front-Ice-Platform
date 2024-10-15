@@ -29,16 +29,30 @@ public class StaffServiceImpl implements StaffService {
         this.staffMapper = staffMapper;
     }
 
-    @Override public Optional<RecruiterResponse> create(RegisterRequest t) {
-        return Optional.empty();
+    @Override
+    public Optional<StaffResponse> getDetailsProfile(String accountId) {
+
+        AccountEntity account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        StaffEntity staff = staffRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        return Optional.of(staffMapper.toStaffResponse(account, staff));
     }
 
-    @Override public Optional<RecruiterResponse> updateInfo(String id, RegisterRequest i) {
+    @Override
+    public Optional<StaffEntity> create(RegisterRequest t) {
         return Optional.empty();
     }
 
     @Override
-    public List<RecruiterResponse> saveAll(List<StaffEntity> ts) {
+    public Optional<StaffEntity> updateInfo(String id, RegisterRequest i) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<StaffEntity> saveAll(List<StaffEntity> ts) {
         return List.of();
     }
 
@@ -53,24 +67,12 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Optional<RecruiterResponse> findById(String id) {
+    public Optional<StaffEntity> findById(String id) {
         return Optional.empty();
     }
 
     @Override
-    public List<RecruiterResponse> findAll() {
+    public List<StaffEntity> findAll() {
         return List.of();
-    }
-
-    @Override
-    public Optional<StaffResponse> getDetailsProfile(String accountId) {
-
-        AccountEntity account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-
-        StaffEntity staff = staffRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
-
-        return Optional.of(staffMapper.toStaffResponse(account, staff));
     }
 }

@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 public class RecruiterServiceImpl implements RecruiterService {
 
-
     private final AccountRepository accountRepository;
     private final RecruiterRepository recruiterRepository;
     private final RecruiterMapper recruiterMapper;
@@ -30,17 +29,29 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public Optional<FollowResponse> create(FollowRequest t) {
+    public Optional<RecruiterResponse> getDetailsProfile(String accountId) {
+
+        AccountEntity account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        RecruiterEntity recruiter = recruiterRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        return Optional.of(recruiterMapper.toRecruiterResponse(account, recruiter));
+    }
+
+    @Override
+    public Optional<RecruiterEntity> create(FollowRequest t) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<FollowResponse> updateInfo(String id, FollowRequest followRequest) {
+    public Optional<RecruiterEntity> updateInfo(String id, FollowRequest i) {
         return Optional.empty();
     }
 
     @Override
-    public List<FollowResponse> saveAll(List<RecruiterEntity> ts) {
+    public List<RecruiterEntity> saveAll(List<RecruiterEntity> ts) {
         return List.of();
     }
 
@@ -55,24 +66,12 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public Optional<FollowResponse> findById(String id) {
+    public Optional<RecruiterEntity> findById(String id) {
         return Optional.empty();
     }
 
     @Override
-    public List<FollowResponse> findAll() {
+    public List<RecruiterEntity> findAll() {
         return List.of();
-    }
-
-    @Override
-    public Optional<RecruiterResponse> getDetailsProfile(String accountId) {
-
-        AccountEntity account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-
-        RecruiterEntity recruiter = recruiterRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
-
-        return Optional.of(recruiterMapper.toRecruiterResponse(account, recruiter));
     }
 }
