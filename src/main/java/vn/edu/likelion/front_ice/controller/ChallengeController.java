@@ -95,7 +95,7 @@ public class ChallengeController {
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resourceEntity.getAssetsName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resourceEntity.getFigmaName() + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }

@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
+import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 
@@ -24,9 +25,10 @@ public interface GoogleDriveService{
 
     UploadAvatarResponse uploadRecruiterAvatar(String accountChallengerId,File file);
 
-    UploadAvatarResponse uploadCV(String accountId, File tempFile);
+    UploadAvatarResponse uploadCV(String accountId, File file);
 
     AssetsResponse uploadAssets(String challengeId , File file);
 
 
+    AssetsResponse uploadFigma(String challengeId, File file);
 }
