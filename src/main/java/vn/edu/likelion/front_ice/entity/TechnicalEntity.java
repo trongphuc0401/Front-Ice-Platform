@@ -2,9 +2,12 @@ package vn.edu.likelion.front_ice.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 
 /**
@@ -23,8 +26,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TechnicalEntity extends BaseEntity {
 
-    @Column
+    @Column(nullable = false)
     String title;
 
+    @ManyToMany(mappedBy = "technicals")
+    private Set<ChallengeEntity> challenges;
 }
 
