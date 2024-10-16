@@ -7,7 +7,6 @@ import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * ChallengeEntity -
@@ -18,10 +17,11 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "tbl_challenge")
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChallengeEntity extends BaseEntity {
 
@@ -30,7 +30,7 @@ public class ChallengeEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    CategoryEntity category;
 
     @ManyToMany
     @JoinTable(
@@ -38,11 +38,11 @@ public class ChallengeEntity extends BaseEntity {
             joinColumns = @JoinColumn(name = "challenge_id"),
             inverseJoinColumns = @JoinColumn(name = "technical_id")
     )
-    private Set<TechnicalEntity> technicals;
+    Set<TechnicalEntity> technicals;
 
     @ManyToOne
     @JoinColumn(name = "challenge_point_id", nullable = false)
-    private ChallengePointEntity challengePoint;
+    ChallengePointEntity challengePoint;
 
     @OneToOne(mappedBy = "challenge",
             cascade = CascadeType.ALL,
@@ -53,7 +53,7 @@ public class ChallengeEntity extends BaseEntity {
     @OneToMany(mappedBy = "challenge",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private Set<PreviewEntity> previews;
+    Set<PreviewEntity> previews;
 
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

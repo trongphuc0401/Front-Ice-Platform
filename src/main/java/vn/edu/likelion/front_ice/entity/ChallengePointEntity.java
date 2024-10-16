@@ -8,7 +8,8 @@ import vn.edu.likelion.front_ice.common.enums.Level;
 
 @Entity
 @Table(name = "tbl_challenge_point")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

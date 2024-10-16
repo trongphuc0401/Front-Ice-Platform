@@ -3,6 +3,8 @@ package vn.edu.likelion.front_ice.entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UuidGenerator;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
@@ -18,7 +20,8 @@ import java.time.LocalDateTime;
  * @throws
  */
 @MappedSuperclass
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseEntity implements Serializable {
 
