@@ -16,7 +16,8 @@ import lombok.experimental.FieldDefaults;
  */
 @Entity
 @Table(name = "tbl_challenger")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

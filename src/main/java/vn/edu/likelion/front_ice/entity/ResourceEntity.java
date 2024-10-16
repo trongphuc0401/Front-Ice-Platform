@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
  */
 @Entity
 @Table(name = "tbl_resource")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

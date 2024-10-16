@@ -17,7 +17,8 @@ import vn.edu.likelion.front_ice.common.enums.StatusSolution;
  */
 @Entity
 @Table(name = "tbl_solution")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

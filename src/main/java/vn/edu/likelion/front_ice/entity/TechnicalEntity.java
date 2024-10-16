@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -19,8 +20,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "tbl_technical")
-@Data
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -30,6 +32,6 @@ public class TechnicalEntity extends BaseEntity {
     String title;
 
     @ManyToMany(mappedBy = "technicals")
-    private Set<ChallengeEntity> challenges;
+    Set<ChallengeEntity> challenges;
 }
 
