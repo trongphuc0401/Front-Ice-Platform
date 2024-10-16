@@ -55,6 +55,7 @@ public interface ApiEndpoints {
     // Challenge API
     String CHALLENGE_API = BASE_API_URL + "/challenge";
     String DOWNLOAD_ASSETS = "/assets/{id}";
+    String DOWNLOAD_FIGMA = "/figma/{id}";
 
     // Solution API
     String SOLUTION_API = BASE_API_URL + "/solution";
@@ -65,6 +66,7 @@ public interface ApiEndpoints {
     // Manager API
     String MANAGER_API = BASE_API_URL + "/manager";
     String UPLOAD_ASSETS = "/assets";
+    String UPLOAD_FIGMA = "/figma";
 
 
     // Notification API
