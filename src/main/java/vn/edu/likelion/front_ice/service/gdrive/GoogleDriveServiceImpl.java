@@ -284,6 +284,66 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
+    @Override public AssetsResponse uploadFigma(String challengeId, File file) {
+        AssetsResponse response = new AssetsResponse();
+
+        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        try {
+            // ID của thư mục trên Google Drive
+            String folderId = "1TGDETb1gH0JACUMCbuXYHISKJerodAki";
+
+            // Tạo dịch vụ Google Drive
+            Drive drive = createDriveService();
+
+            // Giữ nguyên tên file gốc
+            String originalFileName = file.getName();
+
+            // Chuẩn bị metadata cho file
+            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+            fileMetaData.setName(originalFileName); // Giữ nguyên tên gốc
+            fileMetaData.setParents(Collections.singletonList(folderId));
+
+            // Định nghĩa file content với loại file là zip
+            FileContent mediaContent = new FileContent("application/zip", file);
+
+            // Upload file lên Google Drive
+            com.google.api.services.drive.model.File uploadedFile = drive.files()
+                    .create(fileMetaData, mediaContent)
+                    .setFields("id,size")
+                    .execute();
+
+            // Tạo link trực tiếp đến file trên Google Drive
+            String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            System.out.println("File URL: " + fileUrl);
+
+            long fileSize = uploadedFile.getSize(); // Lấy kích thước file (bytes)
+            System.out.println("File Size: " + fileSize + " bytes");
+
+            // Đặt quyền chia sẻ công khai cho file
+            Permission permission = new Permission();
+            permission.setType("anyone");
+            permission.setRole("reader");
+            drive.permissions().create(uploadedFile.getId(), permission).execute();
+
+            // Xóa file cục bộ sau khi upload thành công (nếu cần)
+            file.delete();
+            response.setAssetsUrl(fileUrl);
+            response.setAssetsName(originalFileName);
+            response.setAssetsSize(fileSize);
+            resourceEntity.setFigmaUrl(fileUrl);
+            resourceEntity.setFigmaName(originalFileName);
+            resourceEntity.setFigmaSize(fileSize);
+            resourceRepository.save(resourceEntity);
+
+            // Thiết lập URL vào response
+        } catch (IOException | GeneralSecurityException e) {
+            System.out.println(e.getMessage());
+        }
+        return response;
+    }
+
     public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));

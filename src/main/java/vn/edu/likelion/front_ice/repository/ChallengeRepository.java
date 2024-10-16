@@ -3,8 +3,6 @@ package vn.edu.likelion.front_ice.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 
@@ -21,4 +19,6 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
     Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
+
+    Optional<ChallengeEntity> findById(String id);
 }

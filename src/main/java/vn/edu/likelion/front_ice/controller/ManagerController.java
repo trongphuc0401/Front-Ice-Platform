@@ -12,6 +12,9 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.entity.ChallengeEntity;
+import vn.edu.likelion.front_ice.entity.ChallengerEntity;
+import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
@@ -40,6 +43,7 @@ public class ManagerController {
     @Autowired
     private GoogleDriveService googleDriveService;
     @Autowired private SecurityUtil securityUtil;
+    @Autowired private ChallengeRepository challengeRepository;
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
@@ -80,13 +84,48 @@ public class ManagerController {
             throw new AppException(ErrorCode.ASSETS_UPLOAD_FAILED);
         }
 
-        File tempFile = File.createTempFile("Assets_"+System.currentTimeMillis()+"_", ".zip");
+        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        File tempFile = File.createTempFile("resource_"+challengeEntity
+                .getTitle()
+                .toLowerCase()
+                .replace(" ", "-")
+                +"_", ".zip");
 
         try {
             file.transferTo(tempFile);
 
             return responseUtil.successResponse(googleDriveService.uploadAssets(challengeId, tempFile));
 
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    @PostMapping(ApiEndpoints.UPLOAD_FIGMA)
+    public ResponseEntity<RestAPIResponse<Object>> uploadFigma(
+            @RequestParam("challengeId") String challengeId,
+            @RequestParam("figma") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.ASSETS_UPLOAD_FAILED);
+        }
+
+        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        File tempFile = File.createTempFile("figma_"+challengeEntity
+                .getTitle()
+                .toLowerCase()
+                .replace(" ", "-")
+                +"_", ".zip");
+
+        try {
+            file.transferTo(tempFile);
+            return responseUtil.successResponse(googleDriveService.uploadFigma(challengeId, tempFile));
         } finally {
             if (tempFile.exists()) {
                 tempFile.delete();

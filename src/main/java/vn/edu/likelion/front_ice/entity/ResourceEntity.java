@@ -35,14 +35,14 @@ public class ResourceEntity extends BaseEntity {
     @Column(name = "assets_size")
     Long assetsSize;
 
-    @Column(name = "figma_url", length = 255)
+    @Column(name = "figma_url", columnDefinition = "TEXT")
     String figmaUrl;
 
     @Column(name = "figma_name", length = 255)
     String figmaName;
 
     @Column(name = "figma_size")
-    Integer figmaSize;
+    Long figmaSize;
 
 }
 
