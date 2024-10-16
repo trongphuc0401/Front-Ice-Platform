@@ -13,6 +13,7 @@ import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.account.*;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
+import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
 
@@ -37,11 +38,15 @@ public class AccountController {
 
     @Autowired
     SecurityUtil securityUtil;
+    @Autowired
+    private AccountMapper accountMapper;
 
     @PostMapping(ApiEndpoints.SIGN_UP)
     public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
-
-        return responseUtil.successResponse(accountService.create_v1(registerRequest));
+        Optional<AccountEntity> entity = (accountService.create(registerRequest));
+        return responseUtil.successResponse(accountMapper.toRegisterResponse(
+                entity.orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION)))
+        );
     }
 
     @PostMapping(ApiEndpoints.LOGIN)

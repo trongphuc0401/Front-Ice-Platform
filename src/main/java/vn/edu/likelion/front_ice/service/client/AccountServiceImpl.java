@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,15 +29,11 @@ import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
-import vn.edu.likelion.front_ice.entity.AccountEntity;
-import vn.edu.likelion.front_ice.entity.ChallengerEntity;
-import vn.edu.likelion.front_ice.entity.RecruiterEntity;
+import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
 import vn.edu.likelion.front_ice.mapper.RecruiterMapper;
-import vn.edu.likelion.front_ice.repository.AccountRepository;
-import vn.edu.likelion.front_ice.repository.ChallengerRepository;
-import vn.edu.likelion.front_ice.repository.RecruiterRepository;
+import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.util.*;
@@ -46,7 +45,8 @@ import java.util.*;
  * @return
  * @throws
  */
-@Slf4j @Service
+@Slf4j
+@Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AccountServiceImpl implements AccountService {
@@ -87,6 +87,12 @@ public class AccountServiceImpl implements AccountService {
     private ChallengerMapper challengerMapper;
     @Autowired
     private RecruiterMapper recruiterMapper;
+    @Autowired
+    private SolutionRepository solutionRepository;
+    @Autowired
+    private ChallengeRepository challengeRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public Optional<RegisterResponse> create_v1(RegisterRequest registerRequest) {
@@ -157,11 +163,11 @@ public class AccountServiceImpl implements AccountService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
-        LoginResponse loginResponse = LoginResponse.builder()
-                .accessToken(securityUtil.createAccessToken(authentication))
-                .account(accountEntity)
-                .expiresIn(securityUtil.getExpirationTime())
-                .build();
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .accessToken(securityUtil.createAccessToken(authentication))
+                    .account(accountEntity)
+                    .expiresIn(securityUtil.getExpirationTime())
+                    .build();
 
             return Optional.of(loginResponse);
 
@@ -371,8 +377,70 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<AccountEntity> create(RegisterRequest t) {
-        return Optional.empty();
+    public Optional<AccountEntity> create(RegisterRequest registerRequest) {
+
+        if (accountRepository.findByEmail(registerRequest.getEmail()).isEmpty()) {
+            if (registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+                AccountEntity accountEntity = accountMapper.toAccount(registerRequest);
+                accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+                accountEntity.setIsDeleted(0);
+                accountEntity.setStatus(1);
+
+                accountRepository.save(accountEntity);
+
+                switch (registerRequest.getRole()) {
+                    case CHALLENGER -> {
+                        accountEntity.setRole(Role.CHALLENGER);
+
+                        // create challenger profile
+                        ChallengerEntity challengerEntity = ChallengerEntity.builder()
+                                .accountId(accountEntity.getId())
+                                .build();
+
+                        challengerRepository.save(challengerEntity);
+
+                        // get 2 challenge sample by category "challenge sample"
+                        CategoryEntity category = categoryRepository.findByTitle("Challenge Sample")
+                                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXIST));
+                        Pageable a = PageRequest.of(1, 1, Sort.by("createAt").descending());
+                        List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
+                        listChallenge.forEach(challengeEntity -> {
+                            solutionRepository.save(SolutionEntity.builder()
+                                    .challengerId(challengerEntity.getId())
+                                    .challengeId(challengeEntity.getId())
+                                    .build());
+                        });
+
+//                        // create 2 solution for challenge sample
+//                        solutionRepository.save(SolutionEntity.builder()
+//                                .challengerId(challengerEntity.getId())
+//                                .challengeId()
+//                                .build());
+//                        solutionRepository.save(SolutionEntity.builder().build());
+                    }
+                    case RECRUITER -> {
+                        accountEntity.setRole(Role.RECRUITER);
+
+                        // create challenger profile
+                        RecruiterEntity recruiterEntity = RecruiterEntity.builder()
+                                .accountId(accountEntity.getId())
+                                .build();
+
+                        recruiterRepository.save(recruiterEntity);
+                    }
+                    default -> throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+                }
+
+
+                return Optional.of(accountEntity);
+            } else {
+                throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+            }
+
+        } else {
+            throw new AppException(ErrorCode.ACCOUNT_EXIST);
+        }
+
     }
 
     @Override
