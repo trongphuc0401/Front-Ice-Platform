@@ -24,8 +24,11 @@ public interface ApiEndpoints {
     String VERIFY_FORGOT_PASSWORD_OTP = "/verify-forgot-password-otp"; //POST
 
 
+    // Common API
     String ID  = "{id}";
     String IMAGES = "/images";
+    String UPLOAD_CV = "/cv";
+    String DOWNLOAD_CV = "/cv/{id}";
 
     // Profile API
     String PROFILE_API = "/profile";
@@ -33,7 +36,7 @@ public interface ApiEndpoints {
     String UPDATE_INFO = "/{id}";  // PUT
     String UPLOAD_AVATAR = "/images";  // PUT
     String UPLOAD_BANNER = "/banner";  // PUT
-    String UPLOAD_CV = "/cv";
+
 
     // Challenger API
     String CHALLENGER_API = BASE_API_URL + "/challenger";
@@ -51,6 +54,7 @@ public interface ApiEndpoints {
 
     // Challenge API
     String CHALLENGE_API = BASE_API_URL + "/challenge";
+    String DOWNLOAD_ASSETS = "/assets/{id}";
 
     // Solution API
     String SOLUTION_API = BASE_API_URL + "/solution";

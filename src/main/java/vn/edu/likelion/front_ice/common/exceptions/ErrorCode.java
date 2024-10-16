@@ -17,6 +17,7 @@ public enum ErrorCode {
     VERIFIED(RestAPIStatus.OK,1201,"OTP verified","OK","OTP đã được xác thực"),
     SENT_OTP_EMAIL(RestAPIStatus.OK,1202,"Sent OTP Email","OK","OTP đã được gửi về mail"),
     PASSWORD_CHANGED(RestAPIStatus.OK,1203,"Password changed successful","OK","OTP cho quên mật khẩu đã được gửi về mail."),
+    DOWNLOAD_SUCCESSFUL(RestAPIStatus.OK,1204,"Download successful","OK","Tải file thành công."),
 
 
     INVALID_KEY(RestAPIStatus.BAD_REQUEST,-100,"Invalid input object type!","Bad Request","Dữ liệu đầu vào không hợp lệ"),
@@ -47,7 +48,7 @@ public enum ErrorCode {
     RESET_TOKEN_INVALID(RestAPIStatus.BAD_REQUEST, -122, "Invalid reset token", "Bad Request", "Mã đặt lại mật khẩu không hợp lệ"),
     INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, -123, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
     CV_UPLOAD_FAILED(RestAPIStatus.FAIL, -124, "Failed to upload CV", "Fail", "Upload CV thất bại"),
-
+    INVALID_JWT_TOKEN(RestAPIStatus.BAD_REQUEST,-125,"Invalid Jwt Token","Bad Request","JWT Token không hợp lệ"),
     // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),

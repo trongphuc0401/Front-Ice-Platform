@@ -31,9 +31,6 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     String password;
 
-    // @Column(nullable = false)
-    // AccountType accountType; ?? chi ta
-
     @Column(nullable = false)
     Role role;
 
