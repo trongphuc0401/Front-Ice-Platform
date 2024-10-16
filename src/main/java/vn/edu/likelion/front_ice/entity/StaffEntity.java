@@ -20,7 +20,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "tbl_staff")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
