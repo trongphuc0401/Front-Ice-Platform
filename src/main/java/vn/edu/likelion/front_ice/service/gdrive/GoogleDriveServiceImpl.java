@@ -1,23 +1,18 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.Permission;
-import org.apache.http.entity.FileEntity;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
-import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.ResourceEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
@@ -34,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * GoogleDriveServiceImpl -
@@ -72,6 +66,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         Path filePath= Paths.get(currentDirectory, "credentials.json");
         return filePath.toString();
     }
+
+
 
     private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
         UploadAvatarResponse response = new UploadAvatarResponse();
@@ -288,13 +284,21 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
-    public InputStream downloadAssects(String challengeId, FileEntity fileEntity) throws IOException {
+    public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
+
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
-                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST)
-        );
+                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
-        return null;
+        String fileId = resourceEntity.getAssetsUrl().replace("https://drive.google.com/uc?export=view&id=", "");
+
+        Drive drive = createDriveService();
+
+        InputStream inputStream;
+        inputStream = drive.files().get(fileId).executeMediaAsInputStream();
+
+        return inputStream;
     }
 
 

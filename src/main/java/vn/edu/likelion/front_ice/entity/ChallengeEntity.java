@@ -80,12 +80,4 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "is_hidden", nullable = false)
     boolean isHidden;
 
-    @Column(name = "mobile_design_image", columnDefinition = "TEXT NOT NULL")
-    String mobileDesignImage;
-
-    @Column(name = "tablet_design_image", columnDefinition = "TEXT NOT NULL")
-    String tabletDesignImage;
-
-    @Column(name = "desktop_design_image", columnDefinition = "TEXT NOT NULL")
-    String desktopDesignImage;
 }
