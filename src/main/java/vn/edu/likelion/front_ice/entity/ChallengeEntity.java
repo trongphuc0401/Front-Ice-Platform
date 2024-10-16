@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -27,14 +28,21 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "title", length = 250, nullable = false)
     String title;
 
-    @Column(name = "category_id", nullable = false) // chưa nối bảng khi làm rồi hãy nối
-    String categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity category;
 
-    @Column(name = "technical_id", nullable = false) // chưa nối bảng khi làm ròi hãy nối
-    String technicalId;
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_challenge_technical",
+            joinColumns = @JoinColumn(name = "challenge_id"),
+            inverseJoinColumns = @JoinColumn(name = "technical_id")
+    )
+    private Set<TechnicalEntity> technicals;
 
-    @Column(name = "challenge_point_id", nullable = false)  // chưa nối bảng khi làm ròi hãy nối
-    String challengePointId;
+    @ManyToOne
+    @JoinColumn(name = "challenge_point_id", nullable = false)
+    private ChallengePointEntity challengePoint;
 
     @OneToOne(mappedBy = "challenge",
             cascade = CascadeType.ALL,
