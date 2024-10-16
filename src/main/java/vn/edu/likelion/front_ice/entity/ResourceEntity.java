@@ -35,7 +35,6 @@ public class ResourceEntity extends BaseEntity {
     @Column(name = "assets_size")
     Long assetsSize;
 
-
     @Column(name = "figma_url", length = 255)
     String figmaUrl;
 
