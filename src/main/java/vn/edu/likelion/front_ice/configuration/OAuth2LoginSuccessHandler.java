@@ -71,6 +71,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 accountEntity.setLastName(lastName);
                 accountEntity.setAvatar(avatar);
                 accountEntity.setStatus(1);
+                accountEntity.setIsAuthenticated(1);
             } else {
                 String dummyPassword = UUID.randomUUID().toString();
                 accountEntity = AccountEntity.builder()
@@ -81,6 +82,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                         .password(dummyPassword)
                         .status(1)
                         .role(Role.CHALLENGER)
+                        .isAuthenticated(1)
                         .build();
                 accountRepository.save(accountEntity);
             }
