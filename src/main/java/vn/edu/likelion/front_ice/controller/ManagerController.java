@@ -12,6 +12,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
@@ -38,6 +39,7 @@ public class ManagerController {
 
     @Autowired
     private GoogleDriveService googleDriveService;
+    @Autowired private SecurityUtil securityUtil;
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
@@ -48,13 +50,13 @@ public class ManagerController {
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestParam("accountId") String accountId,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("image") MultipartFile file) throws
             IOException {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
         String originalFilename = file.getOriginalFilename();
         String contentType = file.getContentType();
 
@@ -62,10 +64,10 @@ public class ManagerController {
             throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
         }
 
-        File tempFile = File.createTempFile("manager_", accountId);
+        File tempFile = File.createTempFile("manager_","");
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadManagerAvatar(accountId,tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadManagerAvatar(token,tempFile));
 
     }
 
