@@ -12,6 +12,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
@@ -37,6 +38,7 @@ public class MentorController {
     private StaffService staffService;
     @Autowired
     private GoogleDriveService googleDriveService;
+    @Autowired private SecurityUtil securityUtil;
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_MENTOR')")
@@ -47,13 +49,13 @@ public class MentorController {
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     @PreAuthorize("hasAuthority('ROLE_MENTOR')")
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestParam("accountId") String accountId,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("image") MultipartFile file) throws
             IOException {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
         String originalFilename = file.getOriginalFilename();
         String contentType = file.getContentType();
 
@@ -61,10 +63,10 @@ public class MentorController {
             throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
         }
 
-        File tempFile = File.createTempFile("mentor", accountId);
+        File tempFile = File.createTempFile("mentor", null);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadMentorAvatar(accountId,tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadMentorAvatar(token,tempFile));
 
     }
 

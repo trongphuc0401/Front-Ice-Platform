@@ -15,11 +15,11 @@ public class PreviewEntity extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "challenge_id", nullable = false)
-    private ChallengeEntity challenge;
+    ChallengeEntity challenge;
 
     @Column(columnDefinition = "TEXT")
-    private String url;
+    String url;
 
     @Column(columnDefinition = "TEXT")
-    private String label;
+    String label;
 }

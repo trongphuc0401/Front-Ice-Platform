@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.exceptions.AppException;
+import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import javax.crypto.SecretKey;
@@ -106,6 +108,13 @@ public class SecurityUtil {
     public static Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
+    }
+
+    public String extractJwtFromHeader(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);  // Bỏ đi tiền tố "Bearer "
+        }
+        throw new AppException(ErrorCode.INVALID_JWT_TOKEN);
     }
 
     private static String extractPrincipal(Authentication authentication) {

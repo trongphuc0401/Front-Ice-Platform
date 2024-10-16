@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
  */
 @Entity
 @Table(name = "tbl_resource")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,9 +34,6 @@ public class ResourceEntity extends BaseEntity {
 
     @Column(name = "assets_size")
     Long assetsSize;
-
-    @Column(name = "assets_provider", columnDefinition = "TEXT")
-    String assetsProvider;
 
     @Column(name = "figma_url", length = 255)
     String figmaUrl;

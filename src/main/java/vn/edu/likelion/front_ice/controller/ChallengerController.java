@@ -12,6 +12,7 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class ChallengerController {
     
     @Autowired
     private GoogleDriveService googleDriveService;
+    @Autowired private SecurityUtil securityUtil;
 
     @PostMapping(ApiEndpoints.FOLLOW)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
@@ -59,12 +61,14 @@ public class ChallengerController {
     
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestParam("accountId") String accountId,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("image") MultipartFile file) throws
             IOException {
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
+
         String originalFilename = file.getOriginalFilename();
         String contentType = file.getContentType();
 
@@ -74,7 +78,7 @@ public class ChallengerController {
         File tempFile = File.createTempFile("challenger_", null);
         file.transferTo(tempFile);
 
-        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(accountId,tempFile));
+        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(token,tempFile));
 
     }
 
@@ -84,26 +88,27 @@ public class ChallengerController {
         return responseUtil.successResponse(challengerService.getDetailsProfile(id));
     }
 
+
     @PostMapping(ApiEndpoints.UPLOAD_CV)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadCV(
-            @RequestParam("accountId") String accountId,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("cv") MultipartFile file) throws IOException {
 
-        // Kiểm tra nếu file rỗng
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.CV_UPLOAD_FAILED);
         }
 
-        // Tạo file tạm thời với đuôi .pdf
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
+
         File tempFile = File.createTempFile("CV_", ".pdf");
 
         try {
-            // Chuyển dữ liệu từ MultipartFile sang file tạm
+
             file.transferTo(tempFile);
 
-            // Xóa file tạm sau khi hoàn thành (dù thành công hay thất bại)
-            return responseUtil.successResponse(googleDriveService.uploadCV(accountId, tempFile));
+
+            return responseUtil.successResponse(googleDriveService.uploadCV(token, tempFile));
 
         } finally {
             // Đảm bảo xóa file tạm sau khi sử dụng
@@ -112,6 +117,7 @@ public class ChallengerController {
             }
         }
     }
+
 
 
 }

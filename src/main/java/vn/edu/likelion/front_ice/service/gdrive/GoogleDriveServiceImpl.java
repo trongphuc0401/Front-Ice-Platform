@@ -1,37 +1,34 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.Permission;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
-import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.ResourceEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.ResourceRepository;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * GoogleDriveServiceImpl -
@@ -50,13 +47,17 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     private final ChallengerRepository challengerRepository;
     private final ChallengeRepository challengeRepository;
     private final ResourceRepository resourceRepository;
+    private final SecurityUtil securityUtil;
+
 
     public GoogleDriveServiceImpl(AccountRepository accountRepository, ChallengerRepository challengerRepository,
-                                  ChallengeRepository challengeRepository, ResourceRepository resourceRepository) {
+                                  ChallengeRepository challengeRepository, ResourceRepository resourceRepository,
+                                  SecurityUtil securityUtil) {
         this.accountRepository = accountRepository;
         this.challengerRepository = challengerRepository;
         this.challengeRepository = challengeRepository;
         this.resourceRepository = resourceRepository;
+        this.securityUtil = securityUtil;
     }
 
     private static String getPathToGoogleCredentials() {
@@ -67,226 +68,160 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-    @Override public UploadAvatarResponse uploadChallengerAvatar(String accountChallengerId,File file) {
 
+    private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
-        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+        // Lấy email từ accessToken
+        String email = SecurityUtil.getCurrentUserLogin()
+                .orElseThrow(() -> new AppException(errorCode));
+
+        // Tìm AccountEntity bằng email
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(errorCode));
 
         try {
-            String folderId = "1dD24z_IAgyaY7bPbCPlx2m23jyQXELaQ";
             Drive drive = createDriveService();
-            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
+            String newFileName = "Avatar_" + accountEntity.getFirstName() + "_" + accountEntity.getLastName() + "_" + System.currentTimeMillis() + ".jpeg";
 
+            // Đổi tên file
             File renamedFile = new File(file.getParent(), newFileName);
             if (!file.renameTo(renamedFile)) {
                 throw new IOException("Failed to rename file to " + newFileName);
             }
+
+            // Chuẩn bị metadata cho file
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
             fileMetaData.setName(newFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
+
+            // Tạo FileContent với loại MIME là image/jpeg
             FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
+
+            // Tải file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
-            String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
+
+            // Tạo URL công khai cho hình ảnh
+            String imageUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
             System.out.println("IMAGE URL: " + imageUrl);
+
             // Đặt quyền chia sẻ công khai cho tệp
             Permission permission = new Permission();
             permission.setType("anyone");
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
-            file.delete();
+
+            // Xóa tệp cục bộ sau khi tải lên thành công
+            renamedFile.delete();
+
+            // Cập nhật URL vào AccountEntity và lưu lại
             response.setUrl(imageUrl);
             accountEntity.setAvatar(imageUrl);
             accountRepository.save(accountEntity);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        return response;
-    }
 
-    @Override public UploadAvatarResponse uploadManagerAvatar(String accountChallengerId, File file) {
-        UploadAvatarResponse response = new UploadAvatarResponse();
-
-        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_EXIST));
-
-        try {
-            String folderId = "1vpYYN0SNilcKW89MF63ABvFr80HFQlyv";
-            Drive drive = createDriveService();
-            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
-
-            File renamedFile = new File(file.getParent(), newFileName);
-            if (!file.renameTo(renamedFile)) {
-                throw new IOException("Failed to rename file to " + newFileName);
-            }
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(newFileName);
-            fileMetaData.setParents(Collections.singletonList(folderId));
-            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
-            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
-                    .setFields("id").execute();
-            String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
-            System.out.println("IMAGE URL: " + imageUrl);
-            // Đặt quyền chia sẻ công khai cho tệp
-            Permission permission = new Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-            drive.permissions().create(uploadedFile.getId(), permission).execute();
-            file.delete();
-            response.setUrl(imageUrl);
-            accountEntity.setAvatar(imageUrl);
-            accountRepository.save(accountEntity);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        return response;
-    }
-
-    @Override public UploadAvatarResponse uploadMentorAvatar(String accountChallengerId, File file) {
-        UploadAvatarResponse response = new UploadAvatarResponse();
-
-        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.MENTOR_NOT_EXIST));
-
-        try {
-            String folderId = "1H2NC6sEKLrFTMbA1GQjrUoHTdjS1gJEo";
-            Drive drive = createDriveService();
-
-            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
-
-            File renamedFile = new File(file.getParent(), newFileName);
-            if (!file.renameTo(renamedFile)) {
-                throw new IOException("Failed to rename file to " + newFileName);
-            }
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(newFileName);
-            fileMetaData.setParents(Collections.singletonList(folderId));
-
-            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
-            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
-                    .setFields("id").execute();
-            String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
-            System.out.println("IMAGE URL: " + imageUrl);
-            // Đặt quyền chia sẻ công khai cho tệp
-            Permission permission = new Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-            drive.permissions().create(uploadedFile.getId(), permission).execute();
-            file.delete();
-            response.setUrl(imageUrl);
-            accountEntity.setAvatar(imageUrl);
-            accountRepository.save(accountEntity);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        return response;
-    }
-
-    @Override public UploadAvatarResponse uploadAdminAvatar(String accountChallengerId, File file) {
-
-        // sprint 4 sẽ làm cái này
-        return null;
-    }
-
-    @Override public UploadAvatarResponse uploadRecruiterAvatar(String accountChallengerId, File file)  {
-        UploadAvatarResponse response = new UploadAvatarResponse();
-
-        AccountEntity accountEntity = accountRepository.findById(accountChallengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_EXIST));
-
-        try {
-            String folderId = "1YysRUafhz5seAY9Oa_LzCATYQyA1ZXcn";
-            Drive drive = createDriveService();
-
-            String newFileName = "Avatar_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
-
-            File renamedFile = new File(file.getParent(), newFileName);
-            if (!file.renameTo(renamedFile)) {
-                throw new IOException("Failed to rename file to " + newFileName);
-            }
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(newFileName);
-            fileMetaData.setParents(Collections.singletonList(folderId));
-
-            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
-            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
-                    .setFields("id").execute();
-            String imageUrl = "https://drive.google.com/uc?export=view&id="+uploadedFile.getId();
-            System.out.println("IMAGE URL: " + imageUrl);
-            // Đặt quyền chia sẻ công khai cho tệp
-            Permission permission = new Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-            drive.permissions().create(uploadedFile.getId(), permission).execute();
-            file.delete();
-            response.setUrl(imageUrl);
-            accountEntity.setAvatar(imageUrl);
-            accountRepository.save(accountEntity);
         } catch (IOException | GeneralSecurityException e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error uploading avatar: " + e.getMessage());
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
+
         return response;
+    }
+
+
+    @Override
+    public UploadAvatarResponse uploadChallengerAvatar(String accessToken, File file) {
+        String folderId = "1dD24z_IAgyaY7bPbCPlx2m23jyQXELaQ";
+        return uploadAvatar( file, folderId, ErrorCode.CHALLENGER_NOT_EXIST);
+    }
+
+
+    @Override
+    public UploadAvatarResponse uploadManagerAvatar(String accessToken, File file) {
+        String folderId = "1vpYYN0SNilcKW89MF63ABvFr80HFQlyv";
+        return uploadAvatar( file, folderId, ErrorCode.MANAGER_NOT_EXIST);
     }
 
     @Override
-    public UploadAvatarResponse uploadCV(String accountId, File file) {
+    public UploadAvatarResponse uploadMentorAvatar(String accessToken, File file) {
+        String folderId = "1H2NC6sEKLrFTMbA1GQjrUoHTdjS1gJEo";
+        return uploadAvatar( file, folderId, ErrorCode.MENTOR_NOT_EXIST);
+    }
+
+    @Override
+    public UploadAvatarResponse uploadAdminAvatar(String accessToken, File file) {
+        // Placeholder logic for admin avatar, same as others but different folderId
+        String folderId = "admin_folder_id";
+        return uploadAvatar( file, folderId, ErrorCode.MENTOR_NOT_EXIST);
+    }
+
+    @Override
+    public UploadAvatarResponse uploadRecruiterAvatar(String accessToken, File file) {
+        String folderId = "1YysRUafhz5seAY9Oa_LzCATYQyA1ZXcn";
+        return uploadAvatar( file, folderId, ErrorCode.RECRUITER_NOT_EXIST);
+    }
+
+    private String uploadFileToDrive(File file, String folderId, String newFileName) throws IOException, GeneralSecurityException {
+        Drive drive = createDriveService();
+
+        // Rename the file
+        File renamedFile = new File(file.getParent(), newFileName);
+        if (!file.renameTo(renamedFile)) {
+            throw new IOException("Failed to rename file to " + newFileName);
+        }
+
+        com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+        fileMetaData.setName(newFileName);
+        fileMetaData.setParents(Collections.singletonList(folderId));
+
+        FileContent mediaContent = new FileContent("application/pdf", renamedFile);
+        com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                .setFields("id").execute();
+
+        // Set public permissions
+        Permission permission = new Permission();
+        permission.setType("anyone");
+        permission.setRole("reader");
+        drive.permissions().create(uploadedFile.getId(), permission).execute();
+
+        // Delete local file after upload
+        renamedFile.delete();
+
+        // Return public URL
+        return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+    }
+
+
+    @Override
+    public UploadAvatarResponse uploadCV(String accessToken , File file) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
-        // Kiểm tra xem tài khoản có tồn tại hay không
-        ChallengerEntity challengerEntity = challengerRepository.findByAccountId(accountId)
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-        AccountEntity accountEntity = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.MANAGER_NOT_EXIST));
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         try {
             String folderId = "1sM4AJtU45u3Mg2X9Z0ZZozHXv7aNXIyi";
-            Drive drive = createDriveService();
+            String newFileName = "CV_" + accountEntity.getFirstName() + "_" + accountEntity.getLastName() + "_" + System.currentTimeMillis() + ".pdf";
 
-            String originalFileName = file.getName();
-            String newFileName = "CV_" + accountEntity.getFirstName()+"_"+accountEntity.getLastName()+"_"+System.currentTimeMillis() + ".pdf";
-
-            File renamedFile = new File(file.getParent(), newFileName);
-            if (!file.renameTo(renamedFile)) {
-                throw new IOException("Failed to rename file to " + newFileName);
-            }
-
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(newFileName);  // Đảm bảo tên file có đuôi .pdf
-            fileMetaData.setParents(Collections.singletonList(folderId));
-
-            FileContent mediaContent = new FileContent("application/pdf", renamedFile);
-
-            // Upload file lên Google Drive
-            com.google.api.services.drive.model.File uploadedFile = drive.files()
-                    .create(fileMetaData, mediaContent)
-                    .setFields("id")
-                    .execute();
-
-            // Tạo URL cho file PDF đã được upload
-            String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            String fileUrl = uploadFileToDrive(file, folderId, newFileName);
             System.out.println("FILE URL: " + fileUrl);
 
-            // Đặt quyền chia sẻ công khai cho file
-            Permission permission = new Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-            drive.permissions().create(uploadedFile.getId(), permission).execute();
-
-            renamedFile.delete();
-
-            // Cập nhật URL cho file CV
             response.setUrl(fileUrl);
             challengerEntity.setUrlCV(fileUrl);
             challengerRepository.save(challengerEntity);
+
         } catch (IOException | GeneralSecurityException e) {
             System.out.println(e.getMessage());
         }
 
         return response;
     }
+
 
     @Override public AssetsResponse uploadAssets(String challengeId, File file) {
 
@@ -347,6 +282,23 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             System.out.println(e.getMessage());
         }
         return response;
+    }
+
+    public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
+
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
+                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        String fileId = resourceEntity.getAssetsUrl().replace("https://drive.google.com/uc?export=view&id=", "");
+
+        Drive drive = createDriveService();
+
+        InputStream inputStream;
+        inputStream = drive.files().get(fileId).executeMediaAsInputStream();
+
+        return inputStream;
     }
 
 
