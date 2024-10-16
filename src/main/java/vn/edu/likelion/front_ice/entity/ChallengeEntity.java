@@ -50,6 +50,11 @@ public class ChallengeEntity extends BaseEntity {
             optional = false)
     ResourceEntity resource;
 
+    @OneToMany(mappedBy = "challenge",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Set<PreviewEntity> previews;
+
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime openDate;
@@ -80,12 +85,9 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "is_hidden", nullable = false)
     boolean isHidden;
 
-    @Column(name = "mobile_design_image", columnDefinition = "TEXT NOT NULL")
-    String mobileDesignImage;
+    @Column(name = "assets", columnDefinition = "TEXT")
+    String assets;
 
-    @Column(name = "tablet_design_image", columnDefinition = "TEXT NOT NULL")
-    String tabletDesignImage;
-
-    @Column(name = "desktop_design_image", columnDefinition = "TEXT NOT NULL")
-    String desktopDesignImage;
+    @Column(name = "brief", columnDefinition = "TEXT")
+    String brief;
 }
