@@ -301,6 +301,21 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return inputStream;
     }
 
+    public InputStream downloadFigma(String challengeId) throws IOException, GeneralSecurityException {
+
+        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
+                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        String fileId = resourceEntity.getFigmaUrl().replace("https://drive.google.com/uc?export=view&id=", "");
+
+        Drive drive = createDriveService();
+
+        InputStream inputStream;
+        inputStream = drive.files().get(fileId).executeMediaAsInputStream();
+
+        return inputStream;
+    }
+
 
     private Drive createDriveService() throws GeneralSecurityException,IOException {
 

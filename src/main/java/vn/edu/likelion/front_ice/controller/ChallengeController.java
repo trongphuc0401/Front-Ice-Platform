@@ -76,5 +76,29 @@ public class ChallengeController {
                 .body(resource);
     }
 
+    @GetMapping(ApiEndpoints.DOWNLOAD_FIGMA)
+    public ResponseEntity<Resource> downloadFigma(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable(value = "id") String challengeId)
+            throws IOException, GeneralSecurityException {
+
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
+        if (token.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_JWT_TOKEN);
+        }
+
+        InputStream fileStream = googleDriveServiceImpl.downloadFigma(challengeId);
+
+        InputStreamResource resource = new InputStreamResource(fileStream);
+
+        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resourceEntity.getAssetsName() + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
 
 }
