@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.service.gdrive;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.DesignImageResponse;
 
 import java.io.File;
 
@@ -29,6 +30,8 @@ public interface GoogleDriveService{
 
     AssetsResponse uploadAssets(String challengeId , File file);
 
-
     AssetsResponse uploadFigma(String challengeId, File file);
+
+    DesignImageResponse uploadImageDesktop(File file);
+
 }

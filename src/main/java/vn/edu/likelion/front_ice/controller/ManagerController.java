@@ -105,6 +105,7 @@ public class ManagerController {
         }
     }
 
+
     @PostMapping(ApiEndpoints.UPLOAD_FIGMA)
     public ResponseEntity<RestAPIResponse<Object>> uploadFigma(
             @RequestParam("challengeId") String challengeId,
@@ -132,5 +133,37 @@ public class ManagerController {
             }
         }
     }
+
+    @PostMapping(ApiEndpoints.UPLOAD_DESKTOP_DESIGN)
+    public ResponseEntity<RestAPIResponse<Object>> uploadDesktopDesign(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("desktop") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+        securityUtil.extractJwtFromHeader(authorizationHeader);
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
+        }
+
+        File tempFile = File.createTempFile("desktop"
+                +"_", ".zip");
+
+        try {
+            file.transferTo(tempFile);
+            return responseUtil.successResponse(googleDriveService.uploadImageDesktop(tempFile));
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+
+
 
 }

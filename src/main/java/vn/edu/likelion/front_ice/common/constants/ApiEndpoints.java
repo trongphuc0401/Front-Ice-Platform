@@ -67,6 +67,10 @@ public interface ApiEndpoints {
     String MANAGER_API = BASE_API_URL + "/manager";
     String UPLOAD_ASSETS = "/assets";
     String UPLOAD_FIGMA = "/figma";
+    String UPLOAD_DESKTOP_DESIGN = "/desktop";
+    String UPLOAD_MOBILE_DESIGN = "/mobile";
+    String UPLOAD_TABLET_DESIGN = "/tablet";
+
 
 
     // Notification API
