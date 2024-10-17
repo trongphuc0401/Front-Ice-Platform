@@ -208,7 +208,7 @@ public class ManagerController {
             throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
         }
 
-        File tempFile = File.createTempFile("mobile"
+        File tempFile = File.createTempFile("tablet"
                 +"_", ".zip");
 
         try {

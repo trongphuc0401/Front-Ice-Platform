@@ -226,7 +226,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return uploadDesignImage(file, folderId,ErrorCode.IMAGE_MOBILE,"mobile design");
     }
     @Override public DesignImageResponse uploadImageTablet(File file) {
-        String folderId = "1OYmbANIPhLoaCnCs7NeYd0-zLXQbB0vm";
+        String folderId = "1Z-RIvXxqzM6Bk0wf7HLjFlR7joqLLXAF";
         return uploadDesignImage(file, folderId,ErrorCode.IMAGE_TABLET,"tablet design");
     }
 
