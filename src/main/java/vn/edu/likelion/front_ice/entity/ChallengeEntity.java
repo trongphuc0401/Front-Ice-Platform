@@ -52,6 +52,7 @@ public class ChallengeEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "challenge",
             cascade = CascadeType.ALL,
+            orphanRemoval = true,
             fetch = FetchType.LAZY)
     Set<PreviewEntity> previews;
 
