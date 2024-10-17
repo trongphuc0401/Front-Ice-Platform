@@ -39,7 +39,6 @@ public class GlobalExceptionHandler {
         restAPIResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCodeError());
         restAPIResponse.setMessageEng(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessageEng());
         restAPIResponse.setMessageVN(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessageVN());
-
         restAPIResponse.setTimestamp(LocalDateTime.now());
 
         return ResponseEntity.badRequest().body(restAPIResponse);
