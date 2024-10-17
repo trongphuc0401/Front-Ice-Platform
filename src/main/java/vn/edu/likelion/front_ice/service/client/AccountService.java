@@ -4,6 +4,7 @@ import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RefreshTokenResponse;
 import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.service.BaseService;
@@ -41,7 +42,7 @@ public interface AccountService extends BaseService<AccountEntity, RegisterReque
 
     void updateAccountToken(String token, String email);
 
-    Optional<LoginResponse> refreshToken(String refreshToken);
+    Optional<RefreshTokenResponse> refreshToken(String refreshToken);
 
     void clearRefreshToken(String email);
 
