@@ -174,11 +174,6 @@ public class AccountServiceImpl implements AccountService {
                 .account(accountEntity)
                 .expiresIn(securityUtil.getExpirationTime())
                 .build();
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .accessToken(securityUtil.createAccessToken(authentication))
-                    .account(accountEntity)
-                    .expiresIn(securityUtil.getExpirationTime())
-                    .build();
 
             return Optional.of(loginResponse);
 
