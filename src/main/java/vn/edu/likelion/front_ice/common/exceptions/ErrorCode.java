@@ -56,8 +56,11 @@ public enum ErrorCode {
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
     ASSETS_UPLOAD_FAILED(RestAPIStatus.FAIL,-302 ,"Failed to upload Assets","Fail","Upload Assets thất bại"),
-
     CATEGORY_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-303 ,"Category not exist","Bad Request","Category không tồn tại"),
+    IMAGE_DESKTOP(RestAPIStatus.BAD_REQUEST,-304 ,"Image desktop not exist","Bad Request","Hình ảnh desktop không tồn tại"),
+    IMAGE_MOBILE(RestAPIStatus.BAD_REQUEST,-305 ,"Image mobile not exist","Bad Request","Hình ảnh mobile không tồn tại"),
+    IMAGE_TABLET(RestAPIStatus.BAD_REQUEST,-306 ,"Image tablet not exist","Bad Request","Hình ảnh mobile không tồn tại"),
+
 
     // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
