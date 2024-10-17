@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
@@ -42,6 +43,7 @@ public class AccountController {
     private AccountMapper accountMapper;
 
     @PostMapping(ApiEndpoints.SIGN_UP)
+    @Transactional
     public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
         Optional<AccountEntity> entity = (accountService.create(registerRequest));
         return responseUtil.successResponse(accountMapper.toRegisterResponse(

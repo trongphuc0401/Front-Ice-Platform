@@ -402,7 +402,7 @@ public class AccountServiceImpl implements AccountService {
                         // get 2 challenge sample by category "challenge sample"
                         CategoryEntity category = categoryRepository.findByTitle("Challenge Sample")
                                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXIST));
-                        Pageable a = PageRequest.of(1, 1, Sort.by("createAt").descending());
+                        Pageable a = PageRequest.of(1, 2, Sort.by("createAt").descending());
                         List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
                         listChallenge.forEach(challengeEntity -> {
                             solutionRepository.save(SolutionEntity.builder()
@@ -410,13 +410,6 @@ public class AccountServiceImpl implements AccountService {
                                     .challengeId(challengeEntity.getId())
                                     .build());
                         });
-
-//                        // create 2 solution for challenge sample
-//                        solutionRepository.save(SolutionEntity.builder()
-//                                .challengerId(challengerEntity.getId())
-//                                .challengeId()
-//                                .build());
-//                        solutionRepository.save(SolutionEntity.builder().build());
                     }
                     case RECRUITER -> {
                         accountEntity.setRole(Role.RECRUITER);
