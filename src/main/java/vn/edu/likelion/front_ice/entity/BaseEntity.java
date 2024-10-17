@@ -37,9 +37,11 @@ public abstract class BaseEntity implements Serializable {
     @Column(nullable = true, insertable = false)
     LocalDateTime updateAt;
 
-    private String createdBy;
+    @Column
+    String createdBy;
 
-    private String updatedBy;
+    @Column
+    String updatedBy;
 
     @Column(nullable = false)
     int isDeleted;
