@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,6 +29,7 @@ import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RefreshTokenResponse;
 import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
@@ -161,8 +163,17 @@ public class AccountServiceImpl implements AccountService {
         try {
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            String refreshToken = securityUtil.createRefreshToken(loginRequest.getEmail(), null);
 
+            accountEntity.setRefreshToken(refreshToken);
+            accountRepository.save(accountEntity);
 
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(securityUtil.createAccessToken(authentication))
+                .refreshToken(refreshToken)
+                .account(accountEntity)
+                .expiresIn(securityUtil.getExpirationTime())
+                .build();
             LoginResponse loginResponse = LoginResponse.builder()
                     .accessToken(securityUtil.createAccessToken(authentication))
                     .account(accountEntity)
@@ -313,27 +324,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<LoginResponse> refreshToken(String refreshToken) {
+    public Optional<RefreshTokenResponse> refreshToken(String refreshToken) {
         Jwt decodedToken = securityUtil.checkValidRefreshToken(refreshToken);
         String email = decodedToken.getSubject();
 
         AccountEntity account = accountRepository.findByEmailAndRefreshToken(email, refreshToken)
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        // new access token
         String newAccessToken = securityUtil.createAccessTokenFromEmail(email);
-        long expiresIn = securityUtil.getExpirationTime();
-
-        // new refresh token
         String newRefreshToken = securityUtil.createRefreshToken(email, null);
-        account.setRefreshToken(newRefreshToken);
-        updateAccountToken(newRefreshToken, email);
 
-        return Optional.ofNullable(LoginResponse.builder()
+        account.setRefreshToken(newRefreshToken);
+        accountRepository.save(account);
+
+        RefreshTokenResponse refreshTokenResponse = RefreshTokenResponse.builder()
                 .accessToken(newAccessToken)
-                .expiresIn(securityUtil.getExpirationTime())
-                .account(account)
-                .build());
+                .refreshToken(newRefreshToken)
+                .build();
+
+        return Optional.of(refreshTokenResponse);
     }
 
     @Override

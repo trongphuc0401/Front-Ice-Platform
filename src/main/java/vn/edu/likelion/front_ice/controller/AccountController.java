@@ -13,6 +13,7 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.account.*;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
+import vn.edu.likelion.front_ice.dto.response.account.RefreshTokenResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -53,20 +54,8 @@ public class AccountController {
 
     @PostMapping(ApiEndpoints.LOGIN)
     public ResponseEntity<RestAPIResponse<Object>> login(@RequestBody LoginRequest loginRequest) {
-        String refreshToken = this.securityUtil.createRefreshToken(loginRequest.getEmail(), loginRequest);
 
-        this.accountService.updateAccountToken(refreshToken, loginRequest.getEmail());
-
-        // set cookies
-        ResponseCookie resCookies = ResponseCookie
-                .from("refresh_token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(securityUtil.getRefreshTokenExpiration())
-                .build();
-
-        return responseUtil.successResponse(accountService.login(loginRequest), resCookies.toString());
+        return responseUtil.successResponse(accountService.login(loginRequest));
     }
 
     @PostMapping(ApiEndpoints.SEND_OTP)
@@ -135,18 +124,33 @@ public class AccountController {
             throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        Optional<LoginResponse> loginResponse = accountService.refreshToken(refresh_token);
+        Optional<RefreshTokenResponse> refreshTokenResponse = accountService.refreshToken(refresh_token);
 
         // Create the new refresh token cookie
         ResponseCookie refreshCookie = ResponseCookie
-                .from("refresh_token", loginResponse.get().getAccessToken())
+                .from("refresh_token", refreshTokenResponse.get().getAccessToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .maxAge(securityUtil.getRefreshTokenExpiration())
                 .build();
 
-        return responseUtil.successResponse(loginResponse, refreshCookie.toString());
+        return responseUtil.successResponse(refreshTokenResponse, refreshCookie.toString());
+    }
+
+    @PostMapping(ApiEndpoints.REFRESH_TOKEN)
+    public ResponseEntity<RestAPIResponse<Object>> handleRefreshToken(
+            @RequestBody RefreshTokenRequest refreshTokenRequest) {
+
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        RefreshTokenResponse refreshTokenResponse = accountService.refreshToken(refreshToken)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        return responseUtil.successResponse(refreshTokenResponse);
     }
 
     @PostMapping(ApiEndpoints.LOGOUT)
