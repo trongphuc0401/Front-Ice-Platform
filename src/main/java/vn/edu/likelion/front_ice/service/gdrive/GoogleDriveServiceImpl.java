@@ -219,7 +219,15 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     @Override public DesignImageResponse uploadImageDesktop(File file) {
         String folderId = "1Dd-E2PmIpnrtLgcJLs9ck3xncNUGuZdl";
-        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_DESKTOP,"desktop design"); // làm một hàm khác để upload image
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_DESKTOP,"desktop design");
+    }
+    @Override public DesignImageResponse uploadImageMobile(File file) {
+        String folderId = "1OYmbANIPhLoaCnCs7NeYd0-zLXQbB0vm";
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_MOBILE,"mobile design");
+    }
+    @Override public DesignImageResponse uploadImageTablet(File file) {
+        String folderId = "1OYmbANIPhLoaCnCs7NeYd0-zLXQbB0vm";
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_TABLET,"tablet design");
     }
 
     private String uploadFileToDrive(File file, String folderId, String newFileName) throws IOException, GeneralSecurityException {

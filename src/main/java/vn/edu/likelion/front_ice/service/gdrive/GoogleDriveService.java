@@ -34,4 +34,7 @@ public interface GoogleDriveService{
 
     DesignImageResponse uploadImageDesktop(File file);
 
+    DesignImageResponse uploadImageMobile(File file);
+
+    DesignImageResponse uploadImageTablet(File tempFile);
 }
