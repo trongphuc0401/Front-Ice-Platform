@@ -53,12 +53,12 @@ public interface ApiEndpoints {
     String MANAGER = BASE_API_URL + "/manager";
 
     // Challenge API
-    String CHALLENGE_API = BASE_API_URL + "/challenge";
+    String CHALLENGE_API = BASE_API_URL + "/challenges";
     String DOWNLOAD_ASSETS = "/assets/{id}";
     String DOWNLOAD_FIGMA = "/figma/{id}";
 
     // Solution API
-    String SOLUTION_API = BASE_API_URL + "/solution";
+    String SOLUTION_API = BASE_API_URL + "/solutions";
 
     // Mentor API
     String MENTOR_API = BASE_API_URL + "/mentor";
