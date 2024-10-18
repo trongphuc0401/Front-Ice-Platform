@@ -60,8 +60,10 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     private static String getPathToGoogleCredentials() {
 
+        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
+
         String currentDirectory = System.getProperty("user.dir");
-        Path filePath= Paths.get(currentDirectory, "credentials.json");
+        Path filePath= Paths.get(currentDirectory, credentialsJson);
         return filePath.toString();
     }
 
