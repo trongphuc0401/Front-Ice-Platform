@@ -17,10 +17,7 @@ import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -65,6 +62,23 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         String currentDirectory = System.getProperty("user.dir");
         Path filePath= Paths.get(currentDirectory, credentialsJson);
         return filePath.toString();
+    }
+    private Drive createDriveService() throws GeneralSecurityException, IOException {
+        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
+        if (credentialsJson == null || credentialsJson.isEmpty()) {
+            throw new IllegalStateException("Google Cloud credentials not found in environment variables.");
+        }
+
+        // Chuyển đổi chuỗi JSON thành InputStream để tạo GoogleCredential
+        GoogleCredential credential = GoogleCredential
+                .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()))
+                .createScoped(Collections.singleton(DriveScopes.DRIVE));
+
+        return new Drive.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(),
+                JSON_FACTORY,
+                credential)
+                .build();
     }
 
 
@@ -444,17 +458,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-    private Drive createDriveService() throws GeneralSecurityException,IOException {
 
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(SERVIEC_ACCOUNT_KEY_PATH))
-                .createScoped(Collections.singleton(DriveScopes.DRIVE));
-
-        return new Drive.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(),
-                JSON_FACTORY,
-                credential)
-                .build();
-
-    }
 
 }
