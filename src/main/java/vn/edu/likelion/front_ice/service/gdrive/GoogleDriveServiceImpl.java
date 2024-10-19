@@ -65,8 +65,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return filePath.toString();
     }
 
-
-
     private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
