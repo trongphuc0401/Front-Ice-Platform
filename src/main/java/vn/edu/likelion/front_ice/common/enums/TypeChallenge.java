@@ -3,22 +3,20 @@ package vn.edu.likelion.front_ice.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * StatusChallenge -
+ * TypeChallenge -
  *
  * @param
  * @return
  * @throws
  */
-public enum StatusChallenge {
-
-    PROCESSING("processing"),
-    APPROVED("approved"),
-    HIDE("hide"),
-    CANCEL("cancel");
+public enum TypeChallenge {
+    FREE("free"),
+    FREE_PLUS_PLUS("free++"),
+    PREMIUM("premium");
 
     private final String value;
 
-    StatusChallenge(String value) {
+    TypeChallenge(String value) {
         this.value = value;
     }
 

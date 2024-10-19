@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Difficulty -
  *
@@ -17,6 +19,8 @@ public enum Difficulty {
     private Difficulty(String value) {
         this.value = value;
     }
+
+    @JsonValue
     public String getValue() {
         return value;
     }
