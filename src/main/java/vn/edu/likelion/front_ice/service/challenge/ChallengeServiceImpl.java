@@ -12,13 +12,12 @@ import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
-import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,4 +89,37 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         return response;
     }
+
+    @Override
+    public ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by("createAt").descending());
+
+        Page<ChallengeEntity> pageChallenge = challengeRepository.findAll(pageable);
+
+        if(!pageChallenge.hasContent()){
+            throw new AppException(ErrorCode.CHALLENGE_NOT_EXIST);
+        }
+
+        List<ChallengeEntity> challenges = challengeRepository.findAll();
+
+
+        List<ChallengeResponse> challengeResponses = pageChallenge.getContent()
+                .stream()
+                .map(challengeMapper::toChallengeResponse)
+                .toList();
+
+        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
+        meta.setPageNo(pageChallenge.getNumber() + 1);
+        meta.setPageSize(pageChallenge.getSize());
+        meta.setTotalElements((int) pageChallenge.getTotalElements());
+        meta.setTotalPages(pageChallenge.getTotalPages());
+
+        ResultPaginationResponse response = new ResultPaginationResponse();
+        response.setMeta(meta);
+        response.setResult(challengeResponses);
+
+        return response;
+    }
+
+
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 
 @Component
 public class ResponseUtil {
@@ -37,6 +38,10 @@ public class ResponseUtil {
         return new RestAPIResponse<>(restApiStatus, null, errorCode, errorCode.getMessageEng());
     }
 
+    private RestAPIResponse<Object> _createResponse(RestAPIStatus restAPIStatus, Object data, SuccessCode successCode){
+        return  new RestAPIResponse<>(restAPIStatus, data, successCode);
+    }
+
     /**
      * Build HTTP Response
      * @param restApiStatus
@@ -56,6 +61,17 @@ public class ResponseUtil {
         return new ResponseEntity<>(_createResponse(restApiStatus,data),httpHeaders,httpStatus);
     }
 
+    /**
+     * Build HTTP Response using SuccessCode
+     * @param restApiStatus
+     * @param successCode
+     * @param data
+     * @return
+     */
+    public ResponseEntity<RestAPIResponse<Object>> buildResponse(RestAPIStatus restApiStatus, SuccessCode successCode, Object data) {
+        return new ResponseEntity<>(_createResponse(restApiStatus, data, successCode), HttpStatus.OK);
+    }
+
 
     /**
      *
@@ -67,10 +83,6 @@ public class ResponseUtil {
     public ResponseEntity<RestAPIResponse<Object>> buildResponse(RestAPIStatus restApiStatus, ErrorCode errorCode, HttpStatus httpStatus) {
         return new ResponseEntity<>(_createResponse(restApiStatus, errorCode), httpStatus);
     }
-
-
-
-
 
     /**
      * Return success HTTP Request
@@ -85,7 +97,12 @@ public class ResponseUtil {
         return buildResponse(RestAPIStatus.OK, errorCode, HttpStatus.OK);
     }
 
+    public ResponseEntity<RestAPIResponse<Object>> successResponse(SuccessCode successCode, Object data) {
+        return buildResponse(RestAPIStatus.OK, successCode, data);
+    }
+
+    // A default successResponse method for generic success cases without specific success code
     public ResponseEntity<RestAPIResponse<Object>> successResponse(Object data) {
-        return buildResponse(RestAPIStatus.OK, data, HttpStatus.OK);
+        return successResponse(SuccessCode.OK, data);
     }
 }

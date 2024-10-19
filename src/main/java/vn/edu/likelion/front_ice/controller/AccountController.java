@@ -11,6 +11,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.dto.request.account.*;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.dto.response.account.RefreshTokenResponse;
@@ -61,7 +62,7 @@ public class AccountController {
     @PostMapping(ApiEndpoints.SEND_OTP)
     public ResponseEntity<RestAPIResponse<Object>> sendOTP(@RequestParam String gmail) {
         accountService.generateOTP(gmail);
-        return responseUtil.successResponse(ErrorCode.SENT_OTP_EMAIL);
+        return responseUtil.successResponse(SuccessCode.SENT_OTP_EMAIL);
     }
 
     @PostMapping(ApiEndpoints.VERIFY_EMAIL)
@@ -70,7 +71,7 @@ public class AccountController {
 
         if (flag) {
             accountService.clearOTP(verifyEmailRequest.getEmail());
-            return responseUtil.successResponse(ErrorCode.VERIFIED);
+            return responseUtil.successResponse(SuccessCode.VERIFIED);
         } else {
             throw new AppException(ErrorCode.OTP_INVALID);
         }
@@ -86,7 +87,7 @@ public class AccountController {
         }
 
          accountService.generateForgotPasswordOTP(forgotPasswordRequest.getEmail());
-        return responseUtil.successResponse(ErrorCode.SENT_OTP_EMAIL);
+        return responseUtil.successResponse(SuccessCode.SENT_OTP_EMAIL);
     }
 
     @PostMapping(ApiEndpoints.VERIFY_FORGOT_PASSWORD_OTP)
@@ -111,7 +112,7 @@ public class AccountController {
         boolean isPasswordReset = accountService.resetPassword(resetPasswordRequest.getResetToken(), resetPasswordRequest.getNewPassword());
 
         if (isPasswordReset) {
-            return responseUtil.successResponse(ErrorCode.PASSWORD_CHANGED);
+            return responseUtil.successResponse(SuccessCode.PASSWORD_CHANGED);
         } else {
             throw new AppException(ErrorCode.PASSWORD_RESET_FAILED);
         }
@@ -171,6 +172,6 @@ public class AccountController {
                 .maxAge(0)
                 .build();
 
-        return responseUtil.successResponse(null, deleteCookie.toString());
+        return responseUtil.successResponse(Optional.ofNullable(null),deleteCookie.toString());
     }
 }

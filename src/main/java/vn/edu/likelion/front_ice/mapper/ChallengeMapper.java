@@ -2,19 +2,32 @@ package vn.edu.likelion.front_ice.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
-import vn.edu.likelion.front_ice.entity.AccountEntity;
-import vn.edu.likelion.front_ice.entity.ChallengeEntity;
-import vn.edu.likelion.front_ice.entity.ChallengerEntity;
-import vn.edu.likelion.front_ice.entity.LevelEntity;
+import vn.edu.likelion.front_ice.dto.response.technical.TechnicalResponse;
+import vn.edu.likelion.front_ice.entity.*;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ChallengeMapper {
 
     ChallengeEntity toChallenge(CreationChallengeRequest creationChallengeRequest);
 
+    @Mapping(target = "technicals", source = "technicals")
+    @Mapping(target = "createAt", source = "createAt", qualifiedByName = "toTimestamp")
+    @Mapping(target = "updateAt", source = "updateAt", qualifiedByName = "toTimestamp")
     ChallengeResponse toChallengeResponse(ChallengeEntity challengeEntity);
+
+    @Named("toTimestamp")
+    default Long toTimestamp(LocalDateTime localDateTime) {
+        return (localDateTime != null) ? localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null;
+    }
 }

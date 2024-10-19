@@ -2,6 +2,7 @@ package vn.edu.likelion.front_ice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.entity.ResourceEntity;
@@ -44,12 +47,21 @@ public class ChallengeController {
     @Autowired private GoogleDriveServiceImpl googleDriveServiceImpl;
     @Autowired private SecurityUtil securityUtil;
 
+//    @GetMapping
+//    @PreAuthorize("hasAnyAuthority('ROLE_RECRUITER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+//    public ResponseEntity<RestAPIResponse<Object>> getChallengeByCategory(@RequestParam String category
+//            , @RequestParam int sizeNo, @RequestParam int pageNo) {
+//        return responseUtil.successResponse(challengeService
+//                .getPaginationChallengeByCategory(category, sizeNo, pageNo));
+//    }
+
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_RECRUITER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-    public ResponseEntity<RestAPIResponse<Object>> getChallengeByCategory(@RequestParam String category
-            , @RequestParam int sizeNo, @RequestParam int pageNo) {
-        return responseUtil.successResponse(challengeService
-                .getPaginationChallengeByCategory(category, sizeNo, pageNo));
+    public ResponseEntity<RestAPIResponse<Object>> getAllChallenges(
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize) {
+
+        ResultPaginationResponse response = challengeService.getPaginationChallenge(pageNo, pageSize);
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
     }
 
     @GetMapping(ApiEndpoints.DOWNLOAD_ASSETS)
