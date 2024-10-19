@@ -89,7 +89,7 @@ public class ChallengeEntity extends BaseEntity {
     String banner;
 
     @Column(name = "is_hidden", nullable = false)
-    boolean isHidden;
+    boolean hidden;
 
     @Column(name = "assets", columnDefinition = "TEXT")
     String assets;

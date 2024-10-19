@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.query.SearchRequest;
+import vn.edu.likelion.front_ice.common.query.SearchSpecification;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
@@ -119,6 +122,14 @@ public class ChallengeServiceImpl implements ChallengeService {
         response.setResult(challengeResponses);
 
         return response;
+    }
+
+    @Override
+    public Page<ChallengeEntity> searchChallenges(SearchRequest searchRequest) {
+        Specification<ChallengeEntity> specification = new SearchSpecification<>(searchRequest);
+        Pageable pageable = SearchSpecification.getPageable(searchRequest.getPageNo() - 1, searchRequest.getPageSize());
+
+        return challengeRepository.findAll(specification, pageable);
     }
 
 

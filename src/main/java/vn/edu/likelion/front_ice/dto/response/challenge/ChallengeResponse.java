@@ -35,8 +35,7 @@ public class ChallengeResponse {
     String brief;
     String assets;
     String message;
-    Boolean isHidden;
-    List<PreviewResponse> preview;
+    Boolean hidden;
     Long createAt;
     Long updateAt;
 }
