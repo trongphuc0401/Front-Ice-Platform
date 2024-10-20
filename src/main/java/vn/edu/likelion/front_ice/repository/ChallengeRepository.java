@@ -22,6 +22,7 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
     Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
 
-    @NonNull
+
+
     Optional<ChallengeEntity> findById(String id);
 }

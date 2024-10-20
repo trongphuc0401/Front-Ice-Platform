@@ -41,6 +41,7 @@ public class ChallengeEntity extends BaseEntity {
     )
     Set<TechnicalEntity> technicals;
 
+    
     @ManyToOne
     @JoinColumn(name = "challenge_point_id", nullable = false)
     ChallengePointEntity challengePoint;
