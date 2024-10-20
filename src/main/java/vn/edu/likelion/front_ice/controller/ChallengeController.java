@@ -16,6 +16,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
+import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
@@ -121,29 +122,24 @@ public class ChallengeController {
                 .body(resource);
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<ResultPaginationResponse> searchChallenges(@RequestBody SearchRequest request) {
-        // Thực hiện tìm kiếm dựa trên SearchRequest
-        Page<ChallengeEntity> pageChallenges = challengeService.searchChallenges(request);
+    @PostMapping(ApiEndpoints.SEARCH)
+    public ResponseEntity<RestAPIResponse<Object>> searchChallenges(@RequestBody SearchRequest request) {
+//        Page<ChallengeEntity> pageChallenges = challengeService.searchChallenges(request);
+//
+//        List<ChallengeResponse> challengeResponses = pageChallenges.getContent()
+//                .stream()
+//                .map(challengeMapper::toChallengeResponse)
+//                .collect(Collectors.toList());
+//
+//        ResultPaginationResponse.Meta meta = PaginationUtil.createPaginationMeta(pageChallenges);
+//
+//        ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
+//        resultPaginationResponse.setMeta(meta);
+//        resultPaginationResponse.setResult(challengeResponses);
+//
+//        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, resultPaginationResponse);
 
-        // Chuyển đổi từ ChallengeEntity sang ChallengeResponse
-        List<ChallengeResponse> challengeResponses = pageChallenges.getContent()
-                .stream()
-                .map(challengeMapper::toChallengeResponse)
-                .collect(Collectors.toList());
-
-        // Thiết lập thông tin phân trang
-        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
-        meta.setPageNo(pageChallenges.getNumber() + 1);
-        meta.setPageSize(pageChallenges.getSize());
-        meta.setTotalElements((int) pageChallenges.getTotalElements());
-        meta.setTotalPages(pageChallenges.getTotalPages());
-
-        // Tạo đối tượng response
-        ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
-        resultPaginationResponse.setMeta(meta);
-        resultPaginationResponse.setResult(challengeResponses);
-
-        return ResponseEntity.ok(resultPaginationResponse);
+        ResultPaginationResponse response = challengeService.searchChallenges(request);
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
     }
 }
