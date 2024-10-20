@@ -24,5 +24,5 @@ public interface ChallengeService extends BaseService<ChallengeEntity, CreationC
 
     ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize);
 
-    Page<ChallengeEntity> searchChallenges(SearchRequest request);
+    ResultPaginationResponse searchChallenges(SearchRequest request);
 }

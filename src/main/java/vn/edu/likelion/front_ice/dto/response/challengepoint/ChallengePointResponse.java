@@ -13,5 +13,5 @@ import vn.edu.likelion.front_ice.common.enums.Level;
 public class ChallengePointResponse {
     Level level;
     Difficulty difficulty;
-    Integer point;
+    Integer points;
 }

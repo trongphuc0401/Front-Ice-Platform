@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @return
  * @throws
  */
-public enum TypeChallenge {
+public enum TypeChallenge implements BaseEnum<TypeChallenge> {
     FREE("free"),
     FREE_PLUS_PLUS("free++"),
     PREMIUM("premium");
@@ -23,5 +23,15 @@ public enum TypeChallenge {
     @JsonValue
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public TypeChallenge fromValue(String value) {
+        for (TypeChallenge type : TypeChallenge.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid TypeChallenge value: " + value);
     }
 }

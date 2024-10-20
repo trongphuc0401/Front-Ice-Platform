@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @return
  * @throws
  */
-public enum Level {
+public enum Level implements BaseEnum<Level> {
 
     NEWBIE("newbie"),
     BRONZE("bronze"),
@@ -28,5 +28,15 @@ public enum Level {
     @JsonValue
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public Level fromValue(String value) {
+        for (Level type : Level.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid TypeChallenge value: " + value);
     }
 }

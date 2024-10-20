@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @return
  * @throws
  */
-public enum Difficulty {
+public enum Difficulty implements BaseEnum<Difficulty> {
 
     EASY("easy"),
     MEDIUM("medium"),
@@ -23,5 +23,15 @@ public enum Difficulty {
     @JsonValue
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public Difficulty fromValue(String value) {
+        for (Difficulty type : Difficulty.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid TypeChallenge value: " + value);
     }
 }

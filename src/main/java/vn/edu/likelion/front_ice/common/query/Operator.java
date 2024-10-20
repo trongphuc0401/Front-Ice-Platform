@@ -1,11 +1,10 @@
 package vn.edu.likelion.front_ice.common.query;
 
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
+import vn.edu.likelion.front_ice.common.enums.BaseEnum;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,61 +13,87 @@ import java.util.List;
 public enum Operator {
 
     EQUAL {
-        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+        @Override
+        public <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
             Object value = request.getFieldType().parse(request.getValue().toString());
-            Expression<?> key = root.get(request.getKey());
-            return cb.and(cb.equal(key, value), predicate);
+
+            if (BaseEnum.class.isAssignableFrom(expression.getJavaType())) {
+                value = getEnumValue((Class<BaseEnum<?>>) expression.getJavaType(), value.toString());
+            }
+
+            return cb.and(cb.equal(expression, value), predicate);
         }
     },
 
     NOT_EQUAL {
-        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+        @Override
+        public <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
             Object value = request.getFieldType().parse(request.getValue().toString());
-            Expression<?> key = root.get(request.getKey());
-            return cb.and(cb.notEqual(key, value), predicate);
+
+            if (BaseEnum.class.isAssignableFrom(expression.getJavaType())) {
+                value = getEnumValue((Class<BaseEnum<?>>) expression.getJavaType(), value.toString());
+            }
+
+            return cb.and(cb.notEqual(expression, value), predicate);
         }
     },
 
     LIKE {
-        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
-            Expression<String> key = root.get(request.getKey());
-            return cb.and(cb.like(cb.upper(key), "%" + request.getValue().toString().toUpperCase() + "%"), predicate);
+        @Override
+        public <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+            Object value = request.getFieldType().parse(request.getValue().toString());
+
+            return cb.and(cb.like(cb.upper((Expression<String>) expression), "%" + value.toString().toUpperCase() + "%"), predicate);
         }
     },
 
     IN {
-        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+        @Override
+        public <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
             List<Object> values = request.getValues();
-            CriteriaBuilder.In<Object> inClause = cb.in(root.get(request.getKey()));
+            CriteriaBuilder.In<Object> inClause = cb.in(expression);
             for (Object value : values) {
-                inClause.value(request.getFieldType().parse(value.toString()));
+                if (BaseEnum.class.isAssignableFrom(expression.getJavaType())) {
+                    value = getEnumValue((Class<BaseEnum<?>>) expression.getJavaType(), value.toString());
+                }
+                inClause.value(value);
             }
             return cb.and(inClause, predicate);
         }
     },
 
     BETWEEN {
-        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+        @Override
+        public <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
             Object value = request.getFieldType().parse(request.getValue().toString());
             Object valueTo = request.getFieldType().parse(request.getValueTo().toString());
+
             if (request.getFieldType() == FieldType.DATE) {
                 LocalDateTime startDate = (LocalDateTime) value;
                 LocalDateTime endDate = (LocalDateTime) valueTo;
-                Expression<LocalDateTime> key = root.get(request.getKey());
-                return cb.and(cb.and(cb.greaterThanOrEqualTo(key, startDate), cb.lessThanOrEqualTo(key, endDate)), predicate);
+                return cb.and(cb.and(cb.greaterThanOrEqualTo((Expression<LocalDateTime>) expression, startDate), cb.lessThanOrEqualTo((Expression<LocalDateTime>) expression, endDate)), predicate);
             }
 
             if (request.getFieldType() != FieldType.CHAR && request.getFieldType() != FieldType.BOOLEAN) {
                 Number start = (Number) value;
                 Number end = (Number) valueTo;
-                Expression<Number> key = root.get(request.getKey());
-                return cb.and(cb.and(cb.ge(key, start), cb.le(key, end)), predicate);
+                return cb.and(cb.and(cb.ge((Expression<Number>) expression, start), cb.le((Expression<Number>) expression, end)), predicate);
             }
 
-            log.info("Can not use between for {} field type.", request.getFieldType());
+            log.info("Cannot use BETWEEN for {} field type.", request.getFieldType());
             return predicate;
         }
     };
 
-    public abstract <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate);
+    @SuppressWarnings("unchecked")
+    private static <E extends BaseEnum<?>> E getEnumValue(Class<E> enumType, String value) {
+        try {
+            return (E) enumType.getEnumConstants()[0].fromValue(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid enum value: " + value, e);
+        }
+    }
+
+    // Điều chỉnh phương thức abstract để sử dụng Expression thay vì Root
+    public abstract <T> Predicate build(Expression<?> expression, CriteriaBuilder cb, FilterRequest request, Predicate predicate);
 }
