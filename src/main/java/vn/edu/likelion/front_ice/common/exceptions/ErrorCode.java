@@ -59,8 +59,11 @@ public enum ErrorCode {
 
     CATEGORY_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-303 ,"Category not exist","Bad Request","Category không tồn tại"),
 
+    NOT_FOUND_CHALLENGE_SAMPLE(RestAPIStatus.FAIL,-305 ,"Not found challenge sample","Bad Request","Không tìm thấy challenge mẫu"),
+
     // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
+    YOU_HAVE_ALREADY_JOINED(RestAPIStatus.BAD_REQUEST, -402,"You have already joined","Bad Request","Bạn đã tham gia thử thách này rồi"),
 
     // error level
     LEVEL_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -501,"Level not exist","Bad Request","Level không tồn tại"),

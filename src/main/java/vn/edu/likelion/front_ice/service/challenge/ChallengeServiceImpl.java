@@ -8,17 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
+import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
-import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +33,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 
     @Override
-    public Optional<ChallengeEntity> create(CreationChallengeRequest t) {
+    public Optional<ChallengeEntity> create(CreateChallengeRequest t) {
         return Optional.empty();
     }
 

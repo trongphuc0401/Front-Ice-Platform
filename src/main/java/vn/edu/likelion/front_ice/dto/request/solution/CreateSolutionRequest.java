@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.request.challenger;
+package vn.edu.likelion.front_ice.dto.request.solution;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * CreationChallengerRequest -
+ * CreationSolutionRequest -
  *
  * @param
  * @return
@@ -15,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreationChallengerRequest {
-    String title;
+
+public class CreateSolutionRequest {
+//    String challengerId;
+    String challengeId;
 }

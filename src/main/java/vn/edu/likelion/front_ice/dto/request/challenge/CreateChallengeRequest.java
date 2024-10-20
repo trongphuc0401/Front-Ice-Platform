@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreationChallengeRequest {
+public class CreateChallengeRequest {
     String challenge; // đặt cho có lệ nhớ thay đổi nha mấy anh
 }
