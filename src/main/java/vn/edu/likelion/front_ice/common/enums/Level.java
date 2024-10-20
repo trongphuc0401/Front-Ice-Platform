@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Level -
  *
@@ -22,6 +24,8 @@ public enum Level {
     private Level(String value) {
         this.value = value;
     }
+
+    @JsonValue
     public String getValue() {
         return value;
     }

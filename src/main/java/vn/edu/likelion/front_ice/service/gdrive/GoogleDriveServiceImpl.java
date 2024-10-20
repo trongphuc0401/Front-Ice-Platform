@@ -68,7 +68,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         if (credentialsJson == null || credentialsJson.isEmpty()) {
             throw new IllegalStateException("Google Cloud credentials not found in environment variables.");
         }
-
         // Chuyển đổi chuỗi JSON thành InputStream để tạo GoogleCredential
         GoogleCredential credential = GoogleCredential
                 .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()))
@@ -80,7 +79,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 credential)
                 .build();
     }
-
 
 
     private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
