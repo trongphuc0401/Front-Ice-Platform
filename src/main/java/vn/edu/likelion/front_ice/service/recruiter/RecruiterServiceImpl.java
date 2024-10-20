@@ -69,8 +69,8 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public Optional<RecruiterEntity> findById(String id) {
-        return Optional.empty();
+    public RecruiterEntity findById(String id) {
+        return null;
     }
 
     @Override

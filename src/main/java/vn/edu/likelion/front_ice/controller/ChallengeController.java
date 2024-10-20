@@ -16,7 +16,10 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
+import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
+import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
@@ -121,7 +124,7 @@ public class ChallengeController {
                 .body(resource);
     }
 
-    @PostMapping(ApiEndpoints.SEARCH)
+    @PostMapping("/search")
     public ResponseEntity<ResultPaginationResponse> searchChallenges(@RequestBody SearchRequest request) {
         // Thực hiện tìm kiếm dựa trên SearchRequest
         Page<ChallengeEntity> pageChallenges = challengeService.searchChallenges(request);

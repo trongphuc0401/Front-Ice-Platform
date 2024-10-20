@@ -67,8 +67,8 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Optional<StaffEntity> findById(String id) {
-        return Optional.empty();
+    public StaffEntity findById(String id) {
+        return null;
     }
 
     @Override

@@ -461,8 +461,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<AccountEntity> findById(String id) {
-        return Optional.empty();
+    public AccountEntity findById(String id) {
+        return null;
     }
 
     @Override
