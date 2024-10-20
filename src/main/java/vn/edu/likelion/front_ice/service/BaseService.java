@@ -14,7 +14,7 @@ public interface BaseService<E,I, U> {
 
     void deleteAll(List<String> listId);
 
-    Optional<E> findById(String id);
+    E findById(String id);
 
     List<E> findAll();
 }

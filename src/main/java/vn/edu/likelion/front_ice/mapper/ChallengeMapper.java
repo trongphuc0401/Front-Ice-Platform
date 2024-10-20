@@ -6,6 +6,7 @@ import org.mapstruct.Named;
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
 import vn.edu.likelion.front_ice.dto.response.technical.TechnicalResponse;
 import vn.edu.likelion.front_ice.entity.*;
@@ -25,6 +26,8 @@ public interface ChallengeMapper {
     @Mapping(target = "createAt", source = "createAt", qualifiedByName = "toTimestamp")
     @Mapping(target = "updateAt", source = "updateAt", qualifiedByName = "toTimestamp")
     ChallengeResponse toChallengeResponse(ChallengeEntity challengeEntity);
+
+    DetailChallengeResponse toDetailChallengeResponse(ChallengeEntity challengeEntity);
 
     @Named("toTimestamp")
     default Long toTimestamp(LocalDateTime localDateTime) {

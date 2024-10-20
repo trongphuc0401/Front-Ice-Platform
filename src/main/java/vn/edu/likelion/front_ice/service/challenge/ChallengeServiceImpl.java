@@ -63,8 +63,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Optional<ChallengeEntity> findById(String id) {
-        return Optional.empty();
+    public ChallengeEntity findById(String id) {
+        return challengeRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
     }
 
     @Override

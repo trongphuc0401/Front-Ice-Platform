@@ -17,7 +17,9 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
 import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
+import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -72,6 +75,13 @@ public class ChallengeController {
 
         ResultPaginationResponse response = challengeService.getPaginationChallenge(pageNo, pageSize);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
+    }
+
+    @GetMapping(ApiEndpoints.GET_CHALLENGE_DETAIL)
+    public ResponseEntity<RestAPIResponse<Object>> getChallengeDetail(@PathVariable("id") String id) {
+        ChallengeEntity challengeEntity = challengeService.findById(id);
+        DetailChallengeResponse challengeResponse = challengeMapper.toDetailChallengeResponse(challengeEntity);
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_DETAIL_SUCCESS, challengeResponse);
     }
 
     @GetMapping(ApiEndpoints.DOWNLOAD_ASSETS)
@@ -124,22 +134,18 @@ public class ChallengeController {
 
     @PostMapping(ApiEndpoints.SEARCH)
     public ResponseEntity<RestAPIResponse<Object>> searchChallenges(@RequestBody SearchRequest request) {
-//        Page<ChallengeEntity> pageChallenges = challengeService.searchChallenges(request);
-//
-//        List<ChallengeResponse> challengeResponses = pageChallenges.getContent()
-//                .stream()
-//                .map(challengeMapper::toChallengeResponse)
-//                .collect(Collectors.toList());
-//
-//        ResultPaginationResponse.Meta meta = PaginationUtil.createPaginationMeta(pageChallenges);
-//
-//        ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
-//        resultPaginationResponse.setMeta(meta);
-//        resultPaginationResponse.setResult(challengeResponses);
-//
-//        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, resultPaginationResponse);
-
         ResultPaginationResponse response = challengeService.searchChallenges(request);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<RestAPIResponse<Object>> createChallenge(@RequestBody CreationChallengeRequest request) {
+        Optional<ChallengeEntity> challengeEntity = challengeService.create(request);
+
+        if (challengeEntity.isPresent()) {
+            return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, challengeEntity.get());
+        } else {
+            throw new AppException(ErrorCode.CHALLENGE_NOT_EXIST);
+        }
     }
 }
