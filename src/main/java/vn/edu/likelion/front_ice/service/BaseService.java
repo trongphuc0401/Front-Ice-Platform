@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.service;
 
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
 import java.util.List;
 import java.util.Optional;
 

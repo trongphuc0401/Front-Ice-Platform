@@ -2,6 +2,7 @@ package vn.edu.likelion.front_ice.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
@@ -9,7 +10,7 @@ import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import java.util.Optional;
 
 @Repository
-public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String> {
+public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String>,ElasticsearchRepository<ChallengeEntity, String> {
     //    Optional<ChallengeEntity> findByAccountId(String id);
 
     //    // Query native reference
@@ -21,4 +22,6 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
     Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
 
     Optional<ChallengeEntity> findById(String id);
+
+
 }

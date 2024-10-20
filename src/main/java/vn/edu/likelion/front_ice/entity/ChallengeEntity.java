@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.elasticsearch.annotations.Document;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "tbl_challenge")
+@Document(indexName="tbl_challenge")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

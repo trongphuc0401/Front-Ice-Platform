@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.service.challenge;
 
+import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -89,5 +90,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         response.setTotalPages(challengeEntities.getTotalPages());
 
         return response;
+    }
+
+    @Override public SearchHit searchByName(String name) {
+        return null;
     }
 }
