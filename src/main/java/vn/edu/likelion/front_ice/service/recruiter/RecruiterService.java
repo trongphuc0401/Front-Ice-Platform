@@ -9,5 +9,5 @@ import vn.edu.likelion.front_ice.service.BaseService;
 import java.util.Optional;
 
 public interface RecruiterService extends BaseService<RecruiterEntity, FollowRequest, FollowRequest> {
-    Optional<RecruiterResponse> getDetailsProfile(String accountId);
+    Optional<RecruiterResponse> getDetailsProfile(String accessToken);
 }

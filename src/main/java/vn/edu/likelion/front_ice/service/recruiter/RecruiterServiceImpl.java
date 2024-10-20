@@ -11,6 +11,7 @@ import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import vn.edu.likelion.front_ice.mapper.RecruiterMapper;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.RecruiterRepository;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +30,14 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public Optional<RecruiterResponse> getDetailsProfile(String accountId) {
+    public Optional<RecruiterResponse> getDetailsProfile(String accessToken) {
 
-        AccountEntity account = accountRepository.findById(accountId)
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        RecruiterEntity recruiter = recruiterRepository.findByAccountId(accountId)
+        RecruiterEntity recruiter = recruiterRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
         return Optional.of(recruiterMapper.toRecruiterResponse(account, recruiter));

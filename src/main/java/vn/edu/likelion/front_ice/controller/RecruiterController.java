@@ -43,10 +43,12 @@ public class RecruiterController {
     private final GoogleDriveService googleDriveService;
     @Autowired private SecurityUtil securityUtil;
 
-    @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
+    @GetMapping(ApiEndpoints.PROFILE_API)
     @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
-    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
-        return responseUtil.successResponse(recruiterService.getDetailsProfile(id));
+    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(
+            @RequestHeader("Authorization") String authorizationHeader) {
+        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
+        return responseUtil.successResponse(recruiterService.getDetailsProfile(token));
     }
 
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
