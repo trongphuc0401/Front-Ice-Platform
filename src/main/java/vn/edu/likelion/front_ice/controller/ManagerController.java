@@ -85,7 +85,7 @@ public class ManagerController {
         }
 
         ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         File tempFile = File.createTempFile("resource_"+challengeEntity
                 .getTitle()

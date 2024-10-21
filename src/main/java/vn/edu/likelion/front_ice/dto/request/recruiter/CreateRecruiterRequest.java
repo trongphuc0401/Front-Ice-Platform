@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.request.solution;
+package vn.edu.likelion.front_ice.dto.request.recruiter;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * CreationSolutionRequest -
+ * CreationRecruiter -
  *
  * @param
  * @return
@@ -15,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-public class CreationSolutionRequest {
-    String title;
+public class CreateRecruiterRequest {
+    String name; // đặt cho có lệ nhớ thay đổi nha mấy anh
 }

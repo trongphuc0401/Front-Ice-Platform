@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @return
  * @throws
  */
-public enum StatusChallenge {
+public enum StatusChallenge implements BaseEnum<StatusChallenge> {
 
     PROCESSING("processing"),
     APPROVED("approved"),
@@ -25,5 +25,15 @@ public enum StatusChallenge {
     @JsonValue
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public StatusChallenge fromValue(String value) {
+        for (StatusChallenge type : StatusChallenge.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid StatusChallenge value: " + value);
     }
 }

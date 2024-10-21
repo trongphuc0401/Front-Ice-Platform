@@ -124,7 +124,7 @@ public class ChallengeController {
     @PostMapping("/search")
     public ResponseEntity<ResultPaginationResponse> searchChallenges(@RequestBody SearchRequest request) {
         // Thực hiện tìm kiếm dựa trên SearchRequest
-        Page<ChallengeEntity> pageChallenges = challengeService.searchChallenges(request);
+        Page<ChallengeEntity> pageChallenges = (Page<ChallengeEntity>) challengeService.searchChallenges(request);
 
         // Chuyển đổi từ ChallengeEntity sang ChallengeResponse
         List<ChallengeResponse> challengeResponses = pageChallenges.getContent()

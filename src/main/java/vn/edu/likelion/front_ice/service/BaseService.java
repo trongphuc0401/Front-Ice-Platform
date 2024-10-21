@@ -3,7 +3,7 @@ package vn.edu.likelion.front_ice.service;
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseService<E,I, U> {
+public interface BaseService<E, I, U> {
     Optional<E> create(I t);
 
     Optional<E> updateInfo(String id, U i);
@@ -14,7 +14,7 @@ public interface BaseService<E,I, U> {
 
     void deleteAll(List<String> listId);
 
-    Optional<E> findById(String id);
+    E findById(String id);
 
     List<E> findAll();
 }
