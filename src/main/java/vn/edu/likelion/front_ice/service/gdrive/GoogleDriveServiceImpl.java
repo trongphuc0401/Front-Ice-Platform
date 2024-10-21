@@ -57,20 +57,14 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     private static String getPathToGoogleCredentials() {
 
-        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
-
         String currentDirectory = System.getProperty("user.dir");
-        Path filePath= Paths.get(currentDirectory, credentialsJson);
+        Path filePath= Paths.get(currentDirectory, "credentials.json");
         return filePath.toString();
     }
-    private Drive createDriveService() throws GeneralSecurityException, IOException {
-        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
-        if (credentialsJson == null || credentialsJson.isEmpty()) {
-            throw new IllegalStateException("Google Cloud credentials not found in environment variables.");
-        }
-        // Chuyển đổi chuỗi JSON thành InputStream để tạo GoogleCredential
-        GoogleCredential credential = GoogleCredential
-                .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()))
+
+    private Drive createDriveService() throws GeneralSecurityException,IOException {
+
+        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(SERVIEC_ACCOUNT_KEY_PATH))
                 .createScoped(Collections.singleton(DriveScopes.DRIVE));
 
         return new Drive.Builder(
@@ -78,6 +72,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 JSON_FACTORY,
                 credential)
                 .build();
+
     }
 
 
@@ -193,12 +188,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             System.err.println("Error uploading image: " + e.getMessage());
             throw new AppException(errorCode);
         }
-
         return response;
     }
-
-
-
 
     @Override
     public UploadAvatarResponse uploadChallengerAvatar(String accessToken, File file) {
@@ -221,7 +212,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     @Override
     public UploadAvatarResponse uploadAdminAvatar(String accessToken, File file) {
-        // Placeholder logic for admin avatar, same as others but different folderId
         String folderId = "admin_folder_id";
         return uploadAvatar( file, folderId, ErrorCode.MENTOR_NOT_EXIST);
     }
@@ -311,43 +301,34 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         try {
-            // ID của thư mục trên Google Drive
             String folderId = "1CUsNkMqDiH04F71zGUbdtgUosxPSQBpw";
 
-            // Tạo dịch vụ Google Drive
             Drive drive = createDriveService();
 
-            // Giữ nguyên tên file gốc
             String originalFileName = file.getName();
 
-            // Chuẩn bị metadata cho file
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(originalFileName); // Giữ nguyên tên gốc
+            fileMetaData.setName(originalFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            // Định nghĩa file content với loại file là zip
             FileContent mediaContent = new FileContent("application/zip", file);
 
-            // Upload file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files()
                     .create(fileMetaData, mediaContent)
                     .setFields("id,size")
                     .execute();
 
-            // Tạo link trực tiếp đến file trên Google Drive
             String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
             System.out.println("File URL: " + fileUrl);
 
-            long fileSize = uploadedFile.getSize(); // Lấy kích thước file (bytes)
+            long fileSize = uploadedFile.getSize();
             System.out.println("File Size: " + fileSize + " bytes");
 
-            // Đặt quyền chia sẻ công khai cho file
             Permission permission = new Permission();
             permission.setType("anyone");
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-            // Xóa file cục bộ sau khi upload thành công (nếu cần)
             file.delete();
             response.setAssetsUrl(fileUrl);
             response.setAssetsName(originalFileName);
@@ -357,7 +338,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             resourceEntity.setAssetsSize(fileSize);
             resourceRepository.save(resourceEntity);
 
-            // Thiết lập URL vào response
         } catch (IOException | GeneralSecurityException e) {
             System.out.println(e.getMessage());
         }
@@ -371,43 +351,34 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         try {
-            // ID của thư mục trên Google Drive
             String folderId = "1TGDETb1gH0JACUMCbuXYHISKJerodAki";
 
-            // Tạo dịch vụ Google Drive
             Drive drive = createDriveService();
 
-            // Giữ nguyên tên file gốc
             String originalFileName = file.getName();
 
-            // Chuẩn bị metadata cho file
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(originalFileName); // Giữ nguyên tên gốc
+            fileMetaData.setName(originalFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            // Định nghĩa file content với loại file là zip
             FileContent mediaContent = new FileContent("application/zip", file);
 
-            // Upload file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files()
                     .create(fileMetaData, mediaContent)
                     .setFields("id,size")
                     .execute();
 
-            // Tạo link trực tiếp đến file trên Google Drive
             String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
             System.out.println("File URL: " + fileUrl);
 
-            long fileSize = uploadedFile.getSize(); // Lấy kích thước file (bytes)
+            long fileSize = uploadedFile.getSize();
             System.out.println("File Size: " + fileSize + " bytes");
 
-            // Đặt quyền chia sẻ công khai cho file
             Permission permission = new Permission();
             permission.setType("anyone");
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-            // Xóa file cục bộ sau khi upload thành công (nếu cần)
             file.delete();
             response.setAssetsUrl(fileUrl);
             response.setAssetsName(originalFileName);
@@ -417,14 +388,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             resourceEntity.setFigmaSize(fileSize);
             resourceRepository.save(resourceEntity);
 
-            // Thiết lập URL vào response
         } catch (IOException | GeneralSecurityException e) {
             System.out.println(e.getMessage());
         }
         return response;
     }
-
-
 
     public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
 
