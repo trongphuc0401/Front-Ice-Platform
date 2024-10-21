@@ -48,6 +48,7 @@ public class SolutionServiceImpl implements SolutionService {
         }
 
         solutionEntity = Optional.of(solutionMapper.toSolution(t));
+        solutionEntity.get().setChallengerId(challengerEntity.getId());
         solutionEntity.get().setStatusSolution(StatusSolution.EMPTY);
 
         return Optional.of(solutionRepository.save(solutionEntity.get()));
