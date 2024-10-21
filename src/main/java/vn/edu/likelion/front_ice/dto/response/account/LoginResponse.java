@@ -13,7 +13,7 @@ import vn.edu.likelion.front_ice.entity.AccountEntity;
 public class LoginResponse {
     private String accessToken;
     private String refreshToken;
-    private AccountEntity account;
+    private AccountResponse account;
     long expiresIn;
 
 

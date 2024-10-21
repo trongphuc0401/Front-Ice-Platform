@@ -172,7 +172,7 @@ public class AccountServiceImpl implements AccountService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .accessToken(securityUtil.createAccessToken(authentication))
                 .refreshToken(refreshToken)
-                .account(accountEntity)
+                .account(accountMapper.toAccountResponse(accountEntity))
                 .expiresIn(securityUtil.getExpirationTime())
                 .build();
 
