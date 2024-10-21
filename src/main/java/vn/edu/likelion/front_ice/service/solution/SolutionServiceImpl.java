@@ -74,8 +74,8 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
-    public Optional<SolutionEntity> findById(String id) {
-        return Optional.empty();
+    public SolutionEntity findById(String id) {
+        return null;
     }
 
     @Override

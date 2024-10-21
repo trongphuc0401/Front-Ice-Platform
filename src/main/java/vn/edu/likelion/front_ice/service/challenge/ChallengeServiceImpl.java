@@ -12,7 +12,7 @@ import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
 import vn.edu.likelion.front_ice.common.query.SearchSpecification;
 import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
-import vn.edu.likelion.front_ice.dto.request.challenge.CreationChallengeRequest;
+import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeResponse;
