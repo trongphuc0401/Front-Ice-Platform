@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import vn.edu.likelion.front_ice.common.enums.Role;
+import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
@@ -406,12 +407,15 @@ public class AccountServiceImpl implements AccountService {
                         // get 2 challenge sample by category "challenge sample"
                         CategoryEntity category = categoryRepository.findByTitle("Challenge Sample")
                                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXIST));
-                        Pageable a = PageRequest.of(1, 2, Sort.by("createAt").descending());
+                        Pageable a = PageRequest.of(0, 2, Sort.by("createAt").descending());
                         List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
+
+                        if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
                         listChallenge.forEach(challengeEntity -> {
                             solutionRepository.save(SolutionEntity.builder()
                                     .challengerId(challengerEntity.getId())
                                     .challengeId(challengeEntity.getId())
+                                    .statusSolution(StatusSolution.EMPTY)
                                     .build());
                         });
                     }

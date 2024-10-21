@@ -2,10 +2,14 @@ package vn.edu.likelion.front_ice.service.challenger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.enums.Level;
+import vn.edu.likelion.front_ice.common.enums.LevelTest;
+import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.dto.request.challenger.ChallengerDTO;
 import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
-import vn.edu.likelion.front_ice.dto.request.challenger.CreationChallengerRequest;
+import vn.edu.likelion.front_ice.dto.request.challenger.CreateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
 import vn.edu.likelion.front_ice.entity.*;
@@ -42,7 +46,7 @@ public class ChallengerServiceImpl implements ChallengerService {
     private ChallengerMapper challengerMapper;
 
     @Override
-    public Optional<ChallengerEntity> create(CreationChallengerRequest t) {
+    public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
         return Optional.empty();
     }
 
@@ -135,6 +139,98 @@ public class ChallengerServiceImpl implements ChallengerService {
 
         return Optional.of(challengerMapper.toChallengerResponse(account, challenger, level));
     }
+
+    public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
+        switch (levelTest) {
+            case EASY:
+                challengerEntity = ChallengerEntity.builder()
+                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "easy"))
+                        .build();
+                upLevel(challengerEntity, "newbie");
+                challengerRepository.save(challengerEntity);
+                break;
+
+            case MEDIUM:
+                challengerEntity = ChallengerEntity.builder()
+                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "medium"))
+                        .build();
+                upLevel(challengerEntity, "newbie");
+                challengerRepository.save(challengerEntity);
+                break;
+
+            case HARD:
+                challengerEntity = ChallengerEntity.builder()
+                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "medium"))
+                        .build();
+                upLevel(challengerEntity, "newbie");
+                challengerRepository.save(challengerEntity);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public int addScore(Level levelChallenger, int score, String levelAnwser) {
+        switch (levelChallenger) {
+            case NEWBIE:
+                if (levelAnwser.equals("easy")) {
+
+                    score = ScoreAnswer.NEW_BIE_EASY.getScore() + score;
+                } else if (levelAnwser.equals("medium")) {
+
+                    score = ScoreAnswer.NEW_BIE_MEDIUM.getScore() + score;
+                } else {
+
+                    score = ScoreAnswer.NEW_BIE_HARD.getScore() + score;
+                }
+                break;
+
+            case SILVER:
+                if (levelAnwser.equals("easy")) {
+
+                    score = ScoreAnswer.SILVER_EASY.getScore() + score;
+                } else if (levelAnwser.equals("medium")) {
+
+                    score = ScoreAnswer.SILVER_MEDIUM.getScore() + score;
+                } else {
+
+                    score = ScoreAnswer.SILVER_HARD.getScore() + score;
+                }
+
+                break;
+
+            case GOLD:
+                if (levelAnwser.equals("easy")) {
+
+                    score = ScoreAnswer.GOLD_EASY.getScore() + score;
+                } else if (levelAnwser.equals("medium")) {
+
+                    score = ScoreAnswer.GOLD_MEDIUM.getScore() + score;
+                } else {
+
+                    score = ScoreAnswer.GOLD_HARD.getScore() + score;
+                }
+
+                break;
+
+            default:
+                break;
+        }
+
+        return score;
+    }
+
+    public void upLevel(ChallengerEntity challengerEntity, String levelChallenger) {
+        if (levelChallenger.equals("newbie") && challengerEntity.getScore() >= 150) {
+            challengerEntity.setLevelId("silver");
+        } else if (levelChallenger.equals("silver") && challengerEntity.getScore() >= 450) {
+            challengerEntity.setLevelId("gold");
+        } else if (levelChallenger.equals("gold") && challengerEntity.getScore() >= 1050) {
+            challengerEntity.setLevelId("diamond");
+        }
+    }
+
 
 
 }

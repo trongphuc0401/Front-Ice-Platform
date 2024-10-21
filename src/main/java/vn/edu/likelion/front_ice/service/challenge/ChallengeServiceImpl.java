@@ -38,7 +38,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 
     @Override
-    public Optional<ChallengeEntity> create(CreationChallengeRequest t) {
+    public Optional<ChallengeEntity> create(CreateChallengeRequest t) {
         return Optional.empty();
     }
 
