@@ -3,21 +3,24 @@ package vn.edu.likelion.front_ice.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Status -
+ * ChallengeAccessStatus -
  *
  * @param
  * @return
  * @throws
  */
-public enum StatusSolution {
-
-    PROCESSING("processing"),
-    APPROVED("approved"),
-    CANCEL("cancel");
+public enum ChallengeAccessStatus {
+    VISITED("visited"),
+    JOINED("joined"),
+    SUBMITTED("submitted"),
+    REPORTED("reported"),
+    ERROR_LEVEL("error_level"),
+    ERROR_TYPE("error_type")
+    ;
 
     private final String value;
 
-     StatusSolution(String value) {
+    private ChallengeAccessStatus(String value) {
         this.value = value;
     }
 

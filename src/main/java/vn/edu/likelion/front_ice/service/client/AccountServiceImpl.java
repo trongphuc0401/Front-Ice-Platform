@@ -413,9 +413,9 @@ public class AccountServiceImpl implements AccountService {
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
                         listChallenge.forEach(challengeEntity -> {
                             solutionRepository.save(SolutionEntity.builder()
-                                    .challengerId(challengerEntity.getId())
-                                    .challengeId(challengeEntity.getId())
-                                    .statusSolution(StatusSolution.EMPTY)
+//                                    .challengerId(challengerEntity.getId())
+//                                    .challengeId(challengeEntity.getId())
+//                                    .statusSolution(StatusSolution.EMPTY)
                                     .build());
                         });
                     }
