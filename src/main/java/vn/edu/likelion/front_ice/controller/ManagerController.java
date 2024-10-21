@@ -85,7 +85,7 @@ public class ManagerController {
         }
 
         ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         File tempFile = File.createTempFile("resource_"+challengeEntity
                 .getTitle()
@@ -104,6 +104,7 @@ public class ManagerController {
             }
         }
     }
+
 
     @PostMapping(ApiEndpoints.UPLOAD_FIGMA)
     public ResponseEntity<RestAPIResponse<Object>> uploadFigma(
@@ -132,5 +133,95 @@ public class ManagerController {
             }
         }
     }
+
+    @PostMapping(ApiEndpoints.UPLOAD_DESKTOP_DESIGN)
+    public ResponseEntity<RestAPIResponse<Object>> uploadDesktopDesign(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("desktop") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+        securityUtil.extractJwtFromHeader(authorizationHeader);
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
+        }
+
+        File tempFile = File.createTempFile("desktop"
+                +"_", ".zip");
+
+        try {
+            file.transferTo(tempFile);
+            return responseUtil.successResponse(googleDriveService.uploadImageDesktop(tempFile));
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    @PostMapping(ApiEndpoints.UPLOAD_MOBILE_DESIGN)
+    public ResponseEntity<RestAPIResponse<Object>> uploadMobileDesign(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("mobile") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+        securityUtil.extractJwtFromHeader(authorizationHeader);
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
+        }
+
+        File tempFile = File.createTempFile("mobile"
+                +"_", ".zip");
+
+        try {
+            file.transferTo(tempFile);
+            return responseUtil.successResponse(googleDriveService.uploadImageMobile(tempFile));
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    @PostMapping(ApiEndpoints.UPLOAD_TABLET_DESIGN)
+    public ResponseEntity<RestAPIResponse<Object>> uploaTabletDesign(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("tablet") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+        securityUtil.extractJwtFromHeader(authorizationHeader);
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
+        }
+
+        File tempFile = File.createTempFile("tablet"
+                +"_", ".zip");
+
+        try {
+            file.transferTo(tempFile);
+            return responseUtil.successResponse(googleDriveService.uploadImageTablet(tempFile));
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+
+
 
 }

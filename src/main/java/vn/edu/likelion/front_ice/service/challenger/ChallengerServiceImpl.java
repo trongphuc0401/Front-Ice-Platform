@@ -69,8 +69,8 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public Optional<ChallengerEntity> findById(String id) {
-        return Optional.empty();
+    public ChallengerEntity findById(String id) {
+        return null;
     }
 
     @Override

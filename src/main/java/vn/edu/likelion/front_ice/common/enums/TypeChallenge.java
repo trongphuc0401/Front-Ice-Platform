@@ -3,20 +3,20 @@ package vn.edu.likelion.front_ice.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Difficulty -
+ * TypeChallenge -
  *
  * @param
  * @return
  * @throws
  */
-public enum Difficulty implements BaseEnum<Difficulty> {
+public enum TypeChallenge implements BaseEnum<TypeChallenge> {
+    FREE("free"),
+    FREE_PLUS_PLUS("free++"),
+    PREMIUM("premium");
 
-    EASY("easy"),
-    MEDIUM("medium"),
-    HARD("hard"),
-    ;
     private final String value;
-    private Difficulty(String value) {
+
+    TypeChallenge(String value) {
         this.value = value;
     }
 
@@ -26,8 +26,8 @@ public enum Difficulty implements BaseEnum<Difficulty> {
     }
 
     @Override
-    public Difficulty fromValue(String value) {
-        for (Difficulty type : Difficulty.values()) {
+    public TypeChallenge fromValue(String value) {
+        for (TypeChallenge type : TypeChallenge.values()) {
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }

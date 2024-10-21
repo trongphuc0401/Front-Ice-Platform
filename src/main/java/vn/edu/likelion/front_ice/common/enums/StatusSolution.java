@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Status -
  *

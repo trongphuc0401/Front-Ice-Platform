@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
+import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class ChallengeEntity extends BaseEntity {
     )
     Set<TechnicalEntity> technicals;
 
+    
     @ManyToOne
     @JoinColumn(name = "challenge_point_id", nullable = false)
     ChallengePointEntity challengePoint;
@@ -72,7 +74,11 @@ public class ChallengeEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    StatusChallenge status;
+    StatusChallenge statusChallenge;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_challenge", nullable = false)
+    TypeChallenge typeChallenge;
 
     @Column(name = "price", nullable = false)
     Double price;
@@ -84,7 +90,7 @@ public class ChallengeEntity extends BaseEntity {
     String banner;
 
     @Column(name = "is_hidden", nullable = false)
-    boolean isHidden;
+    boolean hidden;
 
     @Column(name = "assets", columnDefinition = "TEXT")
     String assets;

@@ -29,6 +29,7 @@ public interface ApiEndpoints {
     String IMAGES = "/images";
     String UPLOAD_CV = "/cv";
     String DOWNLOAD_CV = "/cv/{id}";
+    String SEARCH = "/search";
 
     // Profile API
     String PROFILE_API = "/profile";
@@ -53,12 +54,13 @@ public interface ApiEndpoints {
     String MANAGER = BASE_API_URL + "/manager";
 
     // Challenge API
-    String CHALLENGE_API = BASE_API_URL + "/challenge";
+    String CHALLENGE_API = BASE_API_URL + "/challenges";
     String DOWNLOAD_ASSETS = "/assets/{id}";
     String DOWNLOAD_FIGMA = "/figma/{id}";
+    String GET_CHALLENGE_DETAIL = "/{id}";
 
     // Solution API
-    String SOLUTION_API = BASE_API_URL + "/solution";
+    String SOLUTION_API = BASE_API_URL + "/solutions";
 
     // Mentor API
     String MENTOR_API = BASE_API_URL + "/mentor";
@@ -67,6 +69,10 @@ public interface ApiEndpoints {
     String MANAGER_API = BASE_API_URL + "/manager";
     String UPLOAD_ASSETS = "/assets";
     String UPLOAD_FIGMA = "/figma";
+    String UPLOAD_DESKTOP_DESIGN = "/desktop";
+    String UPLOAD_MOBILE_DESIGN = "/mobile";
+    String UPLOAD_TABLET_DESIGN = "/tablet";
+
 
 
     // Notification API

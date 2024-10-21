@@ -1,15 +1,17 @@
 package vn.edu.likelion.front_ice.repository;
 
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 
 import java.util.Optional;
 
 @Repository
-public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String> {
+public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String>, JpaSpecificationExecutor<ChallengeEntity> {
     //    Optional<ChallengeEntity> findByAccountId(String id);
 
     //    // Query native reference
@@ -19,6 +21,8 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
     Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
+
+
 
     Optional<ChallengeEntity> findById(String id);
 }

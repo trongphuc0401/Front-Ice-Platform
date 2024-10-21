@@ -13,13 +13,6 @@ import vn.edu.likelion.front_ice.common.api.RestAPIStatus;
 @Getter
 public enum ErrorCode {
 
-    OK(RestAPIStatus.OK,1200,"Success","OK","Thành công"),
-    VERIFIED(RestAPIStatus.OK,1201,"OTP verified","OK","OTP đã được xác thực"),
-    SENT_OTP_EMAIL(RestAPIStatus.OK,1202,"Sent OTP Email","OK","OTP đã được gửi về mail"),
-    PASSWORD_CHANGED(RestAPIStatus.OK,1203,"Password changed successful","OK","OTP cho quên mật khẩu đã được gửi về mail."),
-    DOWNLOAD_SUCCESSFUL(RestAPIStatus.OK,1204,"Download successful","OK","Tải file thành công."),
-
-
     INVALID_KEY(RestAPIStatus.BAD_REQUEST,-100,"Invalid input object type!","Bad Request","Dữ liệu đầu vào không hợp lệ"),
 
     // error account
@@ -56,8 +49,11 @@ public enum ErrorCode {
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
     ASSETS_UPLOAD_FAILED(RestAPIStatus.FAIL,-302 ,"Failed to upload Assets","Fail","Upload Assets thất bại"),
-
     CATEGORY_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-303 ,"Category not exist","Bad Request","Category không tồn tại"),
+    IMAGE_DESKTOP(RestAPIStatus.BAD_REQUEST,-304 ,"Image desktop not exist","Bad Request","Hình ảnh desktop không tồn tại"),
+    IMAGE_MOBILE(RestAPIStatus.BAD_REQUEST,-305 ,"Image mobile not exist","Bad Request","Hình ảnh mobile không tồn tại"),
+    IMAGE_TABLET(RestAPIStatus.BAD_REQUEST,-306 ,"Image tablet not exist","Bad Request","Hình ảnh mobile không tồn tại"),
+
 
     NOT_FOUND_CHALLENGE_SAMPLE(RestAPIStatus.FAIL,-305 ,"Not found challenge sample","Bad Request","Không tìm thấy challenge mẫu"),
 

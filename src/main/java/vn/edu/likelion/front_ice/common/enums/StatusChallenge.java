@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * StatusChallenge -
  *
@@ -7,19 +9,31 @@ package vn.edu.likelion.front_ice.common.enums;
  * @return
  * @throws
  */
-public enum StatusChallenge {
+public enum StatusChallenge implements BaseEnum<StatusChallenge> {
 
     PROCESSING("processing"),
     APPROVED("approved"),
     HIDE("hide"),
     CANCEL("cancel");
 
-    private final String status;
+    private final String value;
 
-    StatusChallenge(String status) {
-        this.status = status;
+    StatusChallenge(String value) {
+        this.value = value;
     }
-    public String getStatus() {
-        return status;
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public StatusChallenge fromValue(String value) {
+        for (StatusChallenge type : StatusChallenge.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid StatusChallenge value: " + value);
     }
 }

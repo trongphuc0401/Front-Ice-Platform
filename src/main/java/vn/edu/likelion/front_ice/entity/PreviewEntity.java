@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class PreviewEntity extends BaseEntity{
 
     @ManyToOne
-    @JoinColumn(name = "challenge_id", nullable = false)
+    @JoinColumn(name = "challenge_id", nullable = true)
     ChallengeEntity challenge;
 
     @Column(columnDefinition = "TEXT")

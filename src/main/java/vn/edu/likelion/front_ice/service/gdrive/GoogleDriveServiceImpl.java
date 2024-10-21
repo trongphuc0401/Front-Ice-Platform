@@ -12,19 +12,12 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
-import vn.edu.likelion.front_ice.entity.AccountEntity;
-import vn.edu.likelion.front_ice.entity.ChallengerEntity;
-import vn.edu.likelion.front_ice.entity.ResourceEntity;
-import vn.edu.likelion.front_ice.repository.AccountRepository;
-import vn.edu.likelion.front_ice.repository.ChallengeRepository;
-import vn.edu.likelion.front_ice.repository.ChallengerRepository;
-import vn.edu.likelion.front_ice.repository.ResourceRepository;
+import vn.edu.likelion.front_ice.dto.response.challenge.DesignImageResponse;
+import vn.edu.likelion.front_ice.entity.*;
+import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -48,16 +41,18 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     private final ChallengeRepository challengeRepository;
     private final ResourceRepository resourceRepository;
     private final SecurityUtil securityUtil;
+    private final PreviewRepository previewRepository;
 
 
     public GoogleDriveServiceImpl(AccountRepository accountRepository, ChallengerRepository challengerRepository,
                                   ChallengeRepository challengeRepository, ResourceRepository resourceRepository,
-                                  SecurityUtil securityUtil) {
+                                  SecurityUtil securityUtil, PreviewRepository previewRepository) {
         this.accountRepository = accountRepository;
         this.challengerRepository = challengerRepository;
         this.challengeRepository = challengeRepository;
         this.resourceRepository = resourceRepository;
         this.securityUtil = securityUtil;
+        this.previewRepository = previewRepository;
     }
 
     private static String getPathToGoogleCredentials() {
@@ -65,6 +60,19 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         String currentDirectory = System.getProperty("user.dir");
         Path filePath= Paths.get(currentDirectory, "credentials.json");
         return filePath.toString();
+    }
+
+    private Drive createDriveService() throws GeneralSecurityException,IOException {
+
+        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(SERVIEC_ACCOUNT_KEY_PATH))
+                .createScoped(Collections.singleton(DriveScopes.DRIVE));
+
+        return new Drive.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(),
+                JSON_FACTORY,
+                credential)
+                .build();
+
     }
 
 
@@ -128,6 +136,64 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
+    private DesignImageResponse uploadDesignImage( File file, String folderId, ErrorCode errorCode, String label) {
+        DesignImageResponse response = new DesignImageResponse();
+
+        PreviewEntity previewEntity = new PreviewEntity();
+
+        try {
+            Drive drive = createDriveService();
+            String newFileName = System.currentTimeMillis() + ".jpeg";
+
+            File renamedFile = new File(file.getParent(), newFileName);
+            if (!file.renameTo(renamedFile)) {
+                throw new IOException("Failed to rename file to " + newFileName);
+            }
+
+            // Chuẩn bị metadata cho file
+            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+            fileMetaData.setName(newFileName);
+            fileMetaData.setParents(Collections.singletonList(folderId));
+
+            // Tạo FileContent với loại MIME là image/jpeg
+            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
+
+            // Tải file lên Google Drive
+            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                    .setFields("id").execute();
+
+            // Tạo URL công khai cho hình ảnh
+            String imageUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            System.out.println("IMAGE URL: " + imageUrl);
+
+            // Đặt quyền chia sẻ công khai cho tệp
+            Permission permission = new Permission();
+            permission.setType("anyone");
+            permission.setRole("reader");
+            drive.permissions().create(uploadedFile.getId(), permission).execute();
+
+            // Xóa tệp cục bộ sau khi tải lên thành công
+            renamedFile.delete();
+
+            // Cập nhật URL vào AccountEntity và lưu lại
+            previewEntity.setUrl(imageUrl);
+            previewEntity.setLabel(label);
+            previewRepository.save(previewEntity);
+            response.setId(previewEntity.getId());
+            response.setImageUrl(imageUrl);
+            response.setLabel(label);
+
+
+        } catch (IOException | GeneralSecurityException e) {
+            System.err.println("Error uploading image: " + e.getMessage());
+            throw new AppException(errorCode);
+        }
+
+        return response;
+    }
+
+
+
 
     @Override
     public UploadAvatarResponse uploadChallengerAvatar(String accessToken, File file) {
@@ -161,10 +227,22 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return uploadAvatar( file, folderId, ErrorCode.RECRUITER_NOT_EXIST);
     }
 
+    @Override public DesignImageResponse uploadImageDesktop(File file) {
+        String folderId = "1Dd-E2PmIpnrtLgcJLs9ck3xncNUGuZdl";
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_DESKTOP,"desktop design");
+    }
+    @Override public DesignImageResponse uploadImageMobile(File file) {
+        String folderId = "1OYmbANIPhLoaCnCs7NeYd0-zLXQbB0vm";
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_MOBILE,"mobile design");
+    }
+    @Override public DesignImageResponse uploadImageTablet(File file) {
+        String folderId = "1Z-RIvXxqzM6Bk0wf7HLjFlR7joqLLXAF";
+        return uploadDesignImage(file, folderId,ErrorCode.IMAGE_TABLET,"tablet design");
+    }
+
     private String uploadFileToDrive(File file, String folderId, String newFileName) throws IOException, GeneralSecurityException {
         Drive drive = createDriveService();
 
-        // Rename the file
         File renamedFile = new File(file.getParent(), newFileName);
         if (!file.renameTo(renamedFile)) {
             throw new IOException("Failed to rename file to " + newFileName);
@@ -178,16 +256,13 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                 .setFields("id").execute();
 
-        // Set public permissions
         Permission permission = new Permission();
         permission.setType("anyone");
         permission.setRole("reader");
         drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-        // Delete local file after upload
         renamedFile.delete();
 
-        // Return public URL
         return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
     }
 
@@ -344,9 +419,9 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
-    public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
 
-        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+    public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
 
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
                 () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
@@ -375,19 +450,4 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
         return inputStream;
     }
-
-
-    private Drive createDriveService() throws GeneralSecurityException,IOException {
-
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(SERVIEC_ACCOUNT_KEY_PATH))
-                .createScoped(Collections.singleton(DriveScopes.DRIVE));
-
-        return new Drive.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(),
-                JSON_FACTORY,
-                credential)
-                .build();
-
-    }
-
 }

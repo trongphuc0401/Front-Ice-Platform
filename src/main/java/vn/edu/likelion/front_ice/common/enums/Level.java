@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Level -
  *
@@ -7,7 +9,7 @@ package vn.edu.likelion.front_ice.common.enums;
  * @return
  * @throws
  */
-public enum Level {
+public enum Level implements BaseEnum<Level> {
 
     NEWBIE("newbie"),
     BRONZE("bronze"),
@@ -22,7 +24,19 @@ public enum Level {
     private Level(String value) {
         this.value = value;
     }
+
+    @JsonValue
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public Level fromValue(String value) {
+        for (Level type : Level.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid TypeChallenge value: " + value);
     }
 }

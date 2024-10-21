@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.common.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class RestAPIResponse <T extends Object>  implements Serializable {
             throw new IllegalArgumentException("APIStatus must not be null");
         }
         this.status = restApiStatus.getCode();
-        this.code = ErrorCode.OK.getCodeError();
+        this.code = SuccessCode.OK.getCodeSuccess();
         this.messageEng = restApiStatus.getDescription();
         this.data = data;
         this.timestamp = LocalDateTime.now();
@@ -54,6 +55,15 @@ public class RestAPIResponse <T extends Object>  implements Serializable {
         this.code = errorCode.getCodeError();
         this.messageEng = errorCode.getMessageEng();
         this.messageVN = errorCode.getMessageVN();
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public RestAPIResponse(RestAPIStatus restApiStatus, T data, SuccessCode successCode) {
+        this.status = restApiStatus.getCode();
+        this.data = data;
+        this.code = successCode.getCodeSuccess();
+        this.messageEng = successCode.getMessageEng();
+        this.messageVN = successCode.getMessageVN();
         this.timestamp = LocalDateTime.now();
     }
 }
