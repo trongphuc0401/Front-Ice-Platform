@@ -1,10 +1,9 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 
 
@@ -26,12 +25,6 @@ import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 public class SolutionEntity extends BaseEntity {
 
     @Column
-    String challengerId;
-
-    @Column
-    String challengeId;
-
-    @Column
     String urlProduct;
 
     @Column
@@ -46,7 +39,12 @@ public class SolutionEntity extends BaseEntity {
     @Column
     String note;
 
-   @Column
+    @Column(name = "is_hidden")
+    @ColumnDefault("false")
+    boolean hidden;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_solution")
    StatusSolution statusSolution;
 
 }

@@ -40,16 +40,17 @@ public class SolutionServiceImpl implements SolutionService {
         ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-        Optional<SolutionEntity> solutionEntity = solutionRepository
-                .findByChallengeIdAndChallengerId(t.getChallengeId(), challengerEntity.getId());
+//        Optional<SolutionEntity> solutionEntity = solutionRepository
+//                .findByChallengeIdAndChallengerId(t.getChallengeId(), challengerEntity.getId());
 
+        Optional<SolutionEntity> solutionEntity = null;
         if (solutionEntity.isPresent()) {
             throw new AppException(ErrorCode.YOU_HAVE_ALREADY_JOINED);
         }
 
         solutionEntity = Optional.of(solutionMapper.toSolution(t));
-        solutionEntity.get().setChallengerId(challengerEntity.getId());
-        solutionEntity.get().setStatusSolution(StatusSolution.EMPTY);
+//        solutionEntity.get().setChallengerId(challengerEntity.getId());
+//        solutionEntity.get().setStatusSolution(StatusSolution.EMPTY);
 
         return Optional.of(solutionRepository.save(solutionEntity.get()));
     }
