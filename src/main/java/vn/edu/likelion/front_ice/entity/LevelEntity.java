@@ -32,5 +32,8 @@ public class LevelEntity extends BaseEntity {
 
     @Column
     int maxScore;
+
+    @Column
+    String nextLevelId;
 }
 

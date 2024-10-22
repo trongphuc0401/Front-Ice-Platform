@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.dto.response.challenger;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.common.enums.Role;
+import vn.edu.likelion.front_ice.dto.response.account.AccountResponse;
 
 @Getter
 @Setter
@@ -16,6 +17,7 @@ public class ChallengerResponse {
     String email;
     Role role;
     String accountId;
+    AccountResponse accountResponse;
     String levelId;
     String level;
     int isPremium ;
@@ -28,9 +30,9 @@ public class ChallengerResponse {
     String urlStackOverflow;
     String urlLinkedIn;
 
-    int totalJoinedChallenge;
-    int totalSubmittedChallenge;
+    int totalJoinedChallenge; // tổng số challenge đã tham gia
+    int totalSubmittedChallenge; // tổng số challenge đã submit solution
 
-    NextLevelResponse nextLevel;
+    NextLevelResponse nextLevel; // thể hiện cần bao nhiêu điểm nữa để lên level kế tiếp
 }
 
