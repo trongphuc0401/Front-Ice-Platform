@@ -2,6 +2,7 @@ package vn.edu.likelion.front_ice.service.challenger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.enums.Difficulty;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.LevelTest;
 import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
@@ -143,8 +144,8 @@ public class ChallengerServiceImpl implements ChallengerService {
         return Optional.of(challengerMapper.toChallengerResponse(account, challenger, level));
     }
 
-    public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
-        switch (levelTest) {
+    public void updateScore(Difficulty difficulty, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
+        switch (difficulty) {
             case EASY:
                 challengerEntity = ChallengerEntity.builder()
                         .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "easy"))
