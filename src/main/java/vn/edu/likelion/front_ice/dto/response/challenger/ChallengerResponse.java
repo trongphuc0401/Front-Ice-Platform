@@ -21,5 +21,16 @@ public class ChallengerResponse {
     int isPremium ;
     String urlGithub;
     int score;
+    String urlCV;
+    String urlPortfolio;
+    String urlCodepen;
+    String urlGitLab;
+    String urlStackOverflow;
+    String urlLinkedIn;
+
+    int totalJoinedChallenge;
+    int totalSubmittedChallenge;
+
+    NextLevelResponse nextLevel;
 }
 
