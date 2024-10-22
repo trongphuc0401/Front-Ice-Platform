@@ -31,8 +31,6 @@ import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveServiceImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ChallengeController -
@@ -55,14 +53,6 @@ public class ChallengeController {
     @Autowired private SecurityUtil securityUtil;
     @Autowired
     private ChallengeMapper challengeMapper;
-
-//    @GetMapping
-//    @PreAuthorize("hasAnyAuthority('ROLE_RECRUITER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-//    public ResponseEntity<RestAPIResponse<Object>> getChallengeByCategory(@RequestParam String category
-//            , @RequestParam int sizeNo, @RequestParam int pageNo) {
-//        return responseUtil.successResponse(challengeService
-//                .getPaginationChallengeByCategory(category, sizeNo, pageNo));
-//    }
 
     @GetMapping
     public ResponseEntity<RestAPIResponse<Object>> getAllChallenges(
@@ -121,29 +111,9 @@ public class ChallengeController {
                 .body(resource);
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<ResultPaginationResponse> searchChallenges(@RequestBody SearchRequest request) {
-        // Thực hiện tìm kiếm dựa trên SearchRequest
-        Page<ChallengeEntity> pageChallenges = (Page<ChallengeEntity>) challengeService.searchChallenges(request);
-
-        // Chuyển đổi từ ChallengeEntity sang ChallengeResponse
-        List<ChallengeResponse> challengeResponses = pageChallenges.getContent()
-                .stream()
-                .map(challengeMapper::toChallengeResponse)
-                .collect(Collectors.toList());
-
-        // Thiết lập thông tin phân trang
-        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
-        meta.setPageNo(pageChallenges.getNumber() + 1);
-        meta.setPageSize(pageChallenges.getSize());
-        meta.setTotalElements((int) pageChallenges.getTotalElements());
-        meta.setTotalPages(pageChallenges.getTotalPages());
-
-        // Tạo đối tượng response
-        ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
-        resultPaginationResponse.setMeta(meta);
-        resultPaginationResponse.setResult(challengeResponses);
-
-        return ResponseEntity.ok(resultPaginationResponse);
+    @PostMapping(ApiEndpoints.SEARCH)
+    public ResponseEntity<RestAPIResponse<Object>> searchChallenges(@RequestBody SearchRequest request) {
+        ResultPaginationResponse response = challengeService.searchChallenges(request);
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
     }
 }
