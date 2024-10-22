@@ -42,4 +42,24 @@ public class ChallengerEntity extends BaseEntity {
     @Column(name = "url_cv")
     String urlCV;
 
+    @Column(columnDefinition = "TEXT")
+    String urlPortfolio;
+
+    @Column(columnDefinition = "TEXT")
+    String urlCodepen;
+
+    @Column(columnDefinition = "TEXT")
+    String urlGitLab;
+
+    @Column(columnDefinition = "TEXT")
+    String urlStackOverflow;
+
+    @Column(columnDefinition = "TEXT")
+    String urlLinkedIn;
+
+    @Column
+    int totalJoinedChallenge;
+
+    @Column
+    int totalSubmittedChallenge;
 }

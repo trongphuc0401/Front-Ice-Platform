@@ -24,5 +24,11 @@ public interface ChallengerMapper {
     @Mapping(source = "challengerEntity.isPremium", target = "isPremium")
     @Mapping(source = "challengerEntity.urlGithub", target = "urlGithub")
     @Mapping(source = "challengerEntity.score", target = "score")
+    @Mapping(source = "challengerEntity.urlCV", target = "urlCV")
+    @Mapping(source = "challengerEntity.urlPortfolio", target = "urlPortfolio")
+    @Mapping(source = "challengerEntity.urlCodepen", target = "urlCodepen")
+    @Mapping(source = "challengerEntity.urlGitLab", target = "urlGitLab")
+    @Mapping(source = "challengerEntity.urlStackOverflow", target = "urlStackOverflow")
+    @Mapping(source = "challengerEntity.urlLinkedIn", target = "urlLinkedIn")
     ChallengerResponse toChallengerResponse(AccountEntity accountEntity, ChallengerEntity challengerEntity, LevelEntity levelEntity);
 }
