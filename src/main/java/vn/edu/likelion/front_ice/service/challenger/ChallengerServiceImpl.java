@@ -2,6 +2,7 @@ package vn.edu.likelion.front_ice.service.challenger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.LevelTest;
 import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
@@ -11,6 +12,7 @@ import vn.edu.likelion.front_ice.dto.request.challenger.ChallengerDTO;
 import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
+import vn.edu.likelion.front_ice.dto.response.challenger.NextLevelResponse;
 import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
@@ -29,6 +31,7 @@ import vn.edu.likelion.front_ice.security.SecurityUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class ChallengerServiceImpl implements ChallengerService {
@@ -45,6 +48,8 @@ public class ChallengerServiceImpl implements ChallengerService {
     private LevelRepository levelRepository;
     @Autowired
     private ChallengerMapper challengerMapper;
+    @Autowired
+    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -61,11 +66,13 @@ public class ChallengerServiceImpl implements ChallengerService {
         return List.of();
     }
 
-    @Override public void delete(String id) {
+    @Override
+    public void delete(String id) {
 
     }
 
-    @Override public void deleteAll(List<String> listId) {
+    @Override
+    public void deleteAll(List<String> listId) {
 
     }
 
@@ -127,7 +134,7 @@ public class ChallengerServiceImpl implements ChallengerService {
     @Override
     public Optional<ChallengerResponse> getDetailsProfile(String accessToken) {
 
-        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
         AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -140,7 +147,28 @@ public class ChallengerServiceImpl implements ChallengerService {
                         .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
                 .orElse(null);
 
-        return Optional.of(challengerMapper.toChallengerResponse(account, challenger, level));
+        ChallengerResponse response = challengerMapper.toChallengerResponse(account, challenger, level);
+
+        // lấy totalJoinedChallenge và totalSubmittedChallenge
+        challenger.setTotalJoinedChallenge(accessChallengeRepository
+                .findByChallengerIdAndStatus(challenger.getId(), ChallengeAccessStatus.JOINED).size());
+        challenger.setTotalSubmittedChallenge(accessChallengeRepository
+                .findByChallengerIdAndStatus(challenger.getId(), ChallengeAccessStatus.SUBMITTED).size());
+
+        // lấy nextLevel
+        int scoreNextLevel = level.getMaxScore() - challenger.getScore();
+        AtomicReference<String> nextRank = new AtomicReference<>();
+        levelRepository.findById(level.getNextLevelId()).ifPresentOrElse(
+                n -> nextRank.set(n.getTitle()),
+                () -> nextRank.set("not found")
+        );
+
+        response.setNextLevel(NextLevelResponse.builder()
+                .score(scoreNextLevel)
+                .rank(nextRank.get())
+                .build());
+
+        return Optional.of(response);
     }
 
     public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
@@ -233,7 +261,6 @@ public class ChallengerServiceImpl implements ChallengerService {
             challengerEntity.setLevelId("diamond");
         }
     }
-
 
 
 }

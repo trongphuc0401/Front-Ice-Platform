@@ -30,5 +30,8 @@ public interface ChallengerMapper {
     @Mapping(source = "challengerEntity.urlGitLab", target = "urlGitLab")
     @Mapping(source = "challengerEntity.urlStackOverflow", target = "urlStackOverflow")
     @Mapping(source = "challengerEntity.urlLinkedIn", target = "urlLinkedIn")
+    @Mapping(source = "challengerEntity.totalJoinedChallenge", target = "totalJoinedChallenge")
+    @Mapping(source = "challengerEntity.totalSubmittedChallenge", target = "totalSubmittedChallenge")
+    @Mapping(source = "accountEntity", target = "accountResponse")
     ChallengerResponse toChallengerResponse(AccountEntity accountEntity, ChallengerEntity challengerEntity, LevelEntity levelEntity);
 }
