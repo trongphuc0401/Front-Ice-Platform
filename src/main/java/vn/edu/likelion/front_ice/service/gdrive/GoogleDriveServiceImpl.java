@@ -56,9 +56,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-
-
-
     private static String getPathToGoogleCredentials() {
 
         String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
@@ -76,7 +73,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         }
         // Chuyển đổi chuỗi JSON thành InputStream để tạo GoogleCredential
         GoogleCredential credential = GoogleCredential
-                .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()));
+                .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()))
+                .createScoped(Collections.singleton(DriveScopes.DRIVE));
 
         return new Drive.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
@@ -85,8 +83,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 .build();
 
     }
-
-
 
     private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
         UploadAvatarResponse response = new UploadAvatarResponse();
