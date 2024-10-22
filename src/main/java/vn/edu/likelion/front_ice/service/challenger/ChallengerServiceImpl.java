@@ -24,6 +24,7 @@ import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.FollowRepository;
 import vn.edu.likelion.front_ice.repository.RecruiterRepository;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,12 +125,14 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public Optional<ChallengerResponse> getDetailsProfile(String accountId) {
+    public Optional<ChallengerResponse> getDetailsProfile(String accessToken) {
 
-        AccountEntity account = accountRepository.findById(accountId)
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challenger = challengerRepository.findByAccountId(accountId)
+        ChallengerEntity challenger = challengerRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
         LevelEntity level = Optional.ofNullable(challenger.getLevelId())
