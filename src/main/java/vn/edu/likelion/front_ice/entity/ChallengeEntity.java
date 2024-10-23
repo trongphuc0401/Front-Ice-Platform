@@ -3,6 +3,8 @@ package vn.edu.likelion.front_ice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLRestriction;
+import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 
@@ -24,6 +26,7 @@ import java.util.Set;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class ChallengeEntity extends BaseEntity {
 
     @Column(name = "title", length = 250, nullable = false)

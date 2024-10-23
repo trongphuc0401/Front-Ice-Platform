@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UuidGenerator;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -43,8 +44,14 @@ public abstract class BaseEntity implements Serializable {
     @Column
     String updatedBy;
 
-    @Column(nullable = false)
-    int isDeleted;
+    @Column(nullable = false, columnDefinition = "int default 0")
+    int isDeleted = 0;
+
+    @Column
+    LocalDateTime deleteAt;
+
+    @Column
+    String deleteBy;
 
     @PrePersist
     protected void onCreate() {
@@ -62,9 +69,20 @@ public abstract class BaseEntity implements Serializable {
 
     @PreUpdate
     protected void onUpdate() {
-        updateAt = LocalDateTime.now();
+        if(this.isDeleted == 0) {
+            updateAt = LocalDateTime.now();
 
-        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent()
+            this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent()
+                    ? SecurityUtil.getCurrentUserLogin().get()
+                    : "";
+        }
+    }
+
+    @PreRemove
+    public void onSoftDelete()  {
+        this.isDeleted = 1;
+        this.deleteAt = LocalDateTime.now();
+        this.deleteBy = SecurityUtil.getCurrentUserLogin().isPresent()
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
     }
