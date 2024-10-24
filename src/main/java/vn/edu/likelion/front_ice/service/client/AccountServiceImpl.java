@@ -424,11 +424,11 @@ public class AccountServiceImpl implements AccountService {
                         listChallenge.forEach(challengeEntity -> {
                             accessChallengeRepository.save(
                                     AccessChallengeEntity.builder()
-                                            .challengerId(challengerEntity.getId())
-                                            .challengeId(challengeEntity.getId())
-                                            .solutionId(solutionRepository.save(SolutionEntity.builder()
+                                            .challenger(challengerEntity)
+                                            .challenge(challengeEntity)
+                                            .solution(solutionRepository.save(SolutionEntity.builder()
                                                     .statusSolution(StatusSolution.PROCESSING)
-                                                    .build()).getId())
+                                                    .build()))
                                             .status(ChallengeAccessStatus.JOINED)
                                             .build()
                             );
