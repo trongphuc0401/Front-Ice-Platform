@@ -29,7 +29,7 @@ public class AccessChallengeEntity extends BaseEntity {
     @JoinColumn(name = "challenger_id", nullable = false)
     ChallengerEntity challenger;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id", nullable = false)
     ChallengeEntity challenge;
 
