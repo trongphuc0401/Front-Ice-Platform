@@ -93,7 +93,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         challenger = accountRepository.findById(
                         challengerRepository.findById(t.getChallengerId())
                                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
-                                .getAccountId())
+                                .getAccount().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
         recruiter = recruiterRepository.findById(t.getRecruiterId())

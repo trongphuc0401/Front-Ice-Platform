@@ -61,6 +61,12 @@ public class ChallengeEntity extends BaseEntity {
             fetch = FetchType.LAZY)
     Set<PreviewEntity> previews;
 
+    @OneToMany(mappedBy = "challenge",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    Set<AccessChallengeEntity> accessChallenges;
+
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime openDate;

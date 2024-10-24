@@ -21,7 +21,6 @@ import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 import vn.edu.likelion.front_ice.dto.response.account.LoginResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
-import vn.edu.likelion.front_ice.mapper.AccountMapperImpl;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.security.CustomOAuth2UserDetails;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -48,10 +47,8 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     @Autowired
     private AccountMapper accountMapper;
 
-
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
-    @Autowired private AccountMapperImpl accountMapperImpl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
@@ -106,7 +103,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
             LoginResponse loginResponse = LoginResponse.builder()
                     .accessToken(accessToken)
-                    .account(accountMapper.toAccountResponse(accountEntity))
                     .expiresIn(securityUtil.getExpirationTime())
                     .build();
 

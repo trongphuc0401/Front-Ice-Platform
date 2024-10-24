@@ -61,8 +61,16 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column
     int isAuthenticated = 0;
 
-    // Implementing UserDetails methods properly
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    ChallengerEntity challenger;
 
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    RecruiterEntity recruiter;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    StaffEntity staff;
+
+    // Implementing UserDetails methods properly
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

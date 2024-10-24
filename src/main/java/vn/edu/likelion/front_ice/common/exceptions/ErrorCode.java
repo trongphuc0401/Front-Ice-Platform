@@ -53,9 +53,10 @@ public enum ErrorCode {
     IMAGE_DESKTOP(RestAPIStatus.BAD_REQUEST,-304 ,"Image desktop not exist","Bad Request","Hình ảnh desktop không tồn tại"),
     IMAGE_MOBILE(RestAPIStatus.BAD_REQUEST,-305 ,"Image mobile not exist","Bad Request","Hình ảnh mobile không tồn tại"),
     IMAGE_TABLET(RestAPIStatus.BAD_REQUEST,-306 ,"Image tablet not exist","Bad Request","Hình ảnh mobile không tồn tại"),
+    NOT_FOUND_CHALLENGE_SAMPLE(RestAPIStatus.NOT_FOUND,-307 ,"Not found challenge sample","Not found","Không tìm thấy challenge mẫu"),
+    CHALLENGER_AND_CHALLENGE_NOT_PREMIUM(RestAPIStatus.BAD_REQUEST,-308 ,"You are not a premium member. The challenge is restricted and only available for premium users. Please upgrade to premium or select a different challenge.","Bad Request","Bạn không phải là thành viên premium. Thử thách này bị giới hạn và chỉ dành cho thành viên premium. Vui lòng nâng cấp lên thành viên cao cấp hoặc chọn thử thách khác."),
 
 
-    NOT_FOUND_CHALLENGE_SAMPLE(RestAPIStatus.FAIL,-305 ,"Not found challenge sample","Bad Request","Không tìm thấy challenge mẫu"),
 
     // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
