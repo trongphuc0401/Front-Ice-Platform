@@ -120,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         challengerRepository.save(challengerEntity);
@@ -130,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);
@@ -407,7 +407,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .levelId(levelEntity.getId())
                                 .build();
 
@@ -439,7 +439,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);
