@@ -8,6 +8,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.Permission;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 /**
  * GoogleDriveServiceImpl -
@@ -438,8 +440,29 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     public InputStream downloadFigma(String challengeId) throws IOException, GeneralSecurityException {
 
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+
+        Predicate<ChallengeEntity> isAllowedChallenge = challenge ->
+        {
+            TypeChallenge typeChallenge = challenge.getTypeChallenge();
+            return typeChallenge == TypeChallenge.PREMIUM || typeChallenge == TypeChallenge.FREE_PLUS_PLUS;
+        };
+
+        if (challengerEntity.getIsPremium() != 1 || !isAllowedChallenge.test(challengeEntity)) {
+            throw new AppException(ErrorCode.CHALLENGER_AND_CHALLENGE_NOT_PREMIUM);
+        }
+
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
                 () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+
 
         String fileId = resourceEntity.getFigmaUrl().replace("https://drive.google.com/uc?export=view&id=", "");
 
