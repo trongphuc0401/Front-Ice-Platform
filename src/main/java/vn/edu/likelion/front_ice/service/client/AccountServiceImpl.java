@@ -120,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         challengerRepository.save(challengerEntity);
@@ -130,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);
@@ -407,7 +407,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .levelId(levelEntity.getId())
                                 .build();
 
@@ -424,11 +424,11 @@ public class AccountServiceImpl implements AccountService {
                         listChallenge.forEach(challengeEntity -> {
                             accessChallengeRepository.save(
                                     AccessChallengeEntity.builder()
-                                            .challengerId(challengerEntity.getId())
-                                            .challengeId(challengeEntity.getId())
-                                            .solutionId(solutionRepository.save(SolutionEntity.builder()
+                                            .challenger(challengerEntity)
+                                            .challenge(challengeEntity)
+                                            .solution(solutionRepository.save(SolutionEntity.builder()
                                                     .statusSolution(StatusSolution.PROCESSING)
-                                                    .build()).getId())
+                                                    .build()))
                                             .status(ChallengeAccessStatus.JOINED)
                                             .build()
                             );
@@ -439,7 +439,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);

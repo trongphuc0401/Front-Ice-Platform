@@ -25,12 +25,15 @@ public class AccessChallengeEntity extends BaseEntity {
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
-    @Column(name = "challenger_id", nullable = false)
-    String challengerId;
+    @ManyToOne
+    @JoinColumn(name = "challenger_id", nullable = false)
+    ChallengerEntity challenger;
 
-    @Column(name = "challenge_id", nullable = false)
-    String challengeId;
+    @ManyToOne
+    @JoinColumn(name = "challenge_id", nullable = false)
+    ChallengeEntity challenge;
 
-    @Column(name = "solution_id")
-    String solutionId;
+    @ManyToOne
+    @JoinColumn(name = "solution_id")
+    SolutionEntity solution;
 }
