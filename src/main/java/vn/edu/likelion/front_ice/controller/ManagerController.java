@@ -12,10 +12,12 @@ import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.challenge.ChallengeService;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
@@ -44,12 +46,22 @@ public class ManagerController {
     private GoogleDriveService googleDriveService;
     @Autowired private SecurityUtil securityUtil;
     @Autowired private ChallengeRepository challengeRepository;
+    @Autowired private ChallengeService challengeService;
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
         return responseUtil.successResponse(staffService.getDetailsProfile(id));
     }
+
+    @PostMapping
+    public ResponseEntity<RestAPIResponse<Object>> createChallenge(
+            @ModelAttribute CreateChallengeRequest createChallengeRequest
+            )
+    {
+        return responseUtil.successResponse(challengeService.create(createChallengeRequest));
+    }
+
 
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")

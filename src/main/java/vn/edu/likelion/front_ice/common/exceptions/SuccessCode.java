@@ -20,7 +20,8 @@ public enum SuccessCode {
 
     // success challenge
     CHALLENGE_LIST_SUCCESS(RestAPIStatus.OK, 1205, "Challenge list retrieved successfully", "OK", "Lấy danh sách thử thách thành công"),
-    CHALLENGE_DETAIL_SUCCESS(RestAPIStatus.OK, 1206, "Challenge detail retrieved successfully", "OK", "Lấy chi tiết thử thách thành công"), // Thêm mã này
+    CHALLENGE_DETAIL_SUCCESS(RestAPIStatus.OK, 1206, "Challenge detail retrieved successfully", "OK", "Lấy chi tiết thử thách thành công"),
+    CREATE_CHALLENGE_SUCCESSFUL(RestAPIStatus.CREATED, 1207, "Create Challenge Successful", "CREATED", "Tạo challenge thành công"),
     ;
 
     private final int statusCode;
