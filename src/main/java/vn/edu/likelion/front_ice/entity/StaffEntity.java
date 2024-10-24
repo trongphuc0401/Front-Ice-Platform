@@ -1,8 +1,6 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLRestriction;
@@ -30,8 +28,9 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class StaffEntity extends BaseEntity {
-    @Column
-    String accountId;
+    @OneToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    AccountEntity account;
 
     @Column
     String nameStaff;
