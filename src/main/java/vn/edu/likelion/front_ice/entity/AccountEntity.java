@@ -3,9 +3,11 @@ package vn.edu.likelion.front_ice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 import vn.edu.likelion.front_ice.common.enums.AccountType;
 import vn.edu.likelion.front_ice.common.enums.Role;
 
@@ -23,6 +25,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
+@SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class AccountEntity extends BaseEntity implements UserDetails {
 
     @Column(unique = true, nullable = false, length = 50)
@@ -58,8 +61,16 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column
     int isAuthenticated = 0;
 
-    // Implementing UserDetails methods properly
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    ChallengerEntity challenger;
 
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    RecruiterEntity recruiter;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    StaffEntity staff;
+
+    // Implementing UserDetails methods properly
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

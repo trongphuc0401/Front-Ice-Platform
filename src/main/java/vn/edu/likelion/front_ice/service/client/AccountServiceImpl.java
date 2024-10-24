@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
 import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
@@ -96,6 +97,10 @@ public class AccountServiceImpl implements AccountService {
     private ChallengeRepository challengeRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private LevelRepository levelRepository;
+    @Autowired
+    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<RegisterResponse> create_v1(RegisterRequest registerRequest) {
@@ -115,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         challengerRepository.save(challengerEntity);
@@ -125,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);
@@ -169,12 +174,11 @@ public class AccountServiceImpl implements AccountService {
             accountEntity.setRefreshToken(refreshToken);
             accountRepository.save(accountEntity);
 
-        LoginResponse loginResponse = LoginResponse.builder()
-                .accessToken(securityUtil.createAccessToken(authentication))
-                .refreshToken(refreshToken)
-                .account(accountMapper.toAccountResponse(accountEntity))
-                .expiresIn(securityUtil.getExpirationTime())
-                .build();
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .accessToken(securityUtil.createAccessToken(authentication))
+                    .refreshToken(refreshToken)
+                    .expiresIn(securityUtil.getExpirationTime())
+                    .build();
 
             return Optional.of(loginResponse);
 
@@ -397,9 +401,13 @@ public class AccountServiceImpl implements AccountService {
                     case CHALLENGER -> {
                         accountEntity.setRole(Role.CHALLENGER);
 
+                        // get level newbie for new user
+                        LevelEntity levelEntity = levelRepository.findByTitle("NEWBIE");
+
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
+                                .levelId(levelEntity.getId())
                                 .build();
 
                         challengerRepository.save(challengerEntity);
@@ -411,12 +419,18 @@ public class AccountServiceImpl implements AccountService {
                         List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
+                        // create 2 record access challenge and its solution
                         listChallenge.forEach(challengeEntity -> {
-                            solutionRepository.save(SolutionEntity.builder()
-//                                    .challengerId(challengerEntity.getId())
-//                                    .challengeId(challengeEntity.getId())
-//                                    .statusSolution(StatusSolution.EMPTY)
-                                    .build());
+                            accessChallengeRepository.save(
+                                    AccessChallengeEntity.builder()
+                                            .challenger(challengerEntity)
+                                            .challenge(challengeEntity)
+                                            .solution(solutionRepository.save(SolutionEntity.builder()
+                                                    .statusSolution(StatusSolution.PROCESSING)
+                                                    .build()))
+                                            .status(ChallengeAccessStatus.JOINED)
+                                            .build()
+                            );
                         });
                     }
                     case RECRUITER -> {
@@ -424,7 +438,7 @@ public class AccountServiceImpl implements AccountService {
 
                         // create challenger profile
                         RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .accountId(accountEntity.getId())
+                                .account(accountEntity)
                                 .build();
 
                         recruiterRepository.save(recruiterEntity);

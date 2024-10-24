@@ -6,17 +6,10 @@ import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
-import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
-import vn.edu.likelion.front_ice.dto.response.technical.TechnicalResponse;
-import vn.edu.likelion.front_ice.entity.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ChallengeMapper {
