@@ -103,7 +103,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
             LoginResponse loginResponse = LoginResponse.builder()
                     .accessToken(accessToken)
-                    .account(accountMapper.toAccountResponse(accountEntity))
                     .expiresIn(securityUtil.getExpirationTime())
                     .build();
 
