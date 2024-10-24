@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import vn.edu.likelion.front_ice.dto.response.category.CategoryResponse;
 import vn.edu.likelion.front_ice.dto.response.challengepoint.ChallengePointResponse;
 import vn.edu.likelion.front_ice.dto.response.preview.PreviewResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.ResourceResponse;
 import vn.edu.likelion.front_ice.dto.response.technical.TechnicalResponse;
 
 import java.time.LocalDateTime;
@@ -35,4 +36,5 @@ public class DetailChallengeResponse {
     Set<TechnicalResponse> technicals;
     ChallengePointResponse challengePoint;
     Set<PreviewResponse> previews;
+    ResourceResponse resource;
 }
