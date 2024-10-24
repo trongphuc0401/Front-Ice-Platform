@@ -1,12 +1,12 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLRestriction;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
+
+import java.util.Set;
 
 
 /**
@@ -65,4 +65,9 @@ public class ChallengerEntity extends BaseEntity {
 
     @Column
     int totalSubmittedChallenge;
+
+    @OneToMany(mappedBy = "challenger",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    Set<AccessChallengeEntity> accessChallenges;
 }
