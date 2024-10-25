@@ -148,12 +148,14 @@ public class ChallengerServiceImpl implements ChallengerService {
                 .orElse(null);
 
         ChallengerResponse response = challengerMapper.toChallengerResponse(account, challenger, level);
+//        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
         challenger.setTotalJoinedChallenge(accessChallengeRepository
-                .findByChallengerIdAndStatus(challenger.getId(), ChallengeAccessStatus.JOINED).size());
+                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
         challenger.setTotalSubmittedChallenge(accessChallengeRepository
-                .findByChallengerIdAndStatus(challenger.getId(), ChallengeAccessStatus.SUBMITTED).size());
+                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+        challengerRepository.save(challenger);
 
         // lấy nextLevel
         int scoreNextLevel = level.getMaxScore() - challenger.getScore();
