@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PreviewResponse {
     String id;
-    String imageUrl;
+    String url;
     String label;
 }
