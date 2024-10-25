@@ -11,6 +11,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
@@ -54,14 +55,12 @@ public class ManagerController {
         return responseUtil.successResponse(staffService.getDetailsProfile(id));
     }
 
-    @PostMapping
+    @PostMapping("/challenges")
     public ResponseEntity<RestAPIResponse<Object>> createChallenge(
             @ModelAttribute CreateChallengeRequest createChallengeRequest
-            )
-    {
-        return responseUtil.successResponse(challengeService.create(createChallengeRequest));
+            ) throws IOException {
+        return responseUtil.successResponse(SuccessCode.CREATE_CHALLENGE_SUCCESSFUL,challengeService.create(createChallengeRequest));
     }
-
 
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")

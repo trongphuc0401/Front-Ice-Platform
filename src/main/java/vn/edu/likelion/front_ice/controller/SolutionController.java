@@ -16,6 +16,7 @@ import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -41,7 +42,8 @@ public class SolutionController {
 
     @PostMapping
 //    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> create(@RequestBody CreateSolutionRequest createSolutionRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> create(@RequestBody CreateSolutionRequest createSolutionRequest)
+            throws IOException {
         Optional<SolutionResponse> response = solutionService.create(createSolutionRequest)
                 .map(solutionMapper::toSolutionResponse);
 

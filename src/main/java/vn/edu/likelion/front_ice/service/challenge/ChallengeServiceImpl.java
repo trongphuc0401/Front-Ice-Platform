@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.service.challenge;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,14 +15,20 @@ import vn.edu.likelion.front_ice.common.query.SearchSpecification;
 import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
+import vn.edu.likelion.front_ice.mapper.ResourceMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
+import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,10 +43,27 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Autowired
     private ChallengeMapper challengeMapper;
 
+    @Autowired
+    private GoogleDriveService googleDriveService;
+    @Autowired private ResourceMapper resourceMapper;
+
 
     @Override
-    public Optional<ChallengeEntity> create(CreateChallengeRequest t) {
-        return Optional.empty();
+    @Transactional()
+    public Optional<ChallengeEntity> create(CreateChallengeRequest createChallengeRequest) throws IOException {
+        
+        ChallengeEntity challengeEntity = challengeMapper.toChallenge(createChallengeRequest);
+
+        File tempFile = File.createTempFile("resource_"+challengeEntity
+                .getTitle()
+                .toLowerCase()
+                .replace(" ", "-")
+                +"_", ".zip");
+
+        ChallengeEntity savedChallenge = challengeRepository.save(challengeEntity);
+        googleDriveService.uploadAssets(challengeEntity.getId(),tempFile);
+
+        return Optional.of(savedChallenge);
     }
 
     @Override

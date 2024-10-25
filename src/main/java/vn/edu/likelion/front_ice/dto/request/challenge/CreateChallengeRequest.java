@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.dto.request.challenge;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -7,6 +8,7 @@ import vn.edu.likelion.front_ice.common.enums.Difficulty;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -30,9 +32,9 @@ public class CreateChallengeRequest {
 
     String description;
 
-    LocalDateTime openDate;
+    Long openDate;
 
-    LocalDateTime closeDate;
+    Long closeDate;
 
     boolean isPremium;
 
