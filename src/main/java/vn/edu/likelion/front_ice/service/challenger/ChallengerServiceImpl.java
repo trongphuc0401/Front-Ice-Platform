@@ -50,6 +50,8 @@ public class ChallengerServiceImpl implements ChallengerService {
     private ChallengerMapper challengerMapper;
     @Autowired
     private AccessChallengeRepository accessChallengeRepository;
+    @Autowired
+    private ChallengeRepository challengeRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -142,7 +144,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         ChallengerEntity challenger = challengerRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-        LevelEntity level = Optional.ofNullable(challenger.getLevelId())
+        LevelEntity level = Optional.ofNullable(challenger.getLevel().getId())
                 .map(levelId -> levelRepository.findById(levelId)
                         .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
                 .orElse(null);
@@ -161,7 +163,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         int scoreNextLevel = level.getMaxScore() - challenger.getScore();
         AtomicReference<String> nextRank = new AtomicReference<>();
         levelRepository.findById(level.getNextLevelId()).ifPresentOrElse(
-                n -> nextRank.set(n.getTitle()),
+                n -> nextRank.set(n.getLevel().getValue()),
                 () -> nextRank.set("not found")
         );
 
@@ -204,13 +206,13 @@ public class ChallengerServiceImpl implements ChallengerService {
         }
     }
 
-    public int addScore(Level levelChallenger, int score, String levelAnwser) {
+    public int addScore(Level levelChallenger, int score, String levelAnswer) {
         switch (levelChallenger) {
             case NEWBIE:
-                if (levelAnwser.equals("easy")) {
+                if (levelAnswer.equals("easy")) {
 
                     score = ScoreAnswer.NEW_BIE_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
+                } else if (levelAnswer.equals("medium")) {
 
                     score = ScoreAnswer.NEW_BIE_MEDIUM.getScore() + score;
                 } else {
@@ -220,10 +222,10 @@ public class ChallengerServiceImpl implements ChallengerService {
                 break;
 
             case SILVER:
-                if (levelAnwser.equals("easy")) {
+                if (levelAnswer.equals("easy")) {
 
                     score = ScoreAnswer.SILVER_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
+                } else if (levelAnswer.equals("medium")) {
 
                     score = ScoreAnswer.SILVER_MEDIUM.getScore() + score;
                 } else {
@@ -234,10 +236,10 @@ public class ChallengerServiceImpl implements ChallengerService {
                 break;
 
             case GOLD:
-                if (levelAnwser.equals("easy")) {
+                if (levelAnswer.equals("easy")) {
 
                     score = ScoreAnswer.GOLD_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
+                } else if (levelAnswer.equals("medium")) {
 
                     score = ScoreAnswer.GOLD_MEDIUM.getScore() + score;
                 } else {
@@ -256,11 +258,137 @@ public class ChallengerServiceImpl implements ChallengerService {
 
     public void upLevel(ChallengerEntity challengerEntity, String levelChallenger) {
         if (levelChallenger.equals("newbie") && challengerEntity.getScore() >= 150) {
-            challengerEntity.setLevelId("silver");
+//            challengerEntity.setLevelId("silver");
         } else if (levelChallenger.equals("silver") && challengerEntity.getScore() >= 450) {
-            challengerEntity.setLevelId("gold");
+//            challengerEntity.setLevelId("gold");
         } else if (levelChallenger.equals("gold") && challengerEntity.getScore() >= 1050) {
-            challengerEntity.setLevelId("diamond");
+//            challengerEntity.setLevelId("diamond");
+        }
+    }
+
+    @Override
+    public void joinChallenge(String challengeId) {
+        String email = SecurityUtil.getCurrentUserLogin()
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+//        AccessChallengeEntity accessChallengeEntity = AccessChallengeEntity.builder()
+//                .challenger(challengerEntity)
+//                .challenge(challengeEntity)
+//                .build();
+
+        // check có record hay chưa
+        AccessChallengeEntity accessChallengeEntity = accessChallengeRepository
+                .findByChallengerAndChallenge(challengerEntity, challengeEntity)
+                .orElseGet(() -> AccessChallengeEntity.builder()
+                        .challenger(challengerEntity)
+                        .challenge(challengeEntity)
+                        .build());
+
+        // check error type
+        if ((challengerEntity.getIsPremium() == 0) && (challengeEntity.isPremium())) {
+            accessChallengeEntity.setStatus(ChallengeAccessStatus.ERROR_TYPE);
+            accessChallengeEntity.setMessage("You need to upgrade to a premium account to join this challenge.");
+        } else
+
+            // check error level
+            if (challengerEntity.getLevel().getLevel().compareTo(challengeEntity.getChallengePoint().getLevel()) < 0) {
+                accessChallengeEntity.setStatus(ChallengeAccessStatus.ERROR_LEVEL);
+                accessChallengeEntity.setMessage("Your level is not enough to join this challenge.");
+            } else {
+                accessChallengeEntity.setStatus(ChallengeAccessStatus.JOINED);
+                accessChallengeEntity.setMessage("");
+            }
+
+
+    }
+
+    @Override
+    public AccessChallengeEntity checkAccessChallenge(String challengeId) {
+        String email = SecurityUtil.getCurrentUserLogin()
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        switch (checkAccessStatus(challengerEntity, challengeEntity)) {
+            case ERROR_TYPE -> {
+                // tạo access challenge lỗi
+
+            }
+            case ERROR_LEVEL -> {
+            }
+        }
+//        AccessChallengeEntity accessChallengeEntity = AccessChallengeEntity.builder()
+//                .challenger(challengerEntity)
+//                .challenge(challengeEntity)
+//                .build();
+
+        // check có record hay chưa
+        AccessChallengeEntity accessChallengeEntity = accessChallengeRepository
+                .findByChallengerAndChallenge(challengerEntity, challengeEntity);
+//                .orElseGet(() -> AccessChallengeEntity.builder()
+//                        .challenger(challengerEntity)
+//                        .challenge(challengeEntity)
+//                        .build());
+
+        if (accessChallengeEntity != null) {
+
+        }
+
+        // check error type
+        if ((challengerEntity.getIsPremium() == 0) && (challengeEntity.isPremium())) {
+            accessChallengeEntity.setStatus(ChallengeAccessStatus.ERROR_TYPE);
+            accessChallengeEntity.setMessage("You need to upgrade to a premium account to join this challenge.");
+        } else
+
+            // check error level
+            if (challengerEntity.getLevel().getLevel().compareTo(challengeEntity.getChallengePoint().getLevel()) < 0) {
+                accessChallengeEntity.setStatus(ChallengeAccessStatus.ERROR_LEVEL);
+                accessChallengeEntity.setMessage("Your level is not enough to join this challenge.");
+            } else {
+                accessChallengeEntity.setStatus(ChallengeAccessStatus.JOINED);
+                accessChallengeEntity.setMessage("");
+            }
+
+        return ;
+    }
+
+    public ChallengeAccessStatus checkAccessStatus(ChallengerEntity challengerEntity, ChallengeEntity challengeEntity) {
+        // check error type
+        if ((challengerEntity.getIsPremium() == 0) && (challengeEntity.isPremium())) {
+            return ChallengeAccessStatus.ERROR_TYPE;
+        }
+
+        // check error level
+        if (challengerEntity.getLevel().getLevel().compareTo(challengeEntity.getChallengePoint().getLevel()) < 0) {
+            return ChallengeAccessStatus.ERROR_LEVEL;
+        }
+
+        // check status AccessChallenge
+        Optional<AccessChallengeEntity> accessChallengeOpt = accessChallengeRepository.findByChallengerAndChallenge(challengerEntity, challengeEntity);
+
+        if (accessChallengeOpt.isPresent()) {
+            AccessChallengeEntity accessChallenge = accessChallengeOpt.get();
+
+            return switch (accessChallenge.getStatus()) {
+                case VISITED -> ChallengeAccessStatus.VISITED;
+                case JOINED -> ChallengeAccessStatus.JOINED;
+                case SUBMITTED -> ChallengeAccessStatus.SUBMITTED;
+                default -> ChallengeAccessStatus.REPORTED;  // Nếu là trạng thái REPORTED
+            };
+
+            // return `VISITED` nếu người dùng chưa có record trong `AccessChallenge`
+        } else {
+            return ChallengeAccessStatus.VISITED;
         }
     }
 

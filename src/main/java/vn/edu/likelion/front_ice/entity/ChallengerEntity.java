@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLRestriction;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
+import vn.edu.likelion.front_ice.common.enums.Level;
 
 import java.util.Set;
 
@@ -31,8 +32,9 @@ public class ChallengerEntity extends BaseEntity {
     @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 
-    @Column
-    String levelId;
+    @ManyToOne
+    @JoinColumn(name = "level_id", nullable = false)
+    LevelEntity level;
 
     @Column(name = "is_premium", nullable = false, unique = false)
     int isPremium;

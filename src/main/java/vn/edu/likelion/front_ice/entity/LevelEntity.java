@@ -1,12 +1,13 @@
 package vn.edu.likelion.front_ice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLRestriction;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
+import vn.edu.likelion.front_ice.common.enums.Level;
+
+import java.util.Set;
 
 
 /**
@@ -27,8 +28,9 @@ import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class LevelEntity extends BaseEntity {
 
-    @Column
-    String title;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    Level level;
 
     @Column
     int minScore;
@@ -38,5 +40,10 @@ public class LevelEntity extends BaseEntity {
 
     @Column
     String nextLevelId;
+
+    @OneToMany(mappedBy = "level",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    Set<ChallengerEntity> challengers;
 }
 

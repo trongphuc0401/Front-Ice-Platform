@@ -27,4 +27,6 @@ public interface ChallengerService extends BaseService<ChallengerEntity, CreateC
     Optional<List<RecruiterEntity>> getFollow(String challengerId);
 
     Optional<ChallengerResponse> getDetailsProfile(String accessToken);
+
+    void joinChallenge(String challengeId);
 }
