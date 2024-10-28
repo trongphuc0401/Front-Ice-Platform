@@ -63,9 +63,8 @@ public class ChallengeEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "challenge",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
             orphanRemoval = true)
-    Set<AccessChallengeEntity> accessChallenges;
+    Set<SolutionEntity> solutions;
 
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

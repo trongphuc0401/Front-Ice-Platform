@@ -99,8 +99,6 @@ public class AccountServiceImpl implements AccountService {
     private CategoryRepository categoryRepository;
     @Autowired
     private LevelRepository levelRepository;
-    @Autowired
-    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<RegisterResponse> create_v1(RegisterRequest registerRequest) {
@@ -420,18 +418,18 @@ public class AccountServiceImpl implements AccountService {
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
                         // create 2 record access challenge and its solution
-                        listChallenge.forEach(challengeEntity -> {
-                            accessChallengeRepository.save(
-                                    AccessChallengeEntity.builder()
-                                            .challenger(challengerEntity)
-                                            .challenge(challengeEntity)
-                                            .solution(solutionRepository.save(SolutionEntity.builder()
-                                                    .statusSolution(StatusSolution.PROCESSING)
-                                                    .build()))
-                                            .status(ChallengeAccessStatus.JOINED)
-                                            .build()
-                            );
-                        });
+//                        listChallenge.forEach(challengeEntity -> {
+//                            accessChallengeRepository.save(
+//                                    AccessChallengeEntity.builder()
+//                                            .challenger(challengerEntity)
+//                                            .challenge(challengeEntity)
+//                                            .solution(solutionRepository.save(SolutionEntity.builder()
+//                                                    .statusSolution(StatusSolution.PROCESSING)
+//                                                    .build()))
+//                                            .status(ChallengeAccessStatus.JOINED)
+//                                            .build()
+//                            );
+//                        });
                     }
                     case RECRUITER -> {
                         accountEntity.setRole(Role.RECRUITER);

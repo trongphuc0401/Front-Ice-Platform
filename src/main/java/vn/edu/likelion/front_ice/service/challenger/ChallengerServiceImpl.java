@@ -48,8 +48,6 @@ public class ChallengerServiceImpl implements ChallengerService {
     private LevelRepository levelRepository;
     @Autowired
     private ChallengerMapper challengerMapper;
-    @Autowired
-    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -151,10 +149,10 @@ public class ChallengerServiceImpl implements ChallengerService {
 //        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
-        challenger.setTotalJoinedChallenge(accessChallengeRepository
-                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
-        challenger.setTotalSubmittedChallenge(accessChallengeRepository
-                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+//        challenger.setTotalJoinedChallenge(accessChallengeRepository
+//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
+//        challenger.setTotalSubmittedChallenge(accessChallengeRepository
+//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
         challengerRepository.save(challenger);
 
         // lấy nextLevel

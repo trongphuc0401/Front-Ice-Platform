@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 
@@ -34,8 +35,9 @@ public class ChallengerEntity extends BaseEntity {
     @Column
     String levelId;
 
-    @Column(name = "is_premium", nullable = false, unique = false)
-    int isPremium;
+    @Column(name = "is_premium", nullable = false)
+    @ColumnDefault("false")
+    boolean isPremium;
 
     @Column
     String urlGithub;
@@ -70,5 +72,5 @@ public class ChallengerEntity extends BaseEntity {
     @OneToMany(mappedBy = "challenger",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    Set<AccessChallengeEntity> accessChallenges;
+    Set<SolutionEntity> solutions;
 }

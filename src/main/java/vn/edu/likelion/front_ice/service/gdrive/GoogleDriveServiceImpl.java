@@ -455,7 +455,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             return typeChallenge == TypeChallenge.PREMIUM || typeChallenge == TypeChallenge.FREE_PLUS_PLUS;
         };
 
-        if (challengerEntity.getIsPremium() != 1 || !isAllowedChallenge.test(challengeEntity)) {
+        if (challengerEntity.isPremium() || !isAllowedChallenge.test(challengeEntity)) {
             throw new AppException(ErrorCode.CHALLENGER_AND_CHALLENGE_NOT_PREMIUM);
         }
 
