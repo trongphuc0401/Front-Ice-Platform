@@ -1,5 +1,8 @@
 package vn.edu.likelion.front_ice.configuration;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import vn.edu.likelion.front_ice.security.CustomAuthenticationEntryPoint;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -148,4 +154,5 @@ public class SecurityConfiguration {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length,
                 SecurityUtil.JWT_ALGORITHM.getName());
     }
+
 }
