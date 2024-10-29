@@ -457,7 +457,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<AccountEntity> updateInfo(String id, RegisterRequest i) {
+    public Optional<AccountEntity> updateInfo(Long id, RegisterRequest i) {
         return Optional.empty();
     }
 
@@ -467,17 +467,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public AccountEntity findById(String id) {
+    public AccountEntity findById(Long id) {
         return null;
     }
 

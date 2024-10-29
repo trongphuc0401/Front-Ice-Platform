@@ -49,7 +49,7 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public Optional<RecruiterEntity> updateInfo(String id, FollowRequest i) {
+    public Optional<RecruiterEntity> updateInfo(Long id, FollowRequest i) {
         return Optional.empty();
     }
 
@@ -59,17 +59,17 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public RecruiterEntity findById(String id) {
+    public RecruiterEntity findById(Long id) {
         return null;
     }
 

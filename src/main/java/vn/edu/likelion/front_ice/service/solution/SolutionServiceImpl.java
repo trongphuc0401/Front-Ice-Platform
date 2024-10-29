@@ -56,7 +56,7 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
-    public Optional<SolutionEntity> updateInfo(String id, UpdateSolutionRequest i) {
+    public Optional<SolutionEntity> updateInfo(Long id, UpdateSolutionRequest i) {
         return Optional.empty();
     }
 
@@ -66,17 +66,17 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public SolutionEntity findById(String id) {
+    public SolutionEntity findById(Long id) {
         return null;
     }
 

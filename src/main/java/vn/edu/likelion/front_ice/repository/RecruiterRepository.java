@@ -9,8 +9,8 @@ import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import java.util.Optional;
 
 @Repository
-public interface RecruiterRepository extends JpaRepository<RecruiterEntity, String> {
-    Optional<RecruiterEntity> findByAccountId(String id);
+public interface RecruiterRepository extends JpaRepository<RecruiterEntity, Long> {
+    Optional<RecruiterEntity> findByAccountId(Long id);
 
     @Query(value = "SELECT * FROM GetRecruiterByEmail(?1) LIMIT 1", nativeQuery = true)
     Optional<RecruiterEntity> findByEmail(String email);

@@ -7,7 +7,7 @@ import vn.edu.likelion.front_ice.entity.CategoryEntity;
 import java.util.Optional;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<CategoryEntity, String> {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
         Optional<CategoryEntity> findByTitle(String title);
 
 }
