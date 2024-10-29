@@ -67,7 +67,7 @@ public class ChallengeController {
     }
 
     @GetMapping(ApiEndpoints.GET_CHALLENGE_DETAIL)
-    public ResponseEntity<RestAPIResponse<Object>> getChallengeDetail(@PathVariable("id") String id) {
+    public ResponseEntity<RestAPIResponse<Object>> getChallengeDetail(@PathVariable("id") Long id) {
         ChallengeEntity challengeEntity = challengeService.findById(id);
         DetailChallengeResponse challengeResponse = challengeMapper.toDetailChallengeResponse(challengeEntity);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_DETAIL_SUCCESS, challengeResponse);
@@ -76,7 +76,7 @@ public class ChallengeController {
     @GetMapping(ApiEndpoints.DOWNLOAD_ASSETS)
     public ResponseEntity<Resource> downloadAssets(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable(value = "id") String challengeId)
+            @PathVariable(value = "id") Long challengeId)
             throws IOException, GeneralSecurityException {
 
         String token = securityUtil.extractJwtFromHeader(authorizationHeader);
@@ -100,7 +100,7 @@ public class ChallengeController {
     @GetMapping(ApiEndpoints.DOWNLOAD_FIGMA)
     public ResponseEntity<Resource> downloadFigma(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable(value = "id") String challengeId)
+            @PathVariable(value = "id") Long challengeId)
             throws IOException, GeneralSecurityException {
 
         String token = securityUtil.extractJwtFromHeader(authorizationHeader);

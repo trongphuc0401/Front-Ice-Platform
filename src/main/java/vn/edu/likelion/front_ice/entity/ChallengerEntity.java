@@ -33,7 +33,7 @@ public class ChallengerEntity extends BaseEntity {
     AccountEntity account;
 
     @Column
-    String levelId;
+    Long levelId;
 
     @Column(name = "is_premium", nullable = false)
     @ColumnDefault("false")

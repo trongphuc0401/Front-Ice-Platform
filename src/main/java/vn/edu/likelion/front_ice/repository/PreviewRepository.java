@@ -14,5 +14,5 @@ import vn.edu.likelion.front_ice.entity.PreviewEntity;
  */
 
 @Repository
-public interface PreviewRepository extends JpaRepository<PreviewEntity, String> {
+public interface PreviewRepository extends JpaRepository<PreviewEntity, Long> {
 }

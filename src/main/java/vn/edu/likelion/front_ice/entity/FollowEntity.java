@@ -28,8 +28,8 @@ import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 public class FollowEntity extends BaseEntity {
 
     @Column
-    String challengerId;
+    Long challengerId;
 
     @Column
-    String recruiterId;
+    Long recruiterId;
 }

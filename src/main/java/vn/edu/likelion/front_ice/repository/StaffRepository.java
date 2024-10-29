@@ -7,6 +7,6 @@ import vn.edu.likelion.front_ice.entity.StaffEntity;
 import java.util.Optional;
 
 @Repository
-public interface StaffRepository extends JpaRepository<StaffEntity, String> {
-    Optional<StaffEntity> findByAccountId(String id);
+public interface StaffRepository extends JpaRepository<StaffEntity, Long> {
+    Optional<StaffEntity> findByAccountId(Long id);
 }

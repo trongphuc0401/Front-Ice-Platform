@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PreviewResponse {
-    String id;
+    Long id;
     String url;
     String label;
 }

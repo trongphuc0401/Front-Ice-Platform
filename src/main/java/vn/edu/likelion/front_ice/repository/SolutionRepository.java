@@ -7,7 +7,7 @@ import vn.edu.likelion.front_ice.entity.SolutionEntity;
 import java.util.Optional;
 
 @Repository
-public interface SolutionRepository extends JpaRepository<SolutionEntity, String> {
+public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> {
 //    Optional<SolutionEntity> findByChallengeIdAndChallengerId(String challengeId, String challengerId);
 //    Optional<LevelEntity> findById(String id);
 }
