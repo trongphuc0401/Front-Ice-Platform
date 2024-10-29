@@ -22,7 +22,7 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
     Page<ChallengeEntity> findByCategoryId(Long id, Pageable pageable);
 
-
-
     Optional<ChallengeEntity> findById(Long id);
+
+    int countByChallengeCodeStartingWith(String prefix); // dùng để thêm set ChallengeCode khi tạo challenge
 }

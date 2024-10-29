@@ -4,11 +4,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.beans.factory.annotation.Autowired;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 import vn.edu.likelion.front_ice.common.enums.StatusChallenge;
 import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 /**
@@ -112,11 +117,4 @@ public class ChallengeEntity extends BaseEntity {
             updatable = false)
     String challengeCode;
 
-    @PrePersist
-    protected void onCreate() {
-        super.onCreate();
-        if (this.challengeCode == null) {
-            this.challengeCode = ""; // tự tạo mã challenge code
-        }
-    }
 }
