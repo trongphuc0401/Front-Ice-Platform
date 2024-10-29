@@ -34,3 +34,4 @@ build/
 
 ### Credentials ###
 credentials.json
+firebase.json
