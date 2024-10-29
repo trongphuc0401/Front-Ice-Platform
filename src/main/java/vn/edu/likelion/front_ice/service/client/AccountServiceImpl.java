@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
+import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
@@ -400,7 +401,7 @@ public class AccountServiceImpl implements AccountService {
                         accountEntity.setRole(Role.CHALLENGER);
 
                         // get level newbie for new user
-                        LevelEntity levelEntity = levelRepository.findByTitle("NEWBIE");
+                        LevelEntity levelEntity = levelRepository.findByLevel(Level.NEWBIE);
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
