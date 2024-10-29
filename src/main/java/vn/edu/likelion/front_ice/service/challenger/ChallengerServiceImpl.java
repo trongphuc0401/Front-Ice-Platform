@@ -159,7 +159,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         int scoreNextLevel = level.getMaxScore() - challenger.getScore();
         AtomicReference<String> nextRank = new AtomicReference<>();
         levelRepository.findById(level.getNextLevelId()).ifPresentOrElse(
-                n -> nextRank.set(n.getTitle()),
+                n -> nextRank.set(n.getLevel().getValue()),
                 () -> nextRank.set("not found")
         );
 
