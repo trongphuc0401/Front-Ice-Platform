@@ -26,7 +26,6 @@ import java.util.Set;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class ChallengeEntity extends BaseEntity {
 
     @Column(name = "title", length = 250, nullable = false)
@@ -44,7 +43,7 @@ public class ChallengeEntity extends BaseEntity {
     )
     Set<TechnicalEntity> technicals;
 
-    
+
     @ManyToOne
     @JoinColumn(name = "challenge_point_id", nullable = false)
     ChallengePointEntity challengePoint;
@@ -73,9 +72,6 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "close_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime closeDate;
-
-    @Column(name = "is_premium", nullable = false)
-    boolean isPremium;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     String description;
@@ -111,12 +107,4 @@ public class ChallengeEntity extends BaseEntity {
             nullable = false,
             updatable = false)
     String challengeCode;
-
-    @PrePersist
-    protected void onCreate() {
-        super.onCreate();
-        if (this.challengeCode == null) {
-            this.challengeCode = ""; // tự tạo mã challenge code
-        }
-    }
 }
