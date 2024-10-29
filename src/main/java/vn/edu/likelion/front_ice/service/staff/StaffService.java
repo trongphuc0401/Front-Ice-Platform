@@ -10,5 +10,5 @@ import vn.edu.likelion.front_ice.service.BaseService;
 import java.util.Optional;
 
 public interface StaffService extends BaseService<StaffEntity, RegisterRequest, RegisterRequest> {
-    Optional<StaffResponse> getDetailsProfile(String accountId);
+    Optional<StaffResponse> getDetailsProfile(Long accountId);
 }

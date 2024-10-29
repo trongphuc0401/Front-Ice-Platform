@@ -53,7 +53,7 @@ public class SolutionController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> update(@RequestParam String id,
+    public ResponseEntity<RestAPIResponse<Object>> update(@RequestParam Long id,
             @RequestBody UpdateSolutionRequest updateSolutionRequest) {
 
         return responseUtil.successResponse(solutionService.updateInfo(id, updateSolutionRequest));

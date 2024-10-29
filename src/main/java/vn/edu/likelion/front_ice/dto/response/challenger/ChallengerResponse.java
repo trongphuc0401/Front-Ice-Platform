@@ -16,9 +16,9 @@ public class ChallengerResponse {
     String lastName;
     String email;
     Role role;
-    String accountId;
+    Long accountId;
     AccountResponse accountResponse;
-    String levelId;
+    Long levelId;
     String level;
     int isPremium ;
     String urlGithub;

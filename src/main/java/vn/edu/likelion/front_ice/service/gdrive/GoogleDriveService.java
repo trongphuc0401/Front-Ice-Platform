@@ -28,9 +28,9 @@ public interface GoogleDriveService{
 
     UploadAvatarResponse uploadCV(String accountId, File file);
 
-    AssetsResponse uploadAssets(String challengeId , File file);
+    AssetsResponse uploadAssets(Long challengeId , File file);
 
-    AssetsResponse uploadFigma(String challengeId, File file);
+    AssetsResponse uploadFigma(Long challengeId, File file);
 
     DesignImageResponse uploadImageDesktop(File file);
 

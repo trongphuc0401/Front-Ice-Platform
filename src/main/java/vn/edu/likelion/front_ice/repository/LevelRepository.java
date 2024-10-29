@@ -8,7 +8,7 @@ import vn.edu.likelion.front_ice.entity.StaffEntity;
 import java.util.Optional;
 
 @Repository
-public interface LevelRepository extends JpaRepository<LevelEntity, String> {
+public interface LevelRepository extends JpaRepository<LevelEntity, Long> {
     LevelEntity findByTitle(String newbie);
 //    Optional<LevelEntity> findById(String id);
 }

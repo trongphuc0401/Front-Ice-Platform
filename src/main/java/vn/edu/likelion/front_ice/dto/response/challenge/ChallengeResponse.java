@@ -20,7 +20,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChallengeResponse {
 
-    String id;
+    Long id;
     String title;
     CategoryResponse category;
     Set<TechnicalResponse> technicals;
