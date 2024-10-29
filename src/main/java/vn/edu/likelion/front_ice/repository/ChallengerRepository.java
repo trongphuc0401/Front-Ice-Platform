@@ -9,10 +9,10 @@ import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import java.util.Optional;
 
 @Repository
-public interface ChallengerRepository extends JpaRepository<ChallengerEntity, String> {
+public interface ChallengerRepository extends JpaRepository<ChallengerEntity, Long> {
 
 
-    Optional<ChallengerEntity> findByAccountId(String id);
+    Optional<ChallengerEntity> findByAccountId(Long id);
 
     @Query(value = "SELECT * FROM getchallengerbyemail(?1) LIMIT 1", nativeQuery = true)
     Optional<ChallengerEntity> findByEmail(String email);

@@ -29,8 +29,8 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity implements Serializable {
 
     @Id
-    @UuidGenerator
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @Column(nullable = false, updatable = false)
     LocalDateTime createAt;
@@ -55,10 +55,6 @@ public abstract class BaseEntity implements Serializable {
 
     @PrePersist
     protected void onCreate() {
-
-        if (id == null) {
-            id = HelperUtil.getUUID();
-        }
         this.createAt = LocalDateTime.now();
         this.updateAt = LocalDateTime.now();
 

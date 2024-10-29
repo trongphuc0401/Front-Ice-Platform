@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FollowRepository extends JpaRepository<FollowEntity, String> {
-    Optional<List<FollowEntity>> findByChallengerId(String challengerId);
-    Optional<List<FollowEntity>> findByRecruiterId(String recruiterId);
+public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
+    Optional<List<FollowEntity>> findByChallengerId(Long challengerId);
+    Optional<List<FollowEntity>> findByRecruiterId(Long recruiterId);
 
-    Optional<FollowEntity> findByChallengerIdAndRecruiterId(String challengerId, String recruiterId);
+    Optional<FollowEntity> findByChallengerIdAndRecruiterId(Long challengerId, Long recruiterId);
 }

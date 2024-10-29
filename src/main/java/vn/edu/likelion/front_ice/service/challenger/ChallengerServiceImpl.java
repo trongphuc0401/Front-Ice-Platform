@@ -48,8 +48,6 @@ public class ChallengerServiceImpl implements ChallengerService {
     private LevelRepository levelRepository;
     @Autowired
     private ChallengerMapper challengerMapper;
-    @Autowired
-    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -57,7 +55,7 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public Optional<ChallengerEntity> updateInfo(String id, UpdateChallengerRequest i) {
+    public Optional<ChallengerEntity> updateInfo(Long id, UpdateChallengerRequest i) {
         return Optional.empty();
     }
 
@@ -67,17 +65,17 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public ChallengerEntity findById(String id) {
+    public ChallengerEntity findById(Long id) {
         return null;
     }
 
@@ -119,7 +117,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         return Optional.of(response);
     }
 
-    public Optional<List<RecruiterEntity>> getFollow(String challengerId) {
+    public Optional<List<RecruiterEntity>> getFollow(Long challengerId) {
         List<RecruiterEntity> listResponse = new ArrayList<>();
 
         List<FollowEntity> listFollow = followRepository.findByChallengerId(challengerId)
@@ -151,10 +149,10 @@ public class ChallengerServiceImpl implements ChallengerService {
 //        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
-        challenger.setTotalJoinedChallenge(accessChallengeRepository
-                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
-        challenger.setTotalSubmittedChallenge(accessChallengeRepository
-                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+//        challenger.setTotalJoinedChallenge(accessChallengeRepository
+//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
+//        challenger.setTotalSubmittedChallenge(accessChallengeRepository
+//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
         challengerRepository.save(challenger);
 
         // lấy nextLevel
@@ -173,7 +171,7 @@ public class ChallengerServiceImpl implements ChallengerService {
         return Optional.of(response);
     }
 
-    public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
+    /*public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
         switch (levelTest) {
             case EASY:
                 challengerEntity = ChallengerEntity.builder()
@@ -202,7 +200,7 @@ public class ChallengerServiceImpl implements ChallengerService {
             default:
                 break;
         }
-    }
+    }*/
 
     public int addScore(Level levelChallenger, int score, String levelAnwser) {
         switch (levelChallenger) {
@@ -254,15 +252,15 @@ public class ChallengerServiceImpl implements ChallengerService {
         return score;
     }
 
-    public void upLevel(ChallengerEntity challengerEntity, String levelChallenger) {
-        if (levelChallenger.equals("newbie") && challengerEntity.getScore() >= 150) {
-            challengerEntity.setLevelId("silver");
-        } else if (levelChallenger.equals("silver") && challengerEntity.getScore() >= 450) {
-            challengerEntity.setLevelId("gold");
-        } else if (levelChallenger.equals("gold") && challengerEntity.getScore() >= 1050) {
-            challengerEntity.setLevelId("diamond");
-        }
-    }
+//    public void upLevel(ChallengerEntity challengerEntity, String levelChallenger) {
+//        if (levelChallenger.equals("newbie") && challengerEntity.getScore() >= 150) {
+//            challengerEntity.setLevelId("silver");
+//        } else if (levelChallenger.equals("silver") && challengerEntity.getScore() >= 450) {
+//            challengerEntity.setLevelId("gold");
+//        } else if (levelChallenger.equals("gold") && challengerEntity.getScore() >= 1050) {
+//            challengerEntity.setLevelId("diamond");
+//        }
+//    }
 
 
 }

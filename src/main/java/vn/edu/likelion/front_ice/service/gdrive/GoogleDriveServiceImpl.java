@@ -204,7 +204,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
 
-    @Override public AssetsResponse uploadAssets(String challengeId, File file) {
+    @Override public AssetsResponse uploadAssets(Long challengeId, File file) {
 
         AssetsResponse response = new AssetsResponse();
 
@@ -265,7 +265,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
-    @Override public AssetsResponse uploadFigma(String challengeId, File file) {
+    @Override public AssetsResponse uploadFigma(Long challengeId, File file) {
         AssetsResponse response = new AssetsResponse();
 
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId)
@@ -327,7 +327,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
 
 
-    public InputStream downloadAssets(String challengeId) throws IOException, GeneralSecurityException {
+    public InputStream downloadAssets(Long challengeId) throws IOException, GeneralSecurityException {
 
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
                 () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
@@ -342,7 +342,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return inputStream;
     }
 
-    public InputStream downloadFigma(String challengeId) throws IOException, GeneralSecurityException {
+    public InputStream downloadFigma(Long challengeId) throws IOException, GeneralSecurityException {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
@@ -359,7 +359,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
             return typeChallenge == TypeChallenge.PREMIUM || typeChallenge == TypeChallenge.FREE_PLUS_PLUS;
         };
 
-        if (challengerEntity.getIsPremium() != 1 || !isAllowedChallenge.test(challengeEntity)) {
+        if (challengerEntity.isPremium() || !isAllowedChallenge.test(challengeEntity)) {
             throw new AppException(ErrorCode.CHALLENGER_AND_CHALLENGE_NOT_PREMIUM);
         }
 

@@ -9,7 +9,7 @@ import vn.edu.likelion.front_ice.entity.AccountEntity;
 import java.util.Optional;
 
 @Repository
-public interface AccountRepository extends JpaRepository<AccountEntity, String> {
+public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     Optional<AccountEntity> findByEmail(String email);
 

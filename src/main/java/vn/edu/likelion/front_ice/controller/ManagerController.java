@@ -52,7 +52,7 @@ public class ManagerController {
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
+    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") Long id) {
         return responseUtil.successResponse(staffService.getDetailsProfile(id));
     }
 
@@ -70,7 +70,7 @@ public class ManagerController {
 
     @PostMapping(ApiEndpoints.UPLOAD_ASSETS)
     public ResponseEntity<RestAPIResponse<Object>> uploadAssets(
-            @RequestParam("challengeId") String challengeId,
+            @RequestParam("challengeId") Long challengeId,
             @RequestParam("assets") MultipartFile file) throws IOException {
 
         if (file.isEmpty()) {
@@ -101,7 +101,7 @@ public class ManagerController {
 
     @PostMapping(ApiEndpoints.UPLOAD_FIGMA)
     public ResponseEntity<RestAPIResponse<Object>> uploadFigma(
-            @RequestParam("challengeId") String challengeId,
+            @RequestParam("challengeId") Long challengeId,
             @RequestParam("figma") MultipartFile file) throws IOException {
 
         if (file.isEmpty()) {

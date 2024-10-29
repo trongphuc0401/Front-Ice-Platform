@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DetailChallengeResponse {
-    String id;
+    Long id;
     String title;
     String description;
     LocalDateTime openDate;

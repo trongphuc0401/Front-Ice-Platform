@@ -6,15 +6,15 @@ import java.util.Optional;
 public interface BaseService<E, I, U> {
     Optional<E> create(I t);
 
-    Optional<E> updateInfo(String id, U i);
+    Optional<E> updateInfo(Long id, U i);
 
     List<E> saveAll(List<E> ts);
 
-    void delete(String id);
+    void delete(Long id);
 
-    void deleteAll(List<String> listId);
+    void deleteAll(List<Long> listId);
 
-    E findById(String id);
+    E findById(Long id);
 
     List<E> findAll();
 }

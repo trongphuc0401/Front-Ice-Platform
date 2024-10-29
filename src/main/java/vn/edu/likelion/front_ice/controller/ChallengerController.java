@@ -59,7 +59,7 @@ public class ChallengerController {
 
     @GetMapping(ApiEndpoints.GET_FOLLOW)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam String id) {
+    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam Long id) {
         return responseUtil.successResponse(challengerService.getFollow(id));
     }
 

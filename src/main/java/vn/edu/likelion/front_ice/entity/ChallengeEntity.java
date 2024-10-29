@@ -63,9 +63,8 @@ public class ChallengeEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "challenge",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
             orphanRemoval = true)
-    Set<AccessChallengeEntity> accessChallenges;
+    Set<SolutionEntity> solutions;
 
     @Column(name = "open_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -106,4 +105,18 @@ public class ChallengeEntity extends BaseEntity {
 
     @Column(name = "brief", columnDefinition = "TEXT")
     String brief;
+
+    @Column(name = "challenge_code",
+            unique = true,
+            nullable = false,
+            updatable = false)
+    String challengeCode;
+
+    @PrePersist
+    protected void onCreate() {
+        super.onCreate();
+        if (this.challengeCode == null) {
+            this.challengeCode = ""; // tự tạo mã challenge code
+        }
+    }
 }

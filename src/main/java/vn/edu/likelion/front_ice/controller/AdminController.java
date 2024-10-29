@@ -33,7 +33,7 @@ public class AdminController {
 
     @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") String id) {
+    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") Long id) {
         return responseUtil.successResponse(staffService.getDetailsProfile(id));
     }
 

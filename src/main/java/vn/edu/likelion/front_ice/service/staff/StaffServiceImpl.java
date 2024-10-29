@@ -30,7 +30,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Optional<StaffResponse> getDetailsProfile(String accountId) {
+    public Optional<StaffResponse> getDetailsProfile(Long accountId) {
 
         AccountEntity account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -47,7 +47,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Optional<StaffEntity> updateInfo(String id, RegisterRequest i) {
+    public Optional<StaffEntity> updateInfo(Long id, RegisterRequest i) {
         return Optional.empty();
     }
 
@@ -57,17 +57,17 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public StaffEntity findById(String id) {
+    public StaffEntity findById(Long id) {
         return null;
     }
 
