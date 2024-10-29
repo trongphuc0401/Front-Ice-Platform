@@ -16,6 +16,7 @@ import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseService;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.staff.StaffService;
 
@@ -42,6 +43,10 @@ public class ManagerController {
 
     @Autowired
     private GoogleDriveService googleDriveService;
+
+    @Autowired
+    private FirebaseService firebaseService;
+
     @Autowired private SecurityUtil securityUtil;
     @Autowired private ChallengeRepository challengeRepository;
 
@@ -54,24 +59,12 @@ public class ManagerController {
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("image") MultipartFile file) throws
-            IOException {
+            @RequestParam("image") MultipartFile file){
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
-        String originalFilename = file.getOriginalFilename();
-        String contentType = file.getContentType();
 
-        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
-            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
-        }
-
-        File tempFile = File.createTempFile("manager_","");
-        file.transferTo(tempFile);
-
-        return responseUtil.successResponse(googleDriveService.uploadManagerAvatar(token,tempFile));
+        return responseUtil.successResponse(firebaseService.uploadManagerAvatar(file));
 
     }
 
@@ -134,33 +127,46 @@ public class ManagerController {
         }
     }
 
+    // @PostMapping(ApiEndpoints.UPLOAD_DESKTOP_DESIGN)
+    // public ResponseEntity<RestAPIResponse<Object>> uploadDesktopDesign(
+    //         @RequestHeader("Authorization") String authorizationHeader,
+    //         @RequestParam("desktop") MultipartFile file) throws IOException {
+    //
+    //     if (file.isEmpty()) {
+    //         throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+    //     }
+    //     securityUtil.extractJwtFromHeader(authorizationHeader);
+    //     String originalFilename = file.getOriginalFilename();
+    //     String contentType = file.getContentType();
+    //
+    //     if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
+    //         throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
+    //     }
+    //
+    //     File tempFile = File.createTempFile("desktop"
+    //             +"_", ".zip");
+    //
+    //     try {
+    //         file.transferTo(tempFile);
+    //         return responseUtil.successResponse(googleDriveService.uploadImageDesktop(tempFile));
+    //     } finally {
+    //         if (tempFile.exists()) {
+    //             tempFile.delete();
+    //         }
+    //     }
+    // }
+
     @PostMapping(ApiEndpoints.UPLOAD_DESKTOP_DESIGN)
     public ResponseEntity<RestAPIResponse<Object>> uploadDesktopDesign(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("desktop") MultipartFile file) throws IOException {
+            @RequestParam("label") String label,
+            @RequestParam("challengeId") Long challengeId,
+            @RequestParam("desktop") MultipartFile file){
 
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-        securityUtil.extractJwtFromHeader(authorizationHeader);
-        String originalFilename = file.getOriginalFilename();
-        String contentType = file.getContentType();
+            return responseUtil.successResponse(firebaseService.uploadDesignImage(label,challengeId,file));
 
-        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
-            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT);
-        }
-
-        File tempFile = File.createTempFile("desktop"
-                +"_", ".zip");
-
-        try {
-            file.transferTo(tempFile);
-            return responseUtil.successResponse(googleDriveService.uploadImageDesktop(tempFile));
-        } finally {
-            if (tempFile.exists()) {
-                tempFile.delete();
-            }
-        }
     }
 
     @PostMapping(ApiEndpoints.UPLOAD_MOBILE_DESIGN)

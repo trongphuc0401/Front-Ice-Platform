@@ -77,67 +77,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     }
 
-
-
-    private UploadAvatarResponse uploadAvatar( File file, String folderId, ErrorCode errorCode) {
-        UploadAvatarResponse response = new UploadAvatarResponse();
-
-        // Lấy email từ accessToken
-        String email = SecurityUtil.getCurrentUserLogin()
-                .orElseThrow(() -> new AppException(errorCode));
-
-        // Tìm AccountEntity bằng email
-        AccountEntity accountEntity = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(errorCode));
-
-        try {
-            Drive drive = createDriveService();
-            String newFileName = "Avatar_" + accountEntity.getFirstName() + "_" + accountEntity.getLastName() + "_" + System.currentTimeMillis() + ".jpeg";
-
-            // Đổi tên file
-            File renamedFile = new File(file.getParent(), newFileName);
-            if (!file.renameTo(renamedFile)) {
-                throw new IOException("Failed to rename file to " + newFileName);
-            }
-
-            // Chuẩn bị metadata cho file
-            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(newFileName);
-            fileMetaData.setParents(Collections.singletonList(folderId));
-
-            // Tạo FileContent với loại MIME là image/jpeg
-            FileContent mediaContent = new FileContent("image/jpeg", renamedFile);
-
-            // Tải file lên Google Drive
-            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
-                    .setFields("id").execute();
-
-            // Tạo URL công khai cho hình ảnh
-            String imageUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
-            System.out.println("IMAGE URL: " + imageUrl);
-
-            // Đặt quyền chia sẻ công khai cho tệp
-            Permission permission = new Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-            drive.permissions().create(uploadedFile.getId(), permission).execute();
-
-            // Xóa tệp cục bộ sau khi tải lên thành công
-            renamedFile.delete();
-
-            // Cập nhật URL vào AccountEntity và lưu lại
-            response.setUrl(imageUrl);
-            accountEntity.setAvatar(imageUrl);
-            accountRepository.save(accountEntity);
-
-        } catch (IOException | GeneralSecurityException e) {
-            System.err.println("Error uploading avatar: " + e.getMessage());
-            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
-        }
-
-        return response;
-    }
-
     private DesignImageResponse uploadDesignImage( File file, String folderId, ErrorCode errorCode, String label) {
         DesignImageResponse response = new DesignImageResponse();
 
@@ -192,41 +131,6 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         }
 
         return response;
-    }
-
-
-
-
-    @Override
-    public UploadAvatarResponse uploadChallengerAvatar(String accessToken, File file) {
-        String folderId = "1dD24z_IAgyaY7bPbCPlx2m23jyQXELaQ";
-        return uploadAvatar( file, folderId, ErrorCode.CHALLENGER_NOT_EXIST);
-    }
-
-
-    @Override
-    public UploadAvatarResponse uploadManagerAvatar(String accessToken, File file) {
-        String folderId = "1vpYYN0SNilcKW89MF63ABvFr80HFQlyv";
-        return uploadAvatar( file, folderId, ErrorCode.MANAGER_NOT_EXIST);
-    }
-
-    @Override
-    public UploadAvatarResponse uploadMentorAvatar(String accessToken, File file) {
-        String folderId = "1H2NC6sEKLrFTMbA1GQjrUoHTdjS1gJEo";
-        return uploadAvatar( file, folderId, ErrorCode.MENTOR_NOT_EXIST);
-    }
-
-    @Override
-    public UploadAvatarResponse uploadAdminAvatar(String accessToken, File file) {
-        // Placeholder logic for admin avatar, same as others but different folderId
-        String folderId = "admin_folder_id";
-        return uploadAvatar( file, folderId, ErrorCode.MENTOR_NOT_EXIST);
-    }
-
-    @Override
-    public UploadAvatarResponse uploadRecruiterAvatar(String accessToken, File file) {
-        String folderId = "1YysRUafhz5seAY9Oa_LzCATYQyA1ZXcn";
-        return uploadAvatar( file, folderId, ErrorCode.RECRUITER_NOT_EXIST);
     }
 
     @Override public DesignImageResponse uploadImageDesktop(File file) {
