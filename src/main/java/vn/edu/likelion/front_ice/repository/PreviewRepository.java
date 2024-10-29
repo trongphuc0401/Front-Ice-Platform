@@ -19,4 +19,6 @@ import java.util.Optional;
 
 @Repository
 public interface PreviewRepository extends JpaRepository<PreviewEntity, Long> {
+    Optional<PreviewEntity> findByChallengeAndLabel(ChallengeEntity challengeEntity, String label);
+
 }

@@ -159,7 +159,7 @@ public class ManagerController {
     @PostMapping(ApiEndpoints.UPLOAD_DESKTOP_DESIGN)
     public ResponseEntity<RestAPIResponse<Object>> uploadDesktopDesign(
             @RequestParam("label") String label,
-            @RequestParam("challengeId") String challengeId,
+            @RequestParam("challengeId") Long challengeId,
             @RequestParam("desktop") MultipartFile file){
 
         if (file.isEmpty()) {

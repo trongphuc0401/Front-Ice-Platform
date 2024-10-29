@@ -26,5 +26,5 @@ public interface FirebaseService {
 
     UploadAvatarResponse uploadRecruiterAvatar(MultipartFile file);
 
-    DesignImageResponse uploadDesignImage(String label,String challengeId,MultipartFile file);
+    DesignImageResponse uploadDesignImage(String label,Long challengeId,MultipartFile file);
 }

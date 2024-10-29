@@ -113,7 +113,7 @@ public class FirebaseServiceImpl implements FirebaseService {
      * @return
      */
     @Override
-    public DesignImageResponse uploadDesignImage(String label, String challengeId, MultipartFile file) {
+    public DesignImageResponse uploadDesignImage(String label, Long challengeId, MultipartFile file) {
         DesignImageResponse response = new DesignImageResponse();
 
         // Retrieve the ChallengeEntity
