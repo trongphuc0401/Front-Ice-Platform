@@ -1,4 +1,6 @@
 package vn.edu.likelion.front_ice.common.utils;
+ import java.time.LocalDate;
+ import java.time.format.DateTimeFormatter;
  import java.util.Arrays;
  import java.util.List;
  import java.util.UUID;
@@ -13,15 +15,26 @@ public class HelperUtil {
     }
 
     public static boolean isImageFile(String fileName, String contentType) {
-        // Kiểm tra phần mở rộng của file
+
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
         List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
 
-        // Kiểm tra mime type (loại file)
         List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png");
 
-        // Kiểm tra phần mở rộng và mime type của file
         return allowedExtensions.contains(fileExtension) && allowedMimeTypes.contains(contentType);
+    }
+
+    public static String generateChallengeCode(int currentCounter) {
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        return String.format("CHAL-%s-%03d", currentDate, currentCounter);
+    }
+
+    public static String generateSolutionCode(Long challengeId, int currentCounter) {
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        return String.format("CHAL%d-SOL-%s-%03d", challengeId, currentDate, currentCounter);
     }
 
 

@@ -67,5 +67,13 @@ public class SolutionEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id", nullable = false)
     ChallengeEntity challenge;
+
+    @Column(name = "solution_code",
+            unique = true,
+            nullable = true,// sửa lại
+            updatable = false)
+    String solutionCode;
+
+
 }
 
