@@ -418,6 +418,7 @@ public class AccountServiceImpl implements AccountService {
                         List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
+
                         // create 2 record access challenge and its solution
 //                        listChallenge.forEach(challengeEntity -> {
 //                            accessChallengeRepository.save(
@@ -431,6 +432,18 @@ public class AccountServiceImpl implements AccountService {
 //                                            .build()
 //                            );
 //                        });
+
+                        // create 2 records solution
+                        listChallenge.forEach(challengeEntity -> {
+                            solutionRepository.save(
+                                    SolutionEntity.builder()
+                                            .challenger(challengerEntity)
+                                            .challenge(challengeEntity)
+                                            .isJoined(true)
+                                            .statusSolution(StatusSolution.PROCESSING)
+                                            .build()
+                            );
+                        });
                     }
                     case RECRUITER -> {
                         accountEntity.setRole(Role.RECRUITER);

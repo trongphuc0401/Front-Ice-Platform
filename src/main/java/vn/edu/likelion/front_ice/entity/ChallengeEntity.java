@@ -112,11 +112,11 @@ public class ChallengeEntity extends BaseEntity {
             updatable = false)
     String challengeCode;
 
-    @PrePersist
-    protected void onCreate() {
-        super.onCreate();
-        if (this.challengeCode == null) {
-            this.challengeCode = ""; // tự tạo mã challenge code
-        }
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        super.onCreate();
+//        if (this.challengeCode == null) {
+//            this.challengeCode = ""; // tự tạo mã challenge code
+//        }
+//    }
 }

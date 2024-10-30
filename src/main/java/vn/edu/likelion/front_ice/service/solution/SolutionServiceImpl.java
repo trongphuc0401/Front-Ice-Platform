@@ -37,7 +37,7 @@ public class SolutionServiceImpl implements SolutionService {
         String email = SecurityUtil.getCurrentUserLogin()
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+        ChallengerEntity challengerEntity = challengerRepository.findByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
 //        Optional<SolutionEntity> solutionEntity = solutionRepository

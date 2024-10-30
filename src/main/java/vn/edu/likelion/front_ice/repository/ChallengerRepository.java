@@ -14,6 +14,8 @@ public interface ChallengerRepository extends JpaRepository<ChallengerEntity, Lo
 
     Optional<ChallengerEntity> findByAccountId(Long id);
 
-    @Query(value = "SELECT * FROM getchallengerbyemail(?1) LIMIT 1", nativeQuery = true)
-    Optional<ChallengerEntity> findByEmail(String email);
+//    @Query(value = "SELECT * FROM getchallengerbyemail(?1) LIMIT 1", nativeQuery = true)
+//    @Query(value = "SELECT * FROM "tbl_challenger" , nativeQuery = true)
+//    Optional<ChallengerEntity> findChallengerByEmail(String email);
+    Optional<ChallengerEntity> findByAccountEmail(String email);
 }

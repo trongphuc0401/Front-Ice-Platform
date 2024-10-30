@@ -48,6 +48,8 @@ public class ChallengerServiceImpl implements ChallengerService {
     private LevelRepository levelRepository;
     @Autowired
     private ChallengerMapper challengerMapper;
+    @Autowired
+    private SolutionRepository solutionRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -134,10 +136,10 @@ public class ChallengerServiceImpl implements ChallengerService {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        AccountEntity account = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//        AccountEntity account = accountRepository.findByEmail(email)
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challenger = challengerRepository.findByEmail(email)
+        ChallengerEntity challenger = challengerRepository.findByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
         LevelEntity level = Optional.ofNullable(challenger.getLevelId())
@@ -145,14 +147,14 @@ public class ChallengerServiceImpl implements ChallengerService {
                         .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
                 .orElse(null);
 
-        ChallengerResponse response = challengerMapper.toChallengerResponse(account, challenger, level);
+        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger.getAccount(), challenger, level);
 //        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
-//        challenger.setTotalJoinedChallenge(accessChallengeRepository
-//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
-//        challenger.setTotalSubmittedChallenge(accessChallengeRepository
-//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+        challenger.setTotalJoinedChallenge(solutionRepository
+                .findByChallengerAndIsJoined(challenger, ChallengeAccessStatus.JOINED).size());
+        challenger.setTotalSubmittedChallenge(accessChallengeRepository
+                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
         challengerRepository.save(challenger);
 
         // lấy nextLevel
