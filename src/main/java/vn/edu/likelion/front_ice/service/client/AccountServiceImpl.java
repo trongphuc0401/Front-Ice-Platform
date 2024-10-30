@@ -28,6 +28,7 @@ import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
@@ -441,6 +442,7 @@ public class AccountServiceImpl implements AccountService {
                                             .challenge(challengeEntity)
                                             .isJoined(true)
                                             .statusSolution(StatusSolution.PROCESSING)
+                                            .solutionCode(HelperUtil.generateSolutionCode(challengeEntity.getId()))
                                             .build()
                             );
                         });

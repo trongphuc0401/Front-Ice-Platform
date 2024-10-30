@@ -152,9 +152,9 @@ public class ChallengerServiceImpl implements ChallengerService {
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
         challenger.setTotalJoinedChallenge(solutionRepository
-                .findByChallengerAndIsJoined(challenger, ChallengeAccessStatus.JOINED).size());
-        challenger.setTotalSubmittedChallenge(accessChallengeRepository
-                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+                .findByChallengerAndJoined(challenger, true).size());
+        challenger.setTotalSubmittedChallenge(solutionRepository
+                .findByChallengerAndSubmitted(challenger, true).size());
         challengerRepository.save(challenger);
 
         // lấy nextLevel
