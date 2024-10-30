@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DesignImageResponse {
-    String id;
+    Long id;
     String imageUrl;
     String label;
 }

@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FollowRequest {
-    String challengerId;
-    String recruiterId;
+    Long challengerId;
+    Long recruiterId;
 }

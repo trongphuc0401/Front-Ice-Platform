@@ -16,21 +16,11 @@ import java.io.File;
  */
 public interface GoogleDriveService{
 
-    UploadAvatarResponse uploadChallengerAvatar(String accountChallengerId,File file);
-
-    UploadAvatarResponse uploadManagerAvatar(String accountChallengerId,File file);
-
-    UploadAvatarResponse uploadMentorAvatar(String accountChallengerId,File file);
-
-    UploadAvatarResponse uploadAdminAvatar(String accountChallengerId,File file);
-
-    UploadAvatarResponse uploadRecruiterAvatar(String accountChallengerId,File file);
-
     UploadAvatarResponse uploadCV(String accountId, File file);
 
-    AssetsResponse uploadAssets(String challengeId , File file);
+    AssetsResponse uploadAssets(Long challengeId , File file);
 
-    AssetsResponse uploadFigma(String challengeId, File file);
+    AssetsResponse uploadFigma(Long challengeId, File file);
 
     DesignImageResponse uploadImageDesktop(File file);
 

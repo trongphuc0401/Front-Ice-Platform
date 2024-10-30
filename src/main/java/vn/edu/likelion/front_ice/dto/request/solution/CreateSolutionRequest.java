@@ -18,5 +18,5 @@ import lombok.experimental.FieldDefaults;
 
 public class CreateSolutionRequest {
 //    String challengerId;
-    String challengeId;
+Long challengeId;
 }

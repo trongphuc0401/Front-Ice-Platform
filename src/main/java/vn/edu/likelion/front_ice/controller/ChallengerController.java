@@ -13,6 +13,7 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseService;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
 import java.io.File;
@@ -47,6 +48,9 @@ public class ChallengerController {
     private GoogleDriveService googleDriveService;
     @Autowired private SecurityUtil securityUtil;
 
+    @Autowired
+    private FirebaseService firebaseService;
+
     @PostMapping(ApiEndpoints.FOLLOW)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> follow(@RequestBody FollowRequest followRequest) {
@@ -55,30 +59,17 @@ public class ChallengerController {
 
     @GetMapping(ApiEndpoints.GET_FOLLOW)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam String id) {
+    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam Long id) {
         return responseUtil.successResponse(challengerService.getFollow(id));
     }
-    
+
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("image") MultipartFile file) throws
-            IOException {
+            @RequestParam("image") MultipartFile file){
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
-
-        String originalFilename = file.getOriginalFilename();
-        String contentType = file.getContentType();
-
-        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
-            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
-        }
-        File tempFile = File.createTempFile("challenger_", null);
-        file.transferTo(tempFile);
-
-        return responseUtil.successResponse(googleDriveService.uploadChallengerAvatar(token,tempFile));
+        return responseUtil.successResponse(firebaseService.uploadChallengerAvatar(file));
 
     }
 

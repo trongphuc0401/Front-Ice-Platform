@@ -11,7 +11,7 @@ import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import java.util.Optional;
 
 @Repository
-public interface ChallengeRepository extends JpaRepository<ChallengeEntity, String>, JpaSpecificationExecutor<ChallengeEntity> {
+public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long>, JpaSpecificationExecutor<ChallengeEntity> {
     //    Optional<ChallengeEntity> findByAccountId(String id);
 
     //    // Query native reference
@@ -20,9 +20,9 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Stri
 //    Page<Object[]> findPlantBySearchText1(@Param("searchText") String searchText, Pageable pageable);
 //
 //    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
-    Page<ChallengeEntity> findByCategoryId(String id, Pageable pageable);
+    Page<ChallengeEntity> findByCategoryId(Long id, Pageable pageable);
 
+    Optional<ChallengeEntity> findById(Long id);
 
-
-    Optional<ChallengeEntity> findById(String id);
+    int countByChallengeCodeStartingWith(String prefix); // dùng để thêm set ChallengeCode khi tạo challenge
 }

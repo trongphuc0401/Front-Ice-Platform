@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
+import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
@@ -99,8 +100,6 @@ public class AccountServiceImpl implements AccountService {
     private CategoryRepository categoryRepository;
     @Autowired
     private LevelRepository levelRepository;
-    @Autowired
-    private AccessChallengeRepository accessChallengeRepository;
 
     @Override
     public Optional<RegisterResponse> create_v1(RegisterRequest registerRequest) {
@@ -402,7 +401,7 @@ public class AccountServiceImpl implements AccountService {
                         accountEntity.setRole(Role.CHALLENGER);
 
                         // get level newbie for new user
-                        LevelEntity levelEntity = levelRepository.findByTitle("NEWBIE");
+                        LevelEntity levelEntity = levelRepository.findByLevel(Level.NEWBIE);
 
                         // create challenger profile
                         ChallengerEntity challengerEntity = ChallengerEntity.builder()
@@ -420,18 +419,18 @@ public class AccountServiceImpl implements AccountService {
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
                         // create 2 record access challenge and its solution
-                        listChallenge.forEach(challengeEntity -> {
-                            accessChallengeRepository.save(
-                                    AccessChallengeEntity.builder()
-                                            .challenger(challengerEntity)
-                                            .challenge(challengeEntity)
-                                            .solution(solutionRepository.save(SolutionEntity.builder()
-                                                    .statusSolution(StatusSolution.PROCESSING)
-                                                    .build()))
-                                            .status(ChallengeAccessStatus.JOINED)
-                                            .build()
-                            );
-                        });
+//                        listChallenge.forEach(challengeEntity -> {
+//                            accessChallengeRepository.save(
+//                                    AccessChallengeEntity.builder()
+//                                            .challenger(challengerEntity)
+//                                            .challenge(challengeEntity)
+//                                            .solution(solutionRepository.save(SolutionEntity.builder()
+//                                                    .statusSolution(StatusSolution.PROCESSING)
+//                                                    .build()))
+//                                            .status(ChallengeAccessStatus.JOINED)
+//                                            .build()
+//                            );
+//                        });
                     }
                     case RECRUITER -> {
                         accountEntity.setRole(Role.RECRUITER);
@@ -459,7 +458,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<AccountEntity> updateInfo(String id, RegisterRequest i) {
+    public Optional<AccountEntity> updateInfo(Long id, RegisterRequest i) {
         return Optional.empty();
     }
 
@@ -469,17 +468,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public AccountEntity findById(String id) {
+    public AccountEntity findById(Long id) {
         return null;
     }
 

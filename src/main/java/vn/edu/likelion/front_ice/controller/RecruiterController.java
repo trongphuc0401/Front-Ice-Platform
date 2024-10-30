@@ -13,6 +13,8 @@ import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseService;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseServiceImpl;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.service.recruiter.RecruiterService;
 
@@ -42,6 +44,7 @@ public class RecruiterController {
     @Autowired
     private final GoogleDriveService googleDriveService;
     @Autowired private SecurityUtil securityUtil;
+    @Autowired private FirebaseService firebaseService;
 
     @GetMapping(ApiEndpoints.PROFILE_API)
     @PreAuthorize("hasAuthority('ROLE_RECRUITER')")
@@ -53,26 +56,13 @@ public class RecruiterController {
 
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("image") MultipartFile file) throws IOException {
-
+            @RequestParam("image") MultipartFile file) {
 
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
-        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
-        String originalFilename = file.getOriginalFilename();
-        String contentType = file.getContentType();
 
-        if (originalFilename == null || !HelperUtil.isImageFile(originalFilename, contentType)) {
-            throw new AppException(ErrorCode.INVALID_IMAGE_FORMAT); // Ném lỗi định dạng ảnh không hợp lệ
-        }
-
-        File tempFile = File.createTempFile("recruiter_", null);
-        file.transferTo(tempFile);
-
-
-        return responseUtil.successResponse(googleDriveService.uploadRecruiterAvatar(token, tempFile));
+        return responseUtil.successResponse(firebaseService.uploadRecruiterAvatar(file));
     }
 
 

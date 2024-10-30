@@ -38,23 +38,42 @@ public class SolutionEntity extends BaseEntity {
     @Column
     String title;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     String description;
 
     @Column
     String note;
 
-    @Column(name = "is_hidden")
+    @Column(nullable = false)
     @ColumnDefault("false")
-    boolean hidden;
+    boolean isJoined;
+
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    boolean isSubmitted;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_solution")
+    @Column(name = "status_solution", nullable = false)
     StatusSolution statusSolution;
 
-    @OneToMany(mappedBy = "solution",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    Set<AccessChallengeEntity> accessChallenges;
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    boolean reported;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "challenger_id", nullable = false)
+    ChallengerEntity challenger;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "challenge_id", nullable = false)
+    ChallengeEntity challenge;
+
+    @Column(name = "solution_code",
+            unique = true,
+            nullable = true,// sửa lại
+            updatable = false)
+    String solutionCode;
+
+
 }
 

@@ -67,7 +67,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Optional<ChallengeEntity> updateInfo(String id, UpdateChallengeRequest i) {
+    public Optional<ChallengeEntity> updateInfo(Long id, UpdateChallengeRequest i) {
         return Optional.empty();
     }
 
@@ -77,17 +77,17 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void deleteAll(List<String> listId) {
+    public void deleteAll(List<Long> listId) {
 
     }
 
     @Override
-    public ChallengeEntity findById(String id) {
+    public ChallengeEntity findById(Long id) {
         return challengeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
     }
@@ -98,7 +98,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public PaginateChallengeResponse getPaginationChallengeByCategory(String category, int pageNo, int pagSize) {
+    public PaginateChallengeResponse getPaginationChallengeByCategory(Long category, int pageNo, int pagSize) {
         CategoryEntity categoryEntity = categoryRepository.findById(category)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXIST));
 
