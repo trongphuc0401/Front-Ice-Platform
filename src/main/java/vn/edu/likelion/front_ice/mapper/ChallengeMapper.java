@@ -14,6 +14,8 @@ import java.time.ZoneId;
 @Mapper(componentModel = "spring")
 public interface ChallengeMapper {
 
+    @Mapping(target = "openDate", source = "openDate", qualifiedByName = "toTimestamp")
+    @Mapping(target = "closeDate", source = "closeDate", qualifiedByName = "toTimestamp")
     ChallengeEntity toChallenge(CreateChallengeRequest createChallengeRequest);
 
     @Mapping(target = "technicals", source = "technicals")
