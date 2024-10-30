@@ -79,8 +79,6 @@ public class ChallengeEntity extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime closeDate;
 
-    @Column(name = "is_premium", nullable = false)
-    boolean isPremium;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     String description;
