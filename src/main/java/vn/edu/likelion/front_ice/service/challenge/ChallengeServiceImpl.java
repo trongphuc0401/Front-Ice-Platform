@@ -97,9 +97,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by("createAt").descending());
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<ChallengeEntity> pageChallenge = challengeRepository.findAll(pageable);
+        Page<ChallengeEntity> pageChallenge = challengeRepository.findAllChallenges(pageable);
 
         if (!pageChallenge.hasContent()) {
             throw new AppException(ErrorCode.CHALLENGE_NOT_EXIST);

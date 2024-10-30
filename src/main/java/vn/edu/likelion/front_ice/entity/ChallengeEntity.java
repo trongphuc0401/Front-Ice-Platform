@@ -37,11 +37,11 @@ public class ChallengeEntity extends BaseEntity {
     @Column(name = "title", length = 250, nullable = false)
     String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     CategoryEntity category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tbl_challenge_technical",
             joinColumns = @JoinColumn(name = "challenge_id"),
@@ -50,7 +50,7 @@ public class ChallengeEntity extends BaseEntity {
     Set<TechnicalEntity> technicals;
 
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_point_id", nullable = false)
     ChallengePointEntity challengePoint;
 
@@ -68,7 +68,8 @@ public class ChallengeEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "challenge",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     Set<SolutionEntity> solutions;
 
     @Column(name = "open_date", nullable = false)

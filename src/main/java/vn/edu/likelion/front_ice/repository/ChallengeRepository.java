@@ -1,10 +1,11 @@
 package vn.edu.likelion.front_ice.repository;
 
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 
@@ -12,17 +13,13 @@ import java.util.Optional;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long>, JpaSpecificationExecutor<ChallengeEntity> {
-    //    Optional<ChallengeEntity> findByAccountId(String id);
-
-    //    // Query native reference
-//    @Query(value = "SELECT tp.id,tp.name FROM tbl_plant tp" +
-//            " WHERE LOWER(tp.name) LIKE LOWER(CONCAT(:searchText, '%')) AND tp.isDeleted = 0", nativeQuery = true)
-//    Page<Object[]> findPlantBySearchText1(@Param("searchText") String searchText, Pageable pageable);
-//
-//    @Query("SELECT p FROM ChallengeEntity p WHERE p.isDeleted = 0")
     Page<ChallengeEntity> findByCategoryId(Long id, Pageable pageable);
 
     Optional<ChallengeEntity> findById(Long id);
 
-    int countByChallengeCodeStartingWith(String prefix); // dùng để thêm set ChallengeCode khi tạo challenge
+    int countByChallengeCodeStartingWith(String prefix);
+
+    @EntityGraph(attributePaths = {"category", "challengePoint", "technicals", "resource", "previews"})
+    @Query("SELECT c FROM ChallengeEntity c ORDER BY c.createAt DESC")
+    Page<ChallengeEntity> findAllChallenges(Pageable pageable);
 }
