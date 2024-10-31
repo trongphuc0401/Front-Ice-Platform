@@ -113,5 +113,5 @@ public class ChallengeEntity extends BaseEntity {
             nullable = false,
             updatable = false)
     String challengeCode;
-
+    
 }

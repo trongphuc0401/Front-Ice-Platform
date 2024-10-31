@@ -62,6 +62,7 @@ public enum ErrorCode {
     // error solution
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
     YOU_HAVE_ALREADY_JOINED(RestAPIStatus.BAD_REQUEST, -402,"You have already joined","Bad Request","Bạn đã tham gia thử thách này rồi"),
+    YOU_HAVE_ALREADY_SUBMITTED(RestAPIStatus.BAD_REQUEST, -403,"You have already submitted","Bad Request","Bạn đã hoàn thành thử thách này rồi"),
 
     // error level
     LEVEL_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -501,"Level not exist","Bad Request","Level không tồn tại"),
