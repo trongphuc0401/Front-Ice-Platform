@@ -17,6 +17,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class CreateSolutionRequest {
-//    String challengerId;
-Long challengeId;
+    //    String challengerId;
+    Long challengeId;
 }

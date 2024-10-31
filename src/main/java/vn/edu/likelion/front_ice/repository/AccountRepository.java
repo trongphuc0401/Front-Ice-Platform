@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +13,9 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     Optional<AccountEntity> findByEmail(String email);
+
+    @Query(value = "select a from AccountEntity a JOIN FETCH a.challenger c where a.email = :email ")
+    Optional<AccountEntity> findChallengerByEmail(@Param("email") String email);
 
     Optional<AccountEntity> findByEmailAndRefreshToken(String email, String refreshToken);
 }

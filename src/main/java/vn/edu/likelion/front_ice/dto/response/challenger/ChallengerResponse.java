@@ -16,8 +16,10 @@ public class ChallengerResponse {
     String lastName;
     String email;
     Role role;
+    String banner;
+    String avatar;
+    String phone;
     Long accountId;
-    AccountResponse accountResponse;
     Long levelId;
     String level;
     int isPremium ;

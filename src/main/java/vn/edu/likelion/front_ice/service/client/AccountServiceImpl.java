@@ -442,7 +442,7 @@ public class AccountServiceImpl implements AccountService {
                                             .challenge(challengeEntity)
                                             .isJoined(true)
                                             .statusSolution(StatusSolution.PROCESSING)
-                                            .solutionCode(HelperUtil.generateSolutionCode(challengeEntity.getId()))
+                                            .solutionCode(HelperUtil.generateSolutionCode(challengeEntity.getId(), solutionRepository))
                                             .build()
                             );
                         });

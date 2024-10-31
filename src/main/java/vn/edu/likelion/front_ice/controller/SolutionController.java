@@ -40,23 +40,24 @@ public class SolutionController {
     private SolutionMapper solutionMapper;
 
     @PostMapping
-//    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> create(@RequestBody CreateSolutionRequest createSolutionRequest) {
+
         Optional<SolutionResponse> response = solutionService.create(createSolutionRequest)
                 .map(solutionMapper::toSolutionResponse);
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        auth.getAuthorities().forEach(authority -> System.out.println(authority.getAuthority()));
 
         return responseUtil.successResponse(response);
     }
 
-    @PutMapping
+    @PutMapping("/" + ApiEndpoints.ID)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> update(@RequestParam Long id,
+    public ResponseEntity<RestAPIResponse<Object>> update(@PathVariable Long id,
             @RequestBody UpdateSolutionRequest updateSolutionRequest) {
 
-        return responseUtil.successResponse(solutionService.updateInfo(id, updateSolutionRequest));
+        Optional<SolutionResponse> response = solutionService.updateInfo(id, updateSolutionRequest)
+                .map(solutionMapper::toSolutionResponse);
+
+        return responseUtil.successResponse(response);
 
     }
 
