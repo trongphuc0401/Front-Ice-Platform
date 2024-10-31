@@ -50,20 +50,24 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional()
-    public Optional<ChallengeEntity> create(CreateChallengeRequest createChallengeRequest) throws IOException {
-        
-        ChallengeEntity challengeEntity = challengeMapper.toChallenge(createChallengeRequest);
+    public Optional<ChallengeEntity> create(CreateChallengeRequest createChallengeRequest) {
+        try {
+            ChallengeEntity challengeEntity = challengeMapper.toChallenge(createChallengeRequest);
 
-        File tempFile = File.createTempFile("resource_"+challengeEntity
-                .getTitle()
-                .toLowerCase()
-                .replace(" ", "-")
-                +"_", ".zip");
+            File tempFile = File.createTempFile("resource_"+challengeEntity
+                    .getTitle()
+                    .toLowerCase()
+                    .replace(" ", "-")
+                    +"_", ".zip");
 
-        ChallengeEntity savedChallenge = challengeRepository.save(challengeEntity);
-        googleDriveService.uploadAssets(challengeEntity.getId(),tempFile);
+            ChallengeEntity savedChallenge = challengeRepository.save(challengeEntity);
+            googleDriveService.uploadAssets(challengeEntity.getId(),tempFile);
 
-        return Optional.of(savedChallenge);
+            return Optional.of(savedChallenge);
+        }catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -32,9 +32,9 @@ public class CreateChallengeRequest {
 
     String description;
 
-    Long openDate;
+    LocalDateTime openDate;
 
-    Long closeDate;
+    LocalDateTime closeDate;
 
     boolean isPremium;
 

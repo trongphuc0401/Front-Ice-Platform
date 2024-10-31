@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BaseService<E, I, U> {
-    Optional<E> create(I t) throws IOException;
+    Optional<E> create(I t) ;
 
     Optional<E> updateInfo(Long id, U i);
 
