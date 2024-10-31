@@ -20,6 +20,7 @@ import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -46,7 +47,8 @@ public class AccountController {
 
     @PostMapping(ApiEndpoints.SIGN_UP)
     @Transactional
-    public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<RestAPIResponse<Object>> register(@RequestBody RegisterRequest registerRequest)
+            throws IOException {
         Optional<AccountEntity> entity = (accountService.create(registerRequest));
         return responseUtil.successResponse(accountMapper.toRegisterResponse(
                 entity.orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION)))

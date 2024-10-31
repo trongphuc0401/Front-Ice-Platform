@@ -16,6 +16,7 @@ import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
