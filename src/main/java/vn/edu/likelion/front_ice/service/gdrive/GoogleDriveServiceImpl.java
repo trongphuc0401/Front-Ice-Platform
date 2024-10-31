@@ -179,7 +179,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+        ChallengerEntity challengerEntity = challengerRepository.findByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
         AccountEntity accountEntity = accountRepository.findByEmail(email)
@@ -346,7 +346,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
+        ChallengerEntity challengerEntity = challengerRepository.findByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
         ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)

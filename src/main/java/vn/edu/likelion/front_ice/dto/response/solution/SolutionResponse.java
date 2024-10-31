@@ -11,9 +11,9 @@ import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SolutionResponse {
-    Long challengerId;
+    Long challenger;
 
-    Long challengeId;
+    Long challenge;
 
     String urlProduct;
 

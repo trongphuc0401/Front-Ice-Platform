@@ -5,16 +5,17 @@ import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
+import vn.edu.likelion.front_ice.repository.ChallengeRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.SolutionRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,10 @@ public class SolutionServiceImpl implements SolutionService {
 
     @Autowired
     private ChallengerRepository challengerRepository;
+    @Autowired
+    private ChallengeRepository challengeRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public Optional<SolutionEntity> create(CreateSolutionRequest t) {
@@ -37,27 +42,49 @@ public class SolutionServiceImpl implements SolutionService {
         String email = SecurityUtil.getCurrentUserLogin()
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challengerEntity = challengerRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+        ChallengerEntity challengerEntity = accountRepository.findChallengerByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
+                .getChallenger();
 
-//        Optional<SolutionEntity> solutionEntity = solutionRepository
-//                .findByChallengeIdAndChallengerId(t.getChallengeId(), challengerEntity.getId());
+        Optional<SolutionEntity> solutionEntity = solutionRepository
+                .findByChallengeIdAndChallengerIdAndIsJoined(t.getChallengeId(), challengerEntity.getId(), true);
 
-        Optional<SolutionEntity> solutionEntity = null;
+//        Optional<SolutionEntity> solutionEntity = null;
         if (solutionEntity.isPresent()) {
             throw new AppException(ErrorCode.YOU_HAVE_ALREADY_JOINED);
         }
 
-        solutionEntity = Optional.of(solutionMapper.toSolution(t));
-//        solutionEntity.get().setChallengerId(challengerEntity.getId());
-//        solutionEntity.get().setStatusSolution(StatusSolution.EMPTY);
+        solutionEntity = Optional.of(
+                SolutionEntity.builder()
+                        .challenge(
+                                challengeRepository.findById(t.getChallengeId())
+                                        .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST))
+                        )
+                        .challenger(challengerEntity)
+                        .isJoined(true)
+                        .statusSolution(StatusSolution.PROCESSING)
+                        .solutionCode(HelperUtil.generateSolutionCode(t.getChallengeId(), solutionRepository))
+                        .build()
+        );
 
         return Optional.of(solutionRepository.save(solutionEntity.get()));
     }
 
     @Override
     public Optional<SolutionEntity> updateInfo(Long id, UpdateSolutionRequest i) {
-        return Optional.empty();
+
+        SolutionEntity solution = solutionRepository.findById(id)
+                .map(solutionEntity -> solutionMapper.toSolutionUpdate(i, solutionEntity))
+                .orElseThrow(() -> new AppException(ErrorCode.SOLUTION_NOT_EXIST));
+
+        if(solution.getStatusSolution().equals(StatusSolution.APPROVED) && solution.isSubmitted()){
+            throw new AppException(ErrorCode.YOU_HAVE_ALREADY_SUBMITTED);
+        }
+
+        solution.setStatusSolution(StatusSolution.APPROVED);
+        solution.setSubmitted(true);
+
+        return Optional.of(solutionRepository.save(solution));
     }
 
     @Override

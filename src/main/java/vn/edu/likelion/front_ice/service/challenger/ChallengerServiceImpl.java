@@ -2,13 +2,10 @@ package vn.edu.likelion.front_ice.service.challenger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
 import vn.edu.likelion.front_ice.common.enums.Level;
-import vn.edu.likelion.front_ice.common.enums.LevelTest;
 import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
-import vn.edu.likelion.front_ice.dto.request.challenger.ChallengerDTO;
 import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
@@ -48,6 +45,8 @@ public class ChallengerServiceImpl implements ChallengerService {
     private LevelRepository levelRepository;
     @Autowired
     private ChallengerMapper challengerMapper;
+    @Autowired
+    private SolutionRepository solutionRepository;
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -134,25 +133,26 @@ public class ChallengerServiceImpl implements ChallengerService {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        AccountEntity account = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//        AccountEntity account = accountRepository.findByEmail(email)
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challenger = challengerRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+        ChallengerEntity challenger = accountRepository.findChallengerByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
+                .getChallenger();
 
         LevelEntity level = Optional.ofNullable(challenger.getLevelId())
                 .map(levelId -> levelRepository.findById(levelId)
                         .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
                 .orElse(null);
 
-        ChallengerResponse response = challengerMapper.toChallengerResponse(account, challenger, level);
+        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger.getAccount(), challenger, level);
 //        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
 
         // lấy totalJoinedChallenge và totalSubmittedChallenge
-//        challenger.setTotalJoinedChallenge(accessChallengeRepository
-//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.JOINED).size());
-//        challenger.setTotalSubmittedChallenge(accessChallengeRepository
-//                .findByChallengerAndStatus(challenger, ChallengeAccessStatus.SUBMITTED).size());
+        challenger.setTotalJoinedChallenge(solutionRepository
+                .findByChallengerAndIsJoined(challenger, true).size());
+        challenger.setTotalSubmittedChallenge(solutionRepository
+                .findByChallengerAndIsSubmitted(challenger, true).size());
         challengerRepository.save(challenger);
 
         // lấy nextLevel

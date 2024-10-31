@@ -28,6 +28,7 @@ import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
@@ -418,6 +419,7 @@ public class AccountServiceImpl implements AccountService {
                         List<ChallengeEntity> listChallenge = challengeRepository.findByCategoryId(category.getId(), a).getContent();
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
+
                         // create 2 record access challenge and its solution
 //                        listChallenge.forEach(challengeEntity -> {
 //                            accessChallengeRepository.save(
@@ -431,6 +433,19 @@ public class AccountServiceImpl implements AccountService {
 //                                            .build()
 //                            );
 //                        });
+
+                        // create 2 records solution
+                        listChallenge.forEach(challengeEntity -> {
+                            solutionRepository.save(
+                                    SolutionEntity.builder()
+                                            .challenger(challengerEntity)
+                                            .challenge(challengeEntity)
+                                            .isJoined(true)
+                                            .statusSolution(StatusSolution.PROCESSING)
+                                            .solutionCode(HelperUtil.generateSolutionCode(challengeEntity.getId(), solutionRepository))
+                                            .build()
+                            );
+                        });
                     }
                     case RECRUITER -> {
                         accountEntity.setRole(Role.RECRUITER);
