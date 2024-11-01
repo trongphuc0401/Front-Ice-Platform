@@ -67,6 +67,9 @@ public class SolutionServiceImpl implements SolutionService {
                         .build()
         );
 
+        challengerEntity.setTotalJoinedChallenge(challengerEntity.getTotalJoinedChallenge() + 1);
+        challengerRepository.save(challengerEntity);
+
         return Optional.of(solutionRepository.save(solutionEntity.get()));
     }
 
@@ -77,13 +80,14 @@ public class SolutionServiceImpl implements SolutionService {
                 .map(solutionEntity -> solutionMapper.toSolutionUpdate(i, solutionEntity))
                 .orElseThrow(() -> new AppException(ErrorCode.SOLUTION_NOT_EXIST));
 
-        if(solution.getStatusSolution().equals(StatusSolution.APPROVED) && solution.isSubmitted()){
+        if (solution.getStatusSolution().equals(StatusSolution.APPROVED) && solution.isSubmitted()) {
             throw new AppException(ErrorCode.YOU_HAVE_ALREADY_SUBMITTED);
         }
 
         solution.setStatusSolution(StatusSolution.APPROVED);
         solution.setSubmitted(true);
-
+        solution.getChallenger().setTotalSubmittedChallenge(solution.getChallenger().getTotalSubmittedChallenge() + 1);
+        challengerRepository.save(solution.getChallenger());
         return Optional.of(solutionRepository.save(solution));
     }
 

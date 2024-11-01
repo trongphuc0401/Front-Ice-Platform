@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
@@ -42,6 +43,7 @@ public class SolutionController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    @Transactional
     public ResponseEntity<RestAPIResponse<Object>> create(@RequestBody CreateSolutionRequest createSolutionRequest) {
 
         Optional<SolutionResponse> response = solutionService.create(createSolutionRequest)
@@ -52,6 +54,7 @@ public class SolutionController {
 
     @PutMapping("/" + ApiEndpoints.ID)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    @Transactional
     public ResponseEntity<RestAPIResponse<Object>> update(@PathVariable Long id,
             @RequestBody UpdateSolutionRequest updateSolutionRequest) {
 
