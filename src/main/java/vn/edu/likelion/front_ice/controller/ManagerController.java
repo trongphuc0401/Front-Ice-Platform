@@ -63,7 +63,7 @@ public class ManagerController {
     @PostMapping("/challenges")
     public ResponseEntity<RestAPIResponse<Object>> createChallenge(
             @ModelAttribute CreateChallengeRequest createChallengeRequest
-            ) throws IOException {
+            ) {
         return responseUtil.successResponse(SuccessCode.CREATE_CHALLENGE_SUCCESSFUL,challengeService.create(createChallengeRequest));
     }
 
