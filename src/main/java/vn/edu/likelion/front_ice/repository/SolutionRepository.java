@@ -31,4 +31,6 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
     Optional<SolutionEntity> findByChallengeIdAndChallengerIdAndIsJoined(@Param("challengeId") Long challengeId,
                                                                          @Param("id") Long id,
                                                                          @Param("b") boolean b);
+
+    Optional<SolutionEntity> findByChallenger_IdAndChallenge_Id(Long challengerId, Long challengeId);
 }

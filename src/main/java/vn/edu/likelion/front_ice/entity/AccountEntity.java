@@ -61,13 +61,13 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column
     int isAuthenticated = 0;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     ChallengerEntity challenger;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     RecruiterEntity recruiter;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     StaffEntity staff;
 
     // Implementing UserDetails methods properly

@@ -22,7 +22,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.Role;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
@@ -149,6 +148,12 @@ public class AccountServiceImpl implements AccountService {
         }
 
 
+    }
+
+    @Override
+    public AccountEntity getAccountDetailsByEmail(String email) {
+        return accountRepository.findByEmailWithDetails(email)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
     }
 
     public Optional<LoginResponse> login(LoginRequest loginRequest) {

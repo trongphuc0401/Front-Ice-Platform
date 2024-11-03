@@ -25,7 +25,7 @@ import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class RecruiterEntity extends BaseEntity {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 

@@ -1,5 +1,8 @@
 package vn.edu.likelion.front_ice.service.client;
 
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vn.edu.likelion.front_ice.dto.request.account.LoginRequest;
 
 import vn.edu.likelion.front_ice.dto.request.account.RegisterRequest;
@@ -47,4 +50,6 @@ public interface AccountService extends BaseService<AccountEntity, RegisterReque
     void clearRefreshToken(String email);
 
     Optional<RegisterResponse> create_v1(RegisterRequest registerRequest);
+
+    AccountEntity getAccountDetailsByEmail(String email);
 }

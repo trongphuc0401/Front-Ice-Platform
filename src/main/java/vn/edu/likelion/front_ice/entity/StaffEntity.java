@@ -28,7 +28,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class StaffEntity extends BaseEntity {
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 
