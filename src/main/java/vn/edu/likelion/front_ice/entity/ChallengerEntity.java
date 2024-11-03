@@ -28,7 +28,7 @@ import java.util.Set;
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class ChallengerEntity extends BaseEntity {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 

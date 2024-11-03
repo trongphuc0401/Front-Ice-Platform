@@ -42,6 +42,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(RestAPIStatus.UNAUTHORIZED, -123, "Refresh token is invalid or expired", "Unauthorized", "Token làm mới không hợp lệ hoặc hết hạn"),
     CV_UPLOAD_FAILED(RestAPIStatus.FAIL, -124, "Failed to upload CV", "Fail", "Upload CV thất bại"),
     INVALID_JWT_TOKEN(RestAPIStatus.BAD_REQUEST,-125,"Invalid Jwt Token","Bad Request","JWT Token không hợp lệ"),
+    USER_ROLE_NOT_SUPPORTED(RestAPIStatus.FORBIDDEN, -126, "User role not supported", "Forbidden", "Vai trò người dùng không được hỗ trợ"),
     // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),

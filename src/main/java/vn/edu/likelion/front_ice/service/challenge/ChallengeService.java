@@ -10,6 +10,8 @@ import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import vn.edu.likelion.front_ice.service.BaseService;
 
+import java.util.Map;
+
 /**
  * ChallengeService -
  *
@@ -25,4 +27,6 @@ public interface ChallengeService extends BaseService<ChallengeEntity, CreateCha
     ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize);
 
     ResultPaginationResponse searchChallenges(SearchRequest request);
+
+    Object getDetailChallenge(Long challengeId);
 }

@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import vn.edu.likelion.front_ice.common.constants.SecurityConstants;
+import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
+import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
@@ -15,21 +18,21 @@ import vn.edu.likelion.front_ice.common.query.SearchSpecification;
 import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
-import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
-import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
-import vn.edu.likelion.front_ice.dto.response.challenge.PaginateChallengeResponse;
-import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.*;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
 import vn.edu.likelion.front_ice.mapper.ResourceMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
+import vn.edu.likelion.front_ice.repository.SolutionRepository;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
+import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.client.AccountService;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -40,13 +43,21 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
     @Autowired
     private ChallengeMapper challengeMapper;
 
     @Autowired
-    private GoogleDriveService googleDriveService;
-    @Autowired private ResourceMapper resourceMapper;
+    private ResourceMapper resourceMapper;
 
+    @Autowired
+    private GoogleDriveService googleDriveService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private SolutionRepository solutionRepository;
 
     @Override
     @Transactional()
@@ -125,9 +136,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by("createAt").descending());
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<ChallengeEntity> pageChallenge = challengeRepository.findAll(pageable);
+        Page<ChallengeEntity> pageChallenge = challengeRepository.findAllChallenges(pageable);
 
         if (!pageChallenge.hasContent()) {
             throw new AppException(ErrorCode.CHALLENGE_NOT_EXIST);
@@ -148,6 +159,78 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return buildPaginationResponse(pageChallenge);
+    }
+
+    @Override
+    public Object getDetailChallenge(Long challengeId) {
+        ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
+
+        ChallengeDetailForChallengerResponse response = challengeMapper.toChallengeDetailResponse(challenge);
+
+        Optional<String> email = SecurityUtil.getCurrentUserLogin();
+        if (email.isEmpty() || SecurityConstants.ANONYMOUS_USER.equalsIgnoreCase(email.get())) {
+            setPublicAccess(response);
+            return response;
+        }
+
+        AccountEntity account = accountService.getAccountDetailsByEmail(email.get());
+        return handleAccessBasedOnRole(account, challenge, response);
+    }
+
+    private void setPublicAccess(ChallengeDetailForChallengerResponse response) {
+        response.setAccessStatus(ChallengeAccessStatus.PUBLIC_ACCESS.getStatus());
+        response.setAccessMessage(ChallengeAccessStatus.PUBLIC_ACCESS.getMessage());
+        response.setResource(null);
+    }
+
+    private Object handleAccessBasedOnRole(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
+        switch (account.getRole()) {
+            case CHALLENGER -> handleChallengerAccess(account, challenge, response);
+            case ADMIN, MANAGER, MENTOR, RECRUITER -> {
+                break;
+            }
+            default -> throw new AppException(ErrorCode.USER_ROLE_NOT_SUPPORTED);
+        }
+        return response;
+    }
+
+    private void handleChallengerAccess(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
+        ChallengeAccessStatus accessStatus = determineAccessStatus(account, challenge);
+
+        response.setAccessStatus(accessStatus.getStatus());
+        response.setAccessMessage(accessStatus.getMessage());
+
+        if (accessStatus == ChallengeAccessStatus.JOINED || accessStatus == ChallengeAccessStatus.SUBMITTED) {
+            response.setResource(resourceMapper.toResourceResponse(challenge.getResource()));
+        } else {
+            response.setResource(null);
+        }
+    }
+
+    private ChallengeAccessStatus determineAccessStatus(AccountEntity account, ChallengeEntity challenge) {
+        boolean isPremiumRequired = challenge.getTypeChallenge() == TypeChallenge.PREMIUM;
+        Optional<SolutionEntity> solutionOpt = solutionRepository.findByChallenger_IdAndChallenge_Id(account.getChallenger().getId(), challenge.getId());
+
+        if (isPremiumRequired && account.getChallenger() != null && !account.getChallenger().isPremium()) {
+            return ChallengeAccessStatus.PREMIUM_REQUIRED;
+        }
+
+        if (solutionOpt.isEmpty()) {
+            return ChallengeAccessStatus.NOT_JOINED;
+        }
+
+
+        SolutionEntity solution = solutionOpt.get();
+        if (solution.isReported()) {
+            return ChallengeAccessStatus.REPORTED;
+        }
+
+        if (solution.isSubmitted()) {
+            return ChallengeAccessStatus.SUBMITTED;
+        }
+
+        return ChallengeAccessStatus.JOINED;
     }
 
     private ResultPaginationResponse buildPaginationResponse(Page<ChallengeEntity> pageChallenge) {

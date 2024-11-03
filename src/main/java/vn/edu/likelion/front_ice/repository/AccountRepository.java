@@ -18,4 +18,8 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findChallengerByEmail(@Param("email") String email);
 
     Optional<AccountEntity> findByEmailAndRefreshToken(String email, String refreshToken);
+
+    @EntityGraph(attributePaths = {"challenger", "recruiter", "staff"})
+    @Query("SELECT a FROM AccountEntity a WHERE a.email = :email")
+    Optional<AccountEntity> findByEmailWithDetails(@Param("email") String email);
 }
