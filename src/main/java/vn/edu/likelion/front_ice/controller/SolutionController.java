@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
@@ -63,6 +65,17 @@ public class SolutionController {
 
         return responseUtil.successResponse(response);
 
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<RestAPIResponse<Object>> getAllSolutionChallenger(
+
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
+
+    ) {
+        ResultPaginationResponse response = solutionService.getPaginationChallengerSolution(pageNo, pageSize);
+        return responseUtil.successResponse(SuccessCode.SOLUTION_CHALLENGER_LIST_SUCCESS,response);
     }
 
 }

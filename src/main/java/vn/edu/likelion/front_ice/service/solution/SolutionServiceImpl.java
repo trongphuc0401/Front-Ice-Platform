@@ -1,13 +1,21 @@
 package vn.edu.likelion.front_ice.service.solution;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
+import vn.edu.likelion.front_ice.dto.response.solution.SolutionChallengerResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
@@ -114,5 +122,33 @@ public class SolutionServiceImpl implements SolutionService {
     @Override
     public List<SolutionEntity> findAll() {
         return List.of();
+    }
+
+    @Override public ResultPaginationResponse getPaginationChallengerSolution(int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by("createAt").descending());
+
+        Page<SolutionEntity> pageSolution = solutionRepository.findAllByIsDeletedFalse(pageable);
+
+        if (!pageSolution.hasContent()) {
+            throw  new AppException(ErrorCode.SOLUTION_NOT_EXIST);
+        }
+
+        return buildPaginationResponse(pageSolution);
+    }
+
+    private ResultPaginationResponse buildPaginationResponse(Page<SolutionEntity> pageChallenge) {
+        List<SolutionChallengerResponse> solutionChallengerResponses = pageChallenge.getContent()
+                .stream()
+                .map(solutionMapper::toSolutionChallengerResponse)
+                .toList();
+
+        ResultPaginationResponse.Meta meta = PaginationUtil.createPaginationMeta(pageChallenge);
+
+        ResultPaginationResponse response = new ResultPaginationResponse();
+        response.setMeta(meta);
+        response.setResult(solutionChallengerResponses);
+
+        return response;
     }
 }

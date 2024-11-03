@@ -1,5 +1,8 @@
 package vn.edu.likelion.front_ice.repository;
 
+import jakarta.persistence.Entity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,4 +34,10 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
     Optional<SolutionEntity> findByChallengeIdAndChallengerIdAndIsJoined(@Param("challengeId") Long challengeId,
                                                                          @Param("id") Long id,
                                                                          @Param("b") boolean b);
+
+    @EntityGraph(attributePaths = {
+            "technicals",
+            "challengePoint"
+    })
+    Page<SolutionEntity> findAllByIsDeletedFalse(Pageable pageable);
 }
