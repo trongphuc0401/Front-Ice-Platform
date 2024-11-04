@@ -15,4 +15,5 @@ public interface ChallengerMapper {
     ChallengeEntity toAccount(RegisterRequest registerRequest);
 
     ChallengerResponse toChallengerResponse(AccountEntity accountEntity, ChallengerEntity challengerEntity, LevelEntity levelEntity);
+
 }

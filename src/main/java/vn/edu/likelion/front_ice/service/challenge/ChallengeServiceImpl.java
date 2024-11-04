@@ -170,8 +170,12 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
+        ResourceEntity challengerEntity = resourceRepository.findByChallengeId(challengeId)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_EXIST));
 
+        ResourceResponse resourceResponse = resourceMapper.toResourceResponse(challengerEntity);
         ChallengeDetailForChallengerResponse response = challengeMapper.toChallengeDetailResponse(challenge);
+        response.setResource(resourceResponse);
 
 
         Optional<String> email = SecurityUtil.getCurrentUserLogin();
@@ -208,7 +212,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         response.setAccessMessage(accessStatus.getMessage());
 
         if (accessStatus == ChallengeAccessStatus.JOINED || accessStatus == ChallengeAccessStatus.SUBMITTED) {
-            response.setResource(resourceMapper.toResourceResponse(challenge.getResource()));
+            response.setResource(response.getResource());
         } else {
             response.setResource(null);
         }
