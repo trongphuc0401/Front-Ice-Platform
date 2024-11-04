@@ -19,11 +19,13 @@ import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.*;
+import vn.edu.likelion.front_ice.dto.response.resource.ResourceResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
 import vn.edu.likelion.front_ice.mapper.ResourceMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
+import vn.edu.likelion.front_ice.repository.ResourceRepository;
 import vn.edu.likelion.front_ice.repository.SolutionRepository;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -58,6 +60,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     private SolutionRepository solutionRepository;
+    @Autowired private ResourceRepository resourceRepository;
 
     @Override
     @Transactional()
@@ -163,10 +166,13 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Object getDetailChallenge(Long challengeId) {
+
         ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
+
         ChallengeDetailForChallengerResponse response = challengeMapper.toChallengeDetailResponse(challenge);
+
 
         Optional<String> email = SecurityUtil.getCurrentUserLogin();
         if (email.isEmpty() || SecurityConstants.ANONYMOUS_USER.equalsIgnoreCase(email.get())) {

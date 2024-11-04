@@ -77,6 +77,9 @@ public enum ErrorCode {
     // error manager
     MANAGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-801,"Manager not exist","Bad Request","Manager không tồn tại"),
 
+    // error resource
+    RESOURCE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-901,"Resource not exist","Bad Request","Tài nguyên không tồn tại"),
+
     DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),
 
     UPDATE_FAILED(RestAPIStatus.BAD_REQUEST,-9997,"Update failed","Not found","Cập nhật thất bại"),

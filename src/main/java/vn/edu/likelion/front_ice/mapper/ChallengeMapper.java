@@ -1,6 +1,8 @@
 package vn.edu.likelion.front_ice.mapper;
 
 import org.mapstruct.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeDetailForChallengerResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
@@ -8,7 +10,9 @@ import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
+import vn.edu.likelion.front_ice.entity.ResourceEntity;
 import vn.edu.likelion.front_ice.entity.TechnicalEntity;
+import vn.edu.likelion.front_ice.repository.ResourceRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ChallengeMapper {
+
 
     ChallengeEntity toChallenge(CreateChallengeRequest createChallengeRequest);
 
@@ -40,4 +45,5 @@ public interface ChallengeMapper {
                 .map(TechnicalEntity::getTitle)
                 .collect(Collectors.toSet());
     }
+
 }
