@@ -20,7 +20,7 @@ public interface ChallengerRepository extends JpaRepository<ChallengerEntity, Lo
 //    @Query(value = "SELECT * FROM "tbl_challenger" , nativeQuery = true)
 //    Optional<ChallengerEntity> findChallengerByEmail(String email);
 
-    @EntityGraph(attributePaths = {"challenger"})
-    @Query(value = "select a.challenger from AccountEntity a where a.email = :email ")
+    @Query("select a.challenger from AccountEntity a where a.email = :email")
     Optional<ChallengerEntity> findByAccountEmail(@Param("email") String email);
+
 }
