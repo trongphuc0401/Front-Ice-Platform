@@ -80,8 +80,9 @@ public enum ErrorCode {
     // error resource
     RESOURCE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-901,"Resource not exist","Bad Request","Tài nguyên không tồn tại"),
 
-    DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),
-
+    GENERAL_SECURITY_ERROR(RestAPIStatus.BAD_REQUEST,-9994,"Delete failed","Can not delete","Xoá thất bại"),
+    GOOGLE_DRIVE_ERROR(RestAPIStatus.BAD_REQUEST,-9995,"Google Drive operation failed.","Bad Request","Google Drive vận hành bị lỗi trên Google Cloud"),
+    DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Can not delete","Xoá thất bại"),
     UPDATE_FAILED(RestAPIStatus.BAD_REQUEST,-9997,"Update failed","Not found","Cập nhật thất bại"),
     QUERY_NOT_FOUND(RestAPIStatus.BAD_REQUEST,-9998,"Query not found","Not found","Truy vấn không thành công"),
     UNCATEGORIZED_EXCEPTION(RestAPIStatus.BAD_REQUEST,-9999,"Uncategorized error","Bad request","Lỗi chưa được định nghĩa");

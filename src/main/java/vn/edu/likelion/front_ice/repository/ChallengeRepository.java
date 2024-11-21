@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
+import vn.edu.likelion.front_ice.projection.challenge.TypeChallengeProjection;
 
 import java.util.Optional;
 
@@ -32,4 +33,12 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     @EntityGraph(attributePaths = {"category", "challengePoint", "resource", "technicals", "previews"})
     @Query("SELECT c FROM ChallengeEntity c WHERE c.id = :challengeId")
     Optional<ChallengeEntity> findChallengeWithDetails(@Param("challengeId") Long challengeId);
+
+    @Query("SELECT ch.typeChallenge AS typeChallenge " +
+            "FROM ChallengeEntity ch " +
+            "JOIN ResourceEntity r ON r.challenge = ch " +
+            "WHERE r.figmaId = :figmaId")
+    Optional<TypeChallengeProjection> findTypeChallengeByFigmaId(@Param("figmaId") String figmaId);
+
+
 }

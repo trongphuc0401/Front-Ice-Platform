@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
+import vn.edu.likelion.front_ice.projection.challenger.IsPremiumProjection;
 
 import java.util.Optional;
 
@@ -23,4 +24,11 @@ public interface ChallengerRepository extends JpaRepository<ChallengerEntity, Lo
     @Query("select a.challenger from AccountEntity a where a.email = :email")
     Optional<ChallengerEntity> findByAccountEmail(@Param("email") String email);
 
+    @Query("SELECT ch.isPremium " +
+            "FROM AccountEntity a " +
+            "join ChallengerEntity ch on a.id = ch.account.id "+
+            "WHERE a.email = :email")
+    Optional<Boolean> findIsPremiumProjectionByAccountEmail(@Param("email") String email);
 }
+
+

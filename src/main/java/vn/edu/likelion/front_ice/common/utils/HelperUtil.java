@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class HelperUtil {
 
@@ -17,6 +18,14 @@ public class HelperUtil {
     public static synchronized String getUUID() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
+
+    /**
+     * ID unique by ThreadLocalRandom
+     */
+    public static String getThreadLocalRandomId() {
+        return String.valueOf(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
+    }
+
 
     public static boolean isImageFile(String fileName, String contentType) {
 

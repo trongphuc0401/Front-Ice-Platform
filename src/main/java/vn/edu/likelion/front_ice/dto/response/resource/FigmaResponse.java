@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.response.challenge;
+package vn.edu.likelion.front_ice.dto.response.resource;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * AssetsResponse -
+ * FigmaResponse -
  *
  * @param
  * @return
@@ -15,10 +15,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AssetsResponse {
-    String assetsUrl;
+public class FigmaResponse {
+    String figmaId;
 
-    String  assetsName;
+    String  figmaName;
 
-    long assetsSize;
+    long figmaSize;
 }
