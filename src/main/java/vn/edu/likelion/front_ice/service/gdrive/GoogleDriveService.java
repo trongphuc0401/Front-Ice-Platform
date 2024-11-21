@@ -1,11 +1,15 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
-import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
-import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.AssetsResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.DesignImageResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.DownloadResourceResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.FigmaResponse;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
 
 /**
  * GoogleDriveService -
@@ -20,11 +24,17 @@ public interface GoogleDriveService{
 
     AssetsResponse uploadAssets(Long challengeId , File file);
 
-    AssetsResponse uploadFigma(Long challengeId, File file);
+    FigmaResponse uploadFigma(Long challengeId, File file);
 
     DesignImageResponse uploadImageDesktop(File file);
 
     DesignImageResponse uploadImageMobile(File file);
 
     DesignImageResponse uploadImageTablet(File tempFile);
+
+    DownloadResourceResponse downloadResource(Long challengeId);
+
+    InputStream downloadAssets(String assetsId) throws IOException, GeneralSecurityException;
+
+    InputStream downloadFigma(String figmaId) throws IOException, GeneralSecurityException;
 }

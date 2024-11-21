@@ -55,6 +55,8 @@ public interface ApiEndpoints {
 
     // Challenge API
     String CHALLENGE_API = BASE_API_URL + "/challenges";
+
+    String DOWNLOAD_RESOURCE = "/resource/{id}";
     String DOWNLOAD_ASSETS = "/assets/{id}";
     String DOWNLOAD_FIGMA = "/figma/{id}";
     String GET_CHALLENGE_DETAIL = "/{id}";

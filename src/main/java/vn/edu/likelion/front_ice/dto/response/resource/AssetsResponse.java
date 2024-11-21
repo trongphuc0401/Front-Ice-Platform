@@ -3,18 +3,23 @@ package vn.edu.likelion.front_ice.dto.response.resource;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * AssetsResponse -
+ *
+ * @param
+ * @return
+ * @throws
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResourceResponse {
+public class AssetsResponse {
 
-    String assetsUrl;
-    String assetsName;
-    Long assetsSize;
-    String figmaUrl;
-    String figmaName;
-    Long figmaSize;
+    String assetsId;
 
+    String  assetsName;
+
+    long assetsSize;
 }
