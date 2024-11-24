@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.constants.SecurityConstants;
 import vn.edu.likelion.front_ice.common.enums.ChallengeAccessStatus;
-import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
@@ -19,22 +18,20 @@ import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.request.challenge.UpdateChallengeRequest;
 import vn.edu.likelion.front_ice.dto.response.challenge.*;
-import vn.edu.likelion.front_ice.dto.response.resource.ResourceResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
 import vn.edu.likelion.front_ice.mapper.ResourceMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
-import vn.edu.likelion.front_ice.repository.ResourceRepository;
 import vn.edu.likelion.front_ice.repository.SolutionRepository;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.client.AccountService;
+import vn.edu.likelion.front_ice.service.handler.ChallengeAccessHandlerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -63,6 +60,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     private ChallengeAccessService challengeAccessService;
+
+    @Autowired
+    private ChallengeAccessHandlerFactory challengeAccessHandlerFactory;
 
     @Override
     @Transactional()
@@ -171,7 +171,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
-        ChallengeDetailForChallengerResponse response = challengeMapper.toChallengeDetailResponse(challenge);
+        DetailChallengeResponse response = challengeMapper.toChallengeDetailResponse(challenge);
 
         ParticipationSubmissionCount counts = solutionRepository.countParticipationAndSubmission(challengeId);
         response.setPeopleParticipated(counts.getPeopleParticipated());
@@ -179,34 +179,18 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         Optional<String> email = SecurityUtil.getCurrentUserLogin();
         if (email.isEmpty() || SecurityConstants.ANONYMOUS_USER.equalsIgnoreCase(email.get())) {
-            return setPublicAccess(response);
+            challengeAccessHandlerFactory.getHandler(ChallengeAccessStatus.PUBLIC_ACCESS)
+                    .handleAccess(challenge, response);
+            return response;
         }
 
         AccountEntity account = accountService.getAccountDetailsByEmail(email.get());
-        return handleAccess(account, challenge, response);
-    }
-
-    private ChallengeDetailForChallengerResponse handleAccess(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
         ChallengeAccessStatus accessStatus = challengeAccessService.determineAccessStatus(account, challenge);
 
-        response.setAccessStatus(accessStatus.getStatus());
-        response.setAccessMessage(accessStatus.getMessage());
-
-        if (accessStatus == ChallengeAccessStatus.JOINED || accessStatus == ChallengeAccessStatus.SUBMITTED) {
-            response.setResource(resourceMapper.toResourceResponse(challenge.getResource()));
-        } else {
-            response.setResource(null);
-        }
-
+        challengeAccessHandlerFactory.getHandler(accessStatus).handleAccess(challenge, response);
         return response;
     }
 
-    private ChallengeDetailForChallengerResponse setPublicAccess(ChallengeDetailForChallengerResponse response) {
-        response.setAccessStatus(ChallengeAccessStatus.PUBLIC_ACCESS.getStatus());
-        response.setAccessMessage(ChallengeAccessStatus.PUBLIC_ACCESS.getMessage());
-        response.setResource(null);
-        return response;
-    }
 
     private ResultPaginationResponse buildPaginationResponse(Page<ChallengeEntity> pageChallenge) {
         List<ChallengeResponse> challengeResponses = pageChallenge.getContent()
