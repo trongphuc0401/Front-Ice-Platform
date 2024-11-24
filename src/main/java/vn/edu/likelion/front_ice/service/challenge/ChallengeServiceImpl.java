@@ -60,7 +60,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     private SolutionRepository solutionRepository;
-    @Autowired private ResourceRepository resourceRepository;
+
+    @Autowired
+    private ChallengeAccessService challengeAccessService;
 
     @Override
     @Transactional()
@@ -166,43 +168,26 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Object getDetailChallenge(Long challengeId) {
-
         ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
-
         ChallengeDetailForChallengerResponse response = challengeMapper.toChallengeDetailResponse(challenge);
 
+        ParticipationSubmissionCount counts = solutionRepository.countParticipationAndSubmission(challengeId);
+        response.setPeopleParticipated(counts.getPeopleParticipated());
+        response.setPeopleSubmitted(counts.getPeopleSubmitted());
 
         Optional<String> email = SecurityUtil.getCurrentUserLogin();
         if (email.isEmpty() || SecurityConstants.ANONYMOUS_USER.equalsIgnoreCase(email.get())) {
-            setPublicAccess(response);
-            return response;
+            return setPublicAccess(response);
         }
 
         AccountEntity account = accountService.getAccountDetailsByEmail(email.get());
-        return handleAccessBasedOnRole(account, challenge, response);
+        return handleAccess(account, challenge, response);
     }
 
-    private void setPublicAccess(ChallengeDetailForChallengerResponse response) {
-        response.setAccessStatus(ChallengeAccessStatus.PUBLIC_ACCESS.getStatus());
-        response.setAccessMessage(ChallengeAccessStatus.PUBLIC_ACCESS.getMessage());
-        response.setResource(null);
-    }
-
-    private Object handleAccessBasedOnRole(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
-        switch (account.getRole()) {
-            case CHALLENGER -> handleChallengerAccess(account, challenge, response);
-            case ADMIN, MANAGER, MENTOR, RECRUITER -> {
-                break;
-            }
-            default -> throw new AppException(ErrorCode.USER_ROLE_NOT_SUPPORTED);
-        }
-        return response;
-    }
-
-    private void handleChallengerAccess(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
-        ChallengeAccessStatus accessStatus = determineAccessStatus(account, challenge);
+    private ChallengeDetailForChallengerResponse handleAccess(AccountEntity account, ChallengeEntity challenge, ChallengeDetailForChallengerResponse response) {
+        ChallengeAccessStatus accessStatus = challengeAccessService.determineAccessStatus(account, challenge);
 
         response.setAccessStatus(accessStatus.getStatus());
         response.setAccessMessage(accessStatus.getMessage());
@@ -212,31 +197,15 @@ public class ChallengeServiceImpl implements ChallengeService {
         } else {
             response.setResource(null);
         }
+
+        return response;
     }
 
-    private ChallengeAccessStatus determineAccessStatus(AccountEntity account, ChallengeEntity challenge) {
-        boolean isPremiumRequired = challenge.getTypeChallenge() == TypeChallenge.PREMIUM;
-        Optional<SolutionEntity> solutionOpt = solutionRepository.findByChallenger_IdAndChallenge_Id(account.getChallenger().getId(), challenge.getId());
-
-        if (isPremiumRequired && account.getChallenger() != null && !account.getChallenger().isPremium()) {
-            return ChallengeAccessStatus.PREMIUM_REQUIRED;
-        }
-
-        if (solutionOpt.isEmpty()) {
-            return ChallengeAccessStatus.NOT_JOINED;
-        }
-
-
-        SolutionEntity solution = solutionOpt.get();
-        if (solution.isReported()) {
-            return ChallengeAccessStatus.REPORTED;
-        }
-
-        if (solution.isSubmitted()) {
-            return ChallengeAccessStatus.SUBMITTED;
-        }
-
-        return ChallengeAccessStatus.JOINED;
+    private ChallengeDetailForChallengerResponse setPublicAccess(ChallengeDetailForChallengerResponse response) {
+        response.setAccessStatus(ChallengeAccessStatus.PUBLIC_ACCESS.getStatus());
+        response.setAccessMessage(ChallengeAccessStatus.PUBLIC_ACCESS.getMessage());
+        response.setResource(null);
+        return response;
     }
 
     private ResultPaginationResponse buildPaginationResponse(Page<ChallengeEntity> pageChallenge) {
