@@ -32,6 +32,8 @@ public class ChallengeDetailForChallengerResponse {
     Boolean hidden;
     String accessStatus;
     String accessMessage;
+    Long peopleParticipated;
+    Long peopleSubmitted;
 
     CategoryResponse category;
     Set<String> technicals;
