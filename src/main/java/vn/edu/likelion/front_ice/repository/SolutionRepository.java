@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.dto.response.challenge.ParticipationSubmissionCount;
+import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
+import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.SolutionEntity;
 
@@ -41,4 +43,19 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
     WHERE s.challenge.id = :challengeId
     """)
     ParticipationSubmissionCount countParticipationAndSubmission(@Param("challengeId") Long challengeId);
+
+    @Query("""
+    SELECT new vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse(
+                                s.id,
+                                s.urlProduct,
+                                s.urlRepository,
+                                s.title,
+                                s.description,
+                                s.note,
+                                s.statusSolution
+    )
+    FROM SolutionEntity s
+    WHERE s.challenge.id = :challengeId AND s.isSubmitted = true
+    """)
+    List<OtherSolutionResponse> findOtherSolutions(@Param("challengeId") Long challengeId);
 }
