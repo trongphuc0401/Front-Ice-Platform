@@ -80,6 +80,12 @@ public class ChallengerController {
         return responseUtil.successResponse(challengerService.getDetailsProfile(token));
     }
 
+    @GetMapping(ApiEndpoints.OVERVIEW)
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    public ResponseEntity<RestAPIResponse<Object>> getOverview() {
+        return responseUtil.successResponse(challengerService.getOverviewProfile());
+    }
+
 
     @PostMapping(ApiEndpoints.UPLOAD_CV)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")

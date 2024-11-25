@@ -33,6 +33,7 @@ public interface ApiEndpoints {
 
     // Profile API
     String PROFILE_API = "/profile";
+    String OVERVIEW = "/overview";
     String GET_BY_ID = "/{id}"; // GET
     String UPDATE_INFO = "/{id}";  // PUT
     String UPLOAD_AVATAR = "/images";  // PUT
