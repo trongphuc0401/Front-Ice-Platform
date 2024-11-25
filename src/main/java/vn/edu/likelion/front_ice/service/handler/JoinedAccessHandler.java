@@ -17,7 +17,6 @@ public class JoinedAccessHandler implements ChallengeAccessHandler {
     public void handleAccess(ChallengeEntity challenge, DetailChallengeResponse response) {
         response.setAccessStatus(ChallengeAccessStatus.JOINED.getStatus());
         response.setAccessMessage(ChallengeAccessStatus.JOINED.getMessage());
-        response.setResource(resourceMapper.toResourceResponse(challenge.getResource()));
         response.setOtherSolutions(null);
     }
 }

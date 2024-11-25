@@ -11,7 +11,6 @@ public class PublicAccessHandler  implements ChallengeAccessHandler{
     public void handleAccess(ChallengeEntity challenge, DetailChallengeResponse response) {
         response.setAccessStatus(ChallengeAccessStatus.PUBLIC_ACCESS.getStatus());
         response.setAccessMessage(ChallengeAccessStatus.PUBLIC_ACCESS.getMessage());
-        response.setResource(null);
         response.setOtherSolutions(null);
     }
 }

@@ -40,6 +40,5 @@ public class DetailChallengeResponse {
     Set<String> technicals;
     ChallengePointResponse challengePoint;
     Set<PreviewResponse> previews;
-    ResourceResponse resource;
     List<OtherSolutionResponse> otherSolutions;
 }

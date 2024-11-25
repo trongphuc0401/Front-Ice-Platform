@@ -24,9 +24,7 @@ public class SubmittedAccessHandler implements ChallengeAccessHandler {
     public void handleAccess(ChallengeEntity challenge, DetailChallengeResponse response) {
         response.setAccessStatus(ChallengeAccessStatus.SUBMITTED.getStatus());
         response.setAccessMessage(ChallengeAccessStatus.SUBMITTED.getMessage());
-        response.setResource(resourceMapper.toResourceResponse(challenge.getResource()));
 
-        // Lấy danh sách các giải pháp khác
         List<OtherSolutionResponse> otherSolutions = solutionRepository.findOtherSolutions(challenge.getId());
         response.setOtherSolutions(otherSolutions);
     }
