@@ -19,22 +19,16 @@ public class ChallengerResponse {
     String banner;
     String avatar;
     String phone;
-    Long accountId;
     Long levelId;
     String level;
-    int isPremium ;
+    Boolean isPremium ;
     String urlGithub;
-    int score;
+    Integer score;
     String urlCV;
     String urlPortfolio;
     String urlCodepen;
     String urlGitLab;
     String urlStackOverflow;
     String urlLinkedIn;
-
-    int totalJoinedChallenge; // tổng số challenge đã tham gia
-    int totalSubmittedChallenge; // tổng số challenge đã submit solution
-
-    NextLevelResponse nextLevel; // thể hiện cần bao nhiêu điểm nữa để lên level kế tiếp
 }
 
