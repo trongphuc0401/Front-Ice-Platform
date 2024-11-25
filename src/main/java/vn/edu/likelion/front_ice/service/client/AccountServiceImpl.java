@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,7 +36,6 @@ import vn.edu.likelion.front_ice.dto.response.account.RegisterResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.AccountMapper;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
-import vn.edu.likelion.front_ice.mapper.RecruiterMapper;
 import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
@@ -61,9 +59,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     ChallengerRepository challengerRepository;
-
-    @Autowired
-    RecruiterRepository recruiterRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -90,8 +85,6 @@ public class AccountServiceImpl implements AccountService {
     private final long RESET_TOKEN_EXPIRY_DURATION = 10 * 60 * 1000;
     @Autowired
     private ChallengerMapper challengerMapper;
-    @Autowired
-    private RecruiterMapper recruiterMapper;
     @Autowired
     private SolutionRepository solutionRepository;
     @Autowired
@@ -124,16 +117,16 @@ public class AccountServiceImpl implements AccountService {
 
                         challengerRepository.save(challengerEntity);
                     }
-                    case RECRUITER -> {
-                        accountEntity.setRole(Role.RECRUITER);
-
-                        // create challenger profile
-                        RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .account(accountEntity)
-                                .build();
-
-                        recruiterRepository.save(recruiterEntity);
-                    }
+//                    case RECRUITER -> {
+//                        accountEntity.setRole(Role.RECRUITER);
+//
+//                        // create challenger profile
+////                        RecruiterEntity recruiterEntity = RecruiterEntity.builder()
+////                                .account(accountEntity)
+////                                .build();
+//
+////                        recruiterRepository.save(recruiterEntity);
+//                    }
                     default -> throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
                 }
 
@@ -452,16 +445,7 @@ public class AccountServiceImpl implements AccountService {
                             );
                         });
                     }
-                    case RECRUITER -> {
-                        accountEntity.setRole(Role.RECRUITER);
 
-                        // create challenger profile
-                        RecruiterEntity recruiterEntity = RecruiterEntity.builder()
-                                .account(accountEntity)
-                                .build();
-
-                        recruiterRepository.save(recruiterEntity);
-                    }
                     default -> throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
                 }
 

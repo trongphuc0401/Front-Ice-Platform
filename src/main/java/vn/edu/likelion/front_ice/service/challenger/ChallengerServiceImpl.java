@@ -21,11 +21,9 @@ import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.FollowEntity;
-import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.FollowRepository;
-import vn.edu.likelion.front_ice.repository.RecruiterRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
 import java.util.ArrayList;
@@ -38,8 +36,6 @@ public class ChallengerServiceImpl implements ChallengerService {
 
     @Autowired
     private FollowRepository followRepository;
-    @Autowired
-    private RecruiterRepository recruiterRepository;
     @Autowired
     private ChallengerRepository challengerRepository;
     @Autowired
@@ -86,50 +82,46 @@ public class ChallengerServiceImpl implements ChallengerService {
         return List.of();
     }
 
-    public Optional<FollowResponse> follow(FollowRequest t) {
-        AccountEntity challenger;
-        RecruiterEntity recruiter;
+//    public Optional<FollowResponse> follow(FollowRequest t) {
+//        AccountEntity challenger;
+//
+//        challenger = accountRepository.findById(
+//                        challengerRepository.findById(t.getChallengerId())
+//                                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
+//                                .getAccount().getId())
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//
+//        // check follow
+//        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
+////                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
+//                .ifPresent(follow -> {
+//                    throw new AppException(ErrorCode.CHALLENGER_HAS_FOLLOWED_RECRUITER);
+//                })
+//        ;
+//
+//        FollowEntity followEntity = FollowEntity.builder()
+//                .challengerId(t.getChallengerId())
+//                .recruiterId(t.getRecruiterId())
+//                .build();
+//
+//        followRepository.save(followEntity);
+//        FollowResponse response = new FollowResponse(challenger.getFirstName()
+//                + " " + challenger.getLastName(), recruiter.getName());
+//
+//        return Optional.of(response);
+//    }
 
-        challenger = accountRepository.findById(
-                        challengerRepository.findById(t.getChallengerId())
-                                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
-                                .getAccount().getId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-
-        recruiter = recruiterRepository.findById(t.getRecruiterId())
-                .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_EXIST));
-
-        // check follow
-        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
-//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
-                .ifPresent(follow -> {
-                    throw new AppException(ErrorCode.CHALLENGER_HAS_FOLLOWED_RECRUITER);
-                })
-        ;
-
-        FollowEntity followEntity = FollowEntity.builder()
-                .challengerId(t.getChallengerId())
-                .recruiterId(t.getRecruiterId())
-                .build();
-
-        followRepository.save(followEntity);
-        FollowResponse response = new FollowResponse(challenger.getFirstName()
-                + " " + challenger.getLastName(), recruiter.getName());
-
-        return Optional.of(response);
-    }
-
-    public Optional<List<RecruiterEntity>> getFollow(Long challengerId) {
-        List<RecruiterEntity> listResponse = new ArrayList<>();
-
-        List<FollowEntity> listFollow = followRepository.findByChallengerId(challengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
-
-        for (FollowEntity followEntity : listFollow) {
-            listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
-        }
-        return Optional.empty();
-    }
+//    public Optional<List<RecruiterEntity>> getFollow(Long challengerId) {
+//        List<RecruiterEntity> listResponse = new ArrayList<>();
+//
+//        List<FollowEntity> listFollow = followRepository.findByChallengerId(challengerId)
+//                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+//
+//        for (FollowEntity followEntity : listFollow) {
+//            listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
+//        }
+//        return Optional.empty();
+//    }
 
     @Override public Optional<ChallengerResponse> getDetailsProfile(String accessToken) {
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));

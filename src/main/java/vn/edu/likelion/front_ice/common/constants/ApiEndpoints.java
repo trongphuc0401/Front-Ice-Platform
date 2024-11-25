@@ -30,6 +30,8 @@ public interface ApiEndpoints {
     String UPLOAD_CV = "/cv";
     String DOWNLOAD_CV = "/cv/{id}";
     String SEARCH = "/search";
+    String OTHER = "/other";
+    String SOLUTIONS = "/solutions";
 
     // Profile API
     String PROFILE_API = "/profile";

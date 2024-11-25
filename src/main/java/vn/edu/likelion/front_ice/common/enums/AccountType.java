@@ -3,8 +3,6 @@ package vn.edu.likelion.front_ice.common.enums;
 public enum AccountType {
 
     CHALLENGER("challenger"),
-    STAFF("staff"),
-    RECRUITER("recruiter")
     ;
     private final String accountType;
     

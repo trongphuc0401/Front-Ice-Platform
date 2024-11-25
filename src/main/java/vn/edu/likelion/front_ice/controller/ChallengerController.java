@@ -51,17 +51,17 @@ public class ChallengerController {
     @Autowired
     private FirebaseService firebaseService;
 
-    @PostMapping(ApiEndpoints.FOLLOW)
-    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestBody FollowRequest followRequest) {
-        return responseUtil.successResponse(challengerService.follow(followRequest));
-    }
-
-    @GetMapping(ApiEndpoints.GET_FOLLOW)
-    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam Long id) {
-        return responseUtil.successResponse(challengerService.getFollow(id));
-    }
+//    @PostMapping(ApiEndpoints.FOLLOW)
+//    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+//    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestBody FollowRequest followRequest) {
+//        return responseUtil.successResponse(challengerService.follow(followRequest));
+//    }
+//
+//    @GetMapping(ApiEndpoints.GET_FOLLOW)
+//    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+//    public ResponseEntity<RestAPIResponse<Object>> follow(@RequestParam Long id) {
+//        return responseUtil.successResponse(challengerService.getFollow(id));
+//    }
 
     @PostMapping(ApiEndpoints.UPLOAD_AVATAR)
     public ResponseEntity<RestAPIResponse<Object>> uploadAvatar(

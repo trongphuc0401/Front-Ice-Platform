@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
@@ -17,7 +15,6 @@ import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.likelion.front_ice.common.api.ResponseUtil;
 import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
-import vn.edu.likelion.front_ice.service.staff.StaffService;
 
 /**
  * AdminController -
@@ -28,13 +27,11 @@ public class AdminController {
     @Autowired
     private ResponseUtil responseUtil;
 
-    @Autowired
-    private StaffService staffService;
 
-    @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") Long id) {
-        return responseUtil.successResponse(staffService.getDetailsProfile(id));
-    }
+//    @GetMapping(ApiEndpoints.PROFILE_API + ApiEndpoints.GET_BY_ID)
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@PathVariable(value = "id") Long id) {
+//        return responseUtil.successResponse(staffService.getDetailsProfile(id));
+//    }
 
 }

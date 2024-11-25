@@ -141,4 +141,10 @@ public class ChallengeController {
         ResultPaginationResponse response = challengeService.searchChallenges(request);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
     }
+
+    @GetMapping(ApiEndpoints.GET_BY_ID + ApiEndpoints.SOLUTIONS)
+    public ResponseEntity<RestAPIResponse<Object>> getAllOtherSolutions() {
+
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS);
+    }
 }
