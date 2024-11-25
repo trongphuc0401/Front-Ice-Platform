@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +64,15 @@ public class ChallengeController {
             @RequestParam(defaultValue = "10") int pageSize) {
 
         ResultPaginationResponse response = challengeService.getPaginationChallenge(pageNo, pageSize);
+        return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
+    }
+
+    @GetMapping(ApiEndpoints.JOINED)
+    public ResponseEntity<RestAPIResponse<Object>> getAllJoinedChallenges(
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "6") int pageSize
+    ) {
+        ResultPaginationResponse response = challengeService.getPaginationJoinedChallenge(pageNo, pageSize);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_LIST_SUCCESS, response);
     }
 

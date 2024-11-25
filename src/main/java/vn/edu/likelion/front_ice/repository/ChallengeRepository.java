@@ -26,6 +26,20 @@ public interface ChallengeRepository extends JpaRepository<ChallengeEntity, Long
     @Query("SELECT c FROM ChallengeEntity c ORDER BY c.createAt DESC")
     Page<ChallengeEntity> findAllChallenges(Pageable pageable);
 
+    @EntityGraph(attributePaths = {"category", "challengePoint", "technicals", "resource", "previews"})
+    @Query("""
+        SELECT c FROM ChallengeEntity c
+        JOIN SolutionEntity s ON c.id = s.challenge.id
+        JOIN ChallengerEntity c2 ON c2.id = s.challenger.id
+        JOIN AccountEntity ta ON c2.account.id = ta.id
+        WHERE s.isJoined = true
+          AND c.isDeleted = 0
+          AND ta.email = :email
+    """)
+    Page<ChallengeEntity> findAllJoinedChallenge(@Param("email") String email, Pageable pageable);
+
+    // void findJoined
+
     @Override
     @EntityGraph(attributePaths = {"category", "challengePoint", "technicals", "resource", "previews"})
     Page<ChallengeEntity> findAll(Specification<ChallengeEntity> spec, Pageable pageable);

@@ -23,6 +23,7 @@ import vn.edu.likelion.front_ice.mapper.ChallengeMapper;
 import vn.edu.likelion.front_ice.mapper.ResourceMapper;
 import vn.edu.likelion.front_ice.repository.CategoryRepository;
 import vn.edu.likelion.front_ice.repository.ChallengeRepository;
+import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.SolutionRepository;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
@@ -63,6 +64,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     private ChallengeAccessHandlerFactory challengeAccessHandlerFactory;
+    @Autowired private ChallengerRepository challengerRepository;
 
     @Override
     @Transactional()
@@ -150,6 +152,20 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         return buildPaginationResponse(pageChallenge);
+    }
+
+    @Override public ResultPaginationResponse getPaginationJoinedChallenge(int pageNo, int pageSize) {
+
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<ChallengeEntity> pageJoinedChallenge = challengeRepository.findAllJoinedChallenge(email,pageable);
+
+        if (!pageJoinedChallenge.hasContent()) {
+            throw new AppException(ErrorCode.CHALLENGE_NOT_EXIST);
+        }
+
+        return buildPaginationResponse(pageJoinedChallenge);
     }
 
     @Override

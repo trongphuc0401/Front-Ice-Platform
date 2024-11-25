@@ -403,6 +403,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
         SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
+        
+
         DownloadResourceResponse downloadResourceResponse = new DownloadResourceResponse();
 
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(

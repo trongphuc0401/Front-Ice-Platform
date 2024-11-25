@@ -60,6 +60,7 @@ public interface ApiEndpoints {
     String DOWNLOAD_ASSETS = "/assets/{id}";
     String DOWNLOAD_FIGMA = "/figma/{id}";
     String GET_CHALLENGE_DETAIL = "/{id}";
+    String JOINED = "/joined";
 
     // Solution API
     String SOLUTION_API = BASE_API_URL + "/solutions";

@@ -26,6 +26,8 @@ public interface ChallengeService extends BaseService<ChallengeEntity, CreateCha
 
     ResultPaginationResponse getPaginationChallenge(int pageNo, int pageSize);
 
+    ResultPaginationResponse getPaginationJoinedChallenge(int pageNo, int pageSize);
+
     ResultPaginationResponse searchChallenges(SearchRequest request);
 
     Object getDetailChallenge(Long challengeId);
