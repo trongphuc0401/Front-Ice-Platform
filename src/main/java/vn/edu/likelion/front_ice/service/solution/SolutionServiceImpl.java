@@ -49,7 +49,6 @@ public class SolutionServiceImpl implements SolutionService {
         Optional<SolutionEntity> solutionEntity = solutionRepository
                 .findByChallengeIdAndChallengerIdAndIsJoined(t.getChallengeId(), challengerEntity.getId(), true);
 
-//        Optional<SolutionEntity> solutionEntity = null;
         if (solutionEntity.isPresent()) {
             throw new AppException(ErrorCode.YOU_HAVE_ALREADY_JOINED);
         }
