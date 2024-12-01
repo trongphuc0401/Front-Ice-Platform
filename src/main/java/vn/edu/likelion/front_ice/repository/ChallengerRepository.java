@@ -36,11 +36,19 @@ public interface ChallengerRepository extends JpaRepository<ChallengerEntity, Lo
             "WHERE a.email = :email")
     Optional<Boolean> findIsPremiumProjectionByAccountEmail(@Param("email") String email);
 
-    // @Modifying
-    // @Transactional
-    // @Query("UPDATE ChallengerEntity c SET c.levelId = :levelId WHERE c.id = :id")
-    // void updateLevelId(@Param("id") Long id, @Param("levelId") Long levelId);
 
+    @Query("""
+        SELECT COUNT(s) > 0
+        FROM SolutionEntity s
+        JOIN s.challenge c
+        JOIN s.challenger c2
+        JOIN c2.account ta
+        WHERE s.isJoined = true
+          AND c.isDeleted = 0
+          AND ta.email = :email
+          AND c.id = :challengeId
+    """)
+    boolean checkChallengeIsJoined(@Param("email") String email, @Param("challengeId") Long challengeId);
     @Modifying
     @Query(value = "CALL update_challenger_level(:challengerId, :newLevelId)", nativeQuery = true)
     void updateLevelId(@Param("challengerId") Long id, @Param("newLevelId") Long levelId);

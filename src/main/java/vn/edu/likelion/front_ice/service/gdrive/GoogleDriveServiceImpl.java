@@ -401,9 +401,11 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
     @Override public DownloadResourceResponse downloadResource(Long challengeId) {
 
-        SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+       String email =  SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        
+        if (!challengerRepository.checkChallengeIsJoined(email, challengeId)) {
+            throw new AppException(ErrorCode.CHALLENGER_NOT_JOIN_CHALLENGE);
+        }
 
         DownloadResourceResponse downloadResourceResponse = new DownloadResourceResponse();
 
