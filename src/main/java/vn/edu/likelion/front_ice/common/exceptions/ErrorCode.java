@@ -46,6 +46,7 @@ public enum ErrorCode {
     // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),
+    CHALLENGER_NOT_JOIN_CHALLENGE(RestAPIStatus.BAD_REQUEST,-203,"Challenger not joined challenge","Bad Request","Challenger chưa tham gia thử thách này"),
 
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
