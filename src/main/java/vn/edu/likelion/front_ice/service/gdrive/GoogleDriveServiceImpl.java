@@ -230,7 +230,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
 
     @Override
-    public UploadAvatarResponse uploadCV(String accessToken , File file) {
+    public UploadAvatarResponse uploadCV( MultipartFile file) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -261,7 +261,7 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
 
    @Override
    @Async
-    public CompletableFuture<String> uploadCV(MultipartFile file) throws GeneralSecurityException, IOException {
+    public CompletableFuture<String> uploadCVString(MultipartFile file) throws GeneralSecurityException, IOException {
 
         String folderId = "1sM4AJtU45u3Mg2X9Z0ZZozHXv7aNXIyi";
         String fileName = file.getOriginalFilename();

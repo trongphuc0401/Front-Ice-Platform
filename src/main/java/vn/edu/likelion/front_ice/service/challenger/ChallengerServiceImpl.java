@@ -8,6 +8,7 @@ import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.DateTimeUtil;
 import vn.edu.likelion.front_ice.dto.request.challenger.UpdateProfileChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreateChallengerRequest;
@@ -219,64 +220,67 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Transactional
-    @Override
-    public ChallengerEntity updateProfile(UpdateProfileChallengerRequest updateRequest)
+    @Override public ChallengerEntity updateProfile(UpdateProfileChallengerRequest updateProfileChallengerRequest)
             throws GeneralSecurityException, IOException {
 
-        String email = SecurityUtil.getCurrentUserLogin()
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
         ChallengerEntity challenger = challengerRepository.findByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
         AccountEntity account = challenger.getAccount();
 
-        updateAccountInfo(account, updateRequest);
-        updateChallengerInfo(challenger, updateRequest);
+        account.setFirstName(updateProfileChallengerRequest.getFirstName());
+        account.setLastName(updateProfileChallengerRequest.getLastName());
+        account.setPhone(updateProfileChallengerRequest.getPhone());
 
-        Map<String, CompletableFuture<String>> uploadFutures = handleUploads(updateRequest, account);
+        Gender gender = Gender.fromGender(updateProfileChallengerRequest.getGender());
+        challenger.setGender(gender);
 
-        challenger.setUrlCV(getFutureResult(uploadFutures.get("cv")));
-        account.setAvatar(getFutureResult(uploadFutures.get("avatar")));
-        account.setBanner(getFutureResult(uploadFutures.get("banner")));
+        challenger.setBirthday(DateTimeUtil.convertSecondsToLocalDateTime(updateProfileChallengerRequest.getBirthday()));
+        challenger.setBio(updateProfileChallengerRequest.getBio());
+
+        challenger.setUrlCodepen(updateProfileChallengerRequest.getUrlCodepen());
+        challenger.setUrlGitLab(updateProfileChallengerRequest.getUrlGitLab());
+        challenger.setUrlGithub(updateProfileChallengerRequest.getUrlGithub());
+        challenger.setUrlPortfolio(updateProfileChallengerRequest.getUrlPortfolio());
+        challenger.setUrlLinkedIn(updateProfileChallengerRequest.getUrlLinkedIn());
+        challenger.setUrlStackOverflow(updateProfileChallengerRequest.getUrlStackOverflow());
+
+        // không tách API ra gọp chung upload CV và upload avatar banner lại
+
+        // // Xử lý tải lên bất đồng bộ
+        // CompletableFuture<String> cvFuture = null;
+        // CompletableFuture<String> avatarFuture = null;
+        // CompletableFuture<String> bannerFuture = null;
+        //
+        // if (updateProfileChallengerRequest.getUrlCV() != null) {
+        //     cvFuture = googleDriveService.uploadCV(updateProfileChallengerRequest.getUrlCV());
+        // }
+        //
+        // if (updateProfileChallengerRequest.getAvatar()!= null) {
+        //     avatarFuture = firebaseService.uploadChallengerAvatar(updateProfileChallengerRequest.getAvatar(),account);
+        // }
+        // if (updateProfileChallengerRequest.getBanner()!= null) {
+        //     bannerFuture = firebaseService.uploadChallengerBanner(updateProfileChallengerRequest.getAvatar(),account);
+        // }
+        //
+        // if (cvFuture != null) {
+        //     String urlCV = cvFuture.join();
+        //     challenger.setUrlCV(urlCV);
+        // }
+        //
+        // if (avatarFuture != null) {
+        //     String urlAvatar = avatarFuture.join();
+        //     account.setAvatar(urlAvatar);
+        // }
+        //
+        // if (bannerFuture != null) {
+        //     String urlBanner = bannerFuture.join();
+        //     account.setBanner(urlBanner);
+        // }
 
         return challengerRepository.save(challenger);
-    }
-
-    private void updateAccountInfo(AccountEntity account, UpdateProfileChallengerRequest updateRequest) {
-        account.setFirstName(updateRequest.getFirstName());
-        account.setLastName(updateRequest.getLastName());
-        account.setPhone(updateRequest.getPhone());
-    }
-
-    private void updateChallengerInfo(ChallengerEntity challenger, UpdateProfileChallengerRequest updateRequest) {
-        challenger.setGender(Gender.fromGender(updateRequest.getGender()));
-        challenger.setBirthday(updateRequest.getBirthday());
-        challenger.setBio(updateRequest.getBio());
-        challenger.setUrlCodepen(updateRequest.getUrlCodepen());
-        challenger.setUrlGitLab(updateRequest.getUrlGitLab());
-        challenger.setUrlGithub(updateRequest.getUrlGithub());
-        challenger.setUrlPortfolio(updateRequest.getUrlPortfolio());
-        challenger.setUrlLinkedIn(updateRequest.getUrlLinkedIn());
-        challenger.setUrlStackOverflow(updateRequest.getUrlStackOverflow());
-    }
-
-    private Map<String, CompletableFuture<String>> handleUploads(UpdateProfileChallengerRequest updateRequest, AccountEntity account)
-            throws GeneralSecurityException, IOException {
-        Map<String, CompletableFuture<String>> futures = new HashMap<>();
-        if (updateRequest.getUrlCV() != null) {
-            futures.put("cv", googleDriveService.uploadCV(updateRequest.getUrlCV()));
-        }
-        if (updateRequest.getAvatar() != null) {
-            futures.put("avatar", firebaseService.uploadChallengerAvatar(updateRequest.getAvatar(), account));
-        }
-        if (updateRequest.getBanner() != null) {
-            futures.put("banner", firebaseService.uploadChallengerBanner(updateRequest.getBanner(), account));
-        }
-        return futures;
-    }
-
-    private String getFutureResult(CompletableFuture<String> future) {
-        return future != null ? future.join() : null;
     }
     
 

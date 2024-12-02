@@ -64,6 +64,12 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
+    public UploadAvatarResponse uploadChallengerBanner(MultipartFile file) {
+        AccountEntity accountEntity = getCurrentUserAccount();
+        return uploadAvatar(file, accountEntity, "banners/challenger");
+    }
+
+    @Override
     @Async
     public CompletableFuture<String> uploadChallengerAvatar(MultipartFile file, AccountEntity accountEntity) {
         return CompletableFuture.completedFuture(uploadAvatarString(file, accountEntity, "avatars/challenger"));

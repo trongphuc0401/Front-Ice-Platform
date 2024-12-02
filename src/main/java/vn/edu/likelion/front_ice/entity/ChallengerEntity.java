@@ -55,6 +55,7 @@ public class ChallengerEntity extends BaseEntity {
     LocalDateTime birthday;
 
     @Column(name = "gender",nullable = true)
+    @Enumerated(EnumType.ORDINAL)
     Gender gender;
 
     @Column(name = "url_cv")

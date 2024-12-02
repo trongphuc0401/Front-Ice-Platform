@@ -73,7 +73,15 @@ public class ChallengerController {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
         return responseUtil.successResponse(firebaseService.uploadChallengerAvatar(file));
+    }
 
+    @PostMapping(ApiEndpoints.UPLOAD_BANNER)
+    public ResponseEntity<RestAPIResponse<Object>> uploadBanner(
+            @RequestParam("image") MultipartFile file){
+        if (file.isEmpty()) {
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+        return responseUtil.successResponse(firebaseService.uploadChallengerBanner(file));
     }
 
     @GetMapping(ApiEndpoints.PROFILE_API)
@@ -84,7 +92,7 @@ public class ChallengerController {
     }
 
     @PutMapping(ApiEndpoints.PROFILE_API)
-    public ResponseEntity<RestAPIResponse<Object>> updateProfile(@ModelAttribute UpdateProfileChallengerRequest updateProfileChallengerRequest)
+    public ResponseEntity<RestAPIResponse<Object>> updateProfile(@RequestBody UpdateProfileChallengerRequest updateProfileChallengerRequest)
             throws GeneralSecurityException, IOException {
         challengerService.updateProfile(updateProfileChallengerRequest);
         return responseUtil.successResponse(SuccessCode.UPDATE_CHALLENGER_SUCCESSFUL);
@@ -100,30 +108,15 @@ public class ChallengerController {
     @PostMapping(ApiEndpoints.UPLOAD_CV)
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
     public ResponseEntity<RestAPIResponse<Object>> uploadCV(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestParam("cv") MultipartFile file) throws IOException {
+            @RequestParam("cv") MultipartFile file) {
 
         if (file.isEmpty()) {
             throw new AppException(ErrorCode.CV_UPLOAD_FAILED);
         }
 
-        String token = securityUtil.extractJwtFromHeader(authorizationHeader);
-
-        File tempFile = File.createTempFile("CV_", ".pdf");
-
-        try {
-
-            file.transferTo(tempFile);
+        return responseUtil.successResponse(googleDriveService.uploadCV(file));
 
 
-            return responseUtil.successResponse(googleDriveService.uploadCV(token, tempFile));
-
-        } finally {
-            // Đảm bảo xóa file tạm sau khi sử dụng
-            if (tempFile.exists()) {
-                tempFile.delete();
-            }
-        }
     }
 
 

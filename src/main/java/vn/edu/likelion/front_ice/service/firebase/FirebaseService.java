@@ -19,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 public interface FirebaseService {
     UploadAvatarResponse uploadChallengerAvatar(MultipartFile file);
 
+    UploadAvatarResponse uploadChallengerBanner(MultipartFile file);
+
     UploadAvatarResponse uploadManagerAvatar(MultipartFile file);
 
     UploadAvatarResponse uploadMentorAvatar(MultipartFile file);
