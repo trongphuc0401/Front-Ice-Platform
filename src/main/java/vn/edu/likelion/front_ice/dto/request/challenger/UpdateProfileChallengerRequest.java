@@ -25,9 +25,9 @@ import java.time.LocalDateTime;
 public class UpdateProfileChallengerRequest {
 
 
-    // image
-    MultipartFile banner;
-    MultipartFile avatar;
+    // // image
+    // MultipartFile banner;
+    // MultipartFile avatar;
 
     // profile
     String firstName;
@@ -36,15 +36,14 @@ public class UpdateProfileChallengerRequest {
 
     Integer gender; // nghiên cứu thêm xem là Integer hay Gender
 
-    @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // Định dạng ISO-8601 cho timestamp
-    LocalDateTime birthday; // nghiên cứu thêm
+     // Định dạng ISO-8601 cho timestamp
+    Long birthday; // nghiên cứu thêm
     String bio;
 
 
     //url
     String urlGithub;
-    MultipartFile urlCV;
+    // MultipartFile urlCV;
     String urlPortfolio;
     String urlCodepen;
     String urlGitLab;

@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface GoogleDriveService{
 
-    UploadAvatarResponse uploadCV(String accountId, File file);
+    UploadAvatarResponse uploadCV(MultipartFile file);
 
     AssetsResponse uploadAssets(Long challengeId , File file);
 
@@ -40,5 +40,5 @@ public interface GoogleDriveService{
 
     InputStream downloadFigma(String figmaId) throws IOException, GeneralSecurityException;
 
-    CompletableFuture<String> uploadCV(MultipartFile file) throws GeneralSecurityException, IOException;
+    CompletableFuture<String> uploadCVString(MultipartFile file) throws GeneralSecurityException, IOException;
 }
