@@ -7,7 +7,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.Permission;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
@@ -31,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 /**
@@ -185,6 +188,46 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
     }
 
+    private String uploadFileToDrive(MultipartFile file, String folderId, String newFileName) throws IOException, GeneralSecurityException {
+        // Tạo dịch vụ Google Drive
+        Drive drive = createDriveService();
+
+        // Lưu file tạm thời với tên mới
+        java.io.File tempFile = java.io.File.createTempFile("temp-", "-" + newFileName);
+        file.transferTo(tempFile);
+
+        // Đổi tên file
+        java.io.File renamedFile = new java.io.File(tempFile.getParent(), newFileName);
+        if (!tempFile.renameTo(renamedFile)) {
+            throw new IOException("Failed to rename file to " + newFileName);
+        }
+
+        try {
+            // Metadata cho file Drive
+            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+            fileMetaData.setName(newFileName);
+            fileMetaData.setParents(Collections.singletonList(folderId));
+
+            // Nội dung file
+            FileContent mediaContent = new FileContent(file.getContentType(), renamedFile);
+            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                    .setFields("id").execute();
+
+            // Gán quyền truy cập công khai
+            Permission permission = new Permission();
+            permission.setType("anyone");
+            permission.setRole("reader");
+            drive.permissions().create(uploadedFile.getId(), permission).execute();
+
+            // Trả về URL file trên Google Drive
+            return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+        } finally {
+            // Đảm bảo xóa file tạm ngay cả khi có lỗi
+            renamedFile.delete();
+        }
+    }
+
+
 
     @Override
     public UploadAvatarResponse uploadCV(String accessToken , File file) {
@@ -214,6 +257,16 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         }
 
         return response;
+    }
+
+   @Override
+   @Async
+    public CompletableFuture<String> uploadCV(MultipartFile file) throws GeneralSecurityException, IOException {
+
+        String folderId = "1sM4AJtU45u3Mg2X9Z0ZZozHXv7aNXIyi";
+        String fileName = file.getOriginalFilename();
+
+        return CompletableFuture.completedFuture(uploadFileToDrive(file, folderId, fileName));
     }
 
 
