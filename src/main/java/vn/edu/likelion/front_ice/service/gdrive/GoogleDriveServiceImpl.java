@@ -72,23 +72,25 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     }
 
     private static String getPathToGoogleCredentials() {
-
+        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
         String currentDirectory = System.getProperty("user.dir");
-        Path filePath= Paths.get(currentDirectory, "credentials.json");
+        Path filePath= Paths.get(currentDirectory, credentialsJson);
         return filePath.toString();
     }
-
     private Drive createDriveService() throws GeneralSecurityException,IOException {
-
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(SERVIEC_ACCOUNT_KEY_PATH))
+        String credentialsJson = System.getenv("GOOGLE_CLOUD_CREDENTIALS");
+        if (credentialsJson == null || credentialsJson.isEmpty()) {
+            throw new IllegalStateException("Google Cloud credentials not found in environment variables.");
+        }
+        // Chuyển đổi chuỗi JSON thành InputStream để tạo GoogleCredential
+        GoogleCredential credential = GoogleCredential
+                .fromStream(new ByteArrayInputStream(credentialsJson.getBytes()))
                 .createScoped(Collections.singleton(DriveScopes.DRIVE));
-
         return new Drive.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 JSON_FACTORY,
                 credential)
                 .build();
-
     }
 
     private DesignImageResponse uploadDesignImage( File file, String folderId, ErrorCode errorCode, String label) {

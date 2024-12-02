@@ -21,7 +21,6 @@ import java.util.Optional;
 @Repository
 public interface ResourceRepository extends JpaRepository<ResourceEntity, Long> {
 
-
     // @Query(value = "SELECT * FROM GetResourceByChallengeId(?1) LIMIT 1", nativeQuery = true)
     Optional<ResourceEntity> findByChallengeId(Long id);
 
