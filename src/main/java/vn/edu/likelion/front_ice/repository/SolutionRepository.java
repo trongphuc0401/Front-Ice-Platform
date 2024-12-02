@@ -92,22 +92,20 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
      * @return a list of OtherSolutionResponse DTOs for the matching solutions
      */
     @Query("""
-    SELECT new vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse(
-        s.id,
-        s.title,
-        s.description,
-        s.urlProduct,
-        s.urlRepository,
-        s.note,
-        c.account.firstName,
-        c.account.lastName,
-        l.level,
-        c.account.avatar
-    )
-    FROM SolutionEntity s
-    JOIN s.challenger c
-    JOIN LevelEntity l ON c.levelId = l.id
-    WHERE s.challenge.id = :challengeId AND s.isSubmitted = true
+        SELECT s FROM SolutionEntity s
+        JOIN FETCH s.challenger c
+        JOIN FETCH c.account a
+        WHERE s.challenge.id = :challengeId AND s.isSubmitted = true
     """)
-    List<OtherSolutionResponse> findOtherSolutions(@Param("challengeId") Long challengeId);
+    List<SolutionEntity> findLimitedOtherSolutions(@Param("challengeId") Long challengeId);
+
+    @Query("""
+           SELECT s FROM SolutionEntity s
+           JOIN FETCH s.challenger c
+           JOIN FETCH c.account a
+           WHERE s.isSubmitted = true
+             AND c.id != :currentChallengerId
+             AND s.challenge.id IN (SELECT sc.challenge.id FROM SolutionEntity sc WHERE sc.challenger.id = :currentChallengerId)
+           """)
+    List<SolutionEntity> findSolutionsOfOtherChallengers(@Param("currentChallengerId") Long currentChallengerId);
 }

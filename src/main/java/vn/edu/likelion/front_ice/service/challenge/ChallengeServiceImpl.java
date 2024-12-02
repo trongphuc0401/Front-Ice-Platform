@@ -183,7 +183,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Object getDetailChallenge(Long challengeId) {
+    public DetailChallengeResponse getDetailChallenge(Long challengeId) {
         ChallengeEntity challenge = challengeRepository.findChallengeWithDetails(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 

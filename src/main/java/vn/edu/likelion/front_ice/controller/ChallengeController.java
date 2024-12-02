@@ -16,6 +16,7 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.query.SearchRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
@@ -78,7 +79,7 @@ public class ChallengeController {
 
     @GetMapping(ApiEndpoints.GET_BY_ID)
     public ResponseEntity<RestAPIResponse<Object>> getChallengeDetail(@PathVariable("id") Long challengeId) {
-        Object response  = challengeService.getDetailChallenge(challengeId);
+        DetailChallengeResponse response  = challengeService.getDetailChallenge(challengeId);
         return responseUtil.successResponse(SuccessCode.CHALLENGE_DETAIL_SUCCESS, response);
     }
 
