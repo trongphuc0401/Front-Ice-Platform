@@ -4,6 +4,7 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.firebase.cloud.StorageClient;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
@@ -22,6 +23,7 @@ import vn.edu.likelion.front_ice.security.SecurityUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * FirebaseServiceImpl is a service class that handles Firebase Storage operations
@@ -59,6 +61,18 @@ public class FirebaseServiceImpl implements FirebaseService {
     public UploadAvatarResponse uploadChallengerAvatar(MultipartFile file) {
         AccountEntity accountEntity = getCurrentUserAccount();
         return uploadAvatar(file, accountEntity, "avatars/challenger");
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<String> uploadChallengerAvatar(MultipartFile file, AccountEntity accountEntity) {
+        return CompletableFuture.completedFuture(uploadAvatarString(file, accountEntity, "avatars/challenger"));
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<String> uploadChallengerBanner(MultipartFile file, AccountEntity accountEntity) {
+        return CompletableFuture.completedFuture(uploadAvatarString(file, accountEntity, "banners/challenger"));
     }
 
     /**
@@ -233,6 +247,47 @@ public class FirebaseServiceImpl implements FirebaseService {
             throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
         }
     }
+
+    public String uploadAvatarString(MultipartFile file, AccountEntity accountEntity, String folderName) {
+
+        try {
+            if (accountEntity.getAvatar() != null) {
+                String oldAvatarUrl = accountEntity.getAvatar();
+                String oldFileName = oldAvatarUrl.substring(oldAvatarUrl.indexOf("/o/") + 3, oldAvatarUrl.indexOf("?alt=media"));
+                oldFileName = oldFileName.replace("%2F", "/");
+
+                Bucket bucket = StorageClient.getInstance().bucket();
+                Blob oldBlob = bucket.get(oldFileName);
+                if (oldBlob != null) {
+                    oldBlob.delete();
+                }
+            }
+
+            String fileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+            Bucket bucket = StorageClient.getInstance().bucket();
+            String downloadToken = UUID.randomUUID().toString();
+
+            Blob blob = bucket.create(folderName + "/" + fileName, file.getBytes(), file.getContentType(),
+                            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ))
+                    .toBuilder()
+                    .setMetadata(Collections.singletonMap("firebaseStorageDownloadTokens", downloadToken))
+                    .build()
+                    .update();
+
+            return String.format(
+                    "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media&token=%s",
+                    bucket.getName(),
+                    blob.getName().replace("/", "%2F"),
+                    downloadToken
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AppException(ErrorCode.PHOTO_UPLOAD_FAILED);
+        }
+    }
+
+
 
     /**
      * Retrieves the AccountEntity of the current user based on the login token.

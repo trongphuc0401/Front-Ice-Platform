@@ -11,13 +11,16 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.exceptions.SuccessCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.dto.request.challenger.UpdateProfileChallengerRequest;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 import vn.edu.likelion.front_ice.service.firebase.FirebaseService;
 import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,6 +81,13 @@ public class ChallengerController {
     public ResponseEntity<RestAPIResponse<Object>> getDetailsProfile(@RequestHeader("Authorization") String authorizationHeader) {
         String token = securityUtil.extractJwtFromHeader(authorizationHeader);
         return responseUtil.successResponse(challengerService.getDetailsProfile(token));
+    }
+
+    @PutMapping(ApiEndpoints.PROFILE_API)
+    public ResponseEntity<RestAPIResponse<Object>> updateProfile(@ModelAttribute UpdateProfileChallengerRequest updateProfileChallengerRequest)
+            throws GeneralSecurityException, IOException {
+        challengerService.updateProfile(updateProfileChallengerRequest);
+        return responseUtil.successResponse(SuccessCode.UPDATE_CHALLENGER_SUCCESSFUL);
     }
 
     @GetMapping(ApiEndpoints.OVERVIEW)

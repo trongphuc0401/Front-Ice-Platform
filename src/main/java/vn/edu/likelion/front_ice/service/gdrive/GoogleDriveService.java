@@ -1,5 +1,6 @@
 package vn.edu.likelion.front_ice.service.gdrive;
 
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
 import vn.edu.likelion.front_ice.dto.response.resource.AssetsResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.DesignImageResponse;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * GoogleDriveService -
@@ -37,4 +39,6 @@ public interface GoogleDriveService{
     InputStream downloadAssets(String assetsId) throws IOException, GeneralSecurityException;
 
     InputStream downloadFigma(String figmaId) throws IOException, GeneralSecurityException;
+
+    CompletableFuture<String> uploadCV(MultipartFile file) throws GeneralSecurityException, IOException;
 }
