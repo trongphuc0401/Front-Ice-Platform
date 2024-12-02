@@ -8,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
-import vn.edu.likelion.front_ice.common.enums.AccountType;
 import vn.edu.likelion.front_ice.common.enums.Role;
 
 import java.util.Collection;
@@ -61,14 +60,8 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column
     int isAuthenticated = 0;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     ChallengerEntity challenger;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    RecruiterEntity recruiter;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    StaffEntity staff;
 
     // Implementing UserDetails methods properly
     @Override

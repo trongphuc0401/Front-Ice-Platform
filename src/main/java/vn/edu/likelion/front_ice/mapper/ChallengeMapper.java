@@ -2,12 +2,11 @@ package vn.edu.likelion.front_ice.mapper;
 
 import org.mapstruct.Mapper;
 import vn.edu.likelion.front_ice.dto.request.challenge.CreateChallengeRequest;
-import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeDetailForChallengerResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.ChallengeResponse;
+import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.entity.ChallengeEntity;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import vn.edu.likelion.front_ice.dto.response.challenge.DetailChallengeResponse;
 import vn.edu.likelion.front_ice.entity.TechnicalEntity;
 
 import java.time.LocalDateTime;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ChallengeMapper {
 
+
     ChallengeEntity toChallenge(CreateChallengeRequest createChallengeRequest);
 
     @Mapping(target = "technicals", source = "technicals", qualifiedByName = "mapTechnicals")
@@ -27,7 +27,7 @@ public interface ChallengeMapper {
     ChallengeResponse toChallengeResponse(ChallengeEntity challengeEntity);
 
     @Mapping(target = "technicals", source = "technicals", qualifiedByName = "mapTechnicals")
-    ChallengeDetailForChallengerResponse toChallengeDetailResponse(ChallengeEntity challengeEntity);
+    DetailChallengeResponse toChallengeDetailResponse(ChallengeEntity challengeEntity);
 
     @Named("toTimestamp")
     default Long toTimestamp(LocalDateTime localDateTime) {
@@ -40,4 +40,5 @@ public interface ChallengeMapper {
                 .map(TechnicalEntity::getTitle)
                 .collect(Collectors.toSet());
     }
+
 }

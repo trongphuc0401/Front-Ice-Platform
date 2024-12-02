@@ -9,10 +9,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ResourceResponse {
+
     String assetsUrl;
     String assetsName;
     Long assetsSize;
     String figmaUrl;
     String figmaName;
     Long figmaSize;
+
 }

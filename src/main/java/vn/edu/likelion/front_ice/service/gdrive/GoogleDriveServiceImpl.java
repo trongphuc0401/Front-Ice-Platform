@@ -7,14 +7,24 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.Permission;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.likelion.front_ice.common.enums.TypeChallenge;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.response.UploadAvatarResponse;
-import vn.edu.likelion.front_ice.dto.response.challenge.AssetsResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.AssetsResponse;
 import vn.edu.likelion.front_ice.dto.response.challenge.DesignImageResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.DownloadResourceResponse;
+import vn.edu.likelion.front_ice.dto.response.resource.FigmaResponse;
 import vn.edu.likelion.front_ice.entity.*;
+import vn.edu.likelion.front_ice.mapper.ResourceMapper;
+import vn.edu.likelion.front_ice.projection.challenge.TypeChallengeProjection;
+import vn.edu.likelion.front_ice.projection.challenger.IsPremiumProjection;
+import vn.edu.likelion.front_ice.projection.resource.AssetsUrlProjection;
+import vn.edu.likelion.front_ice.projection.resource.FigmaUrlProjection;
 import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
 
@@ -23,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 /**
@@ -44,17 +55,20 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
     private final ResourceRepository resourceRepository;
     private final SecurityUtil securityUtil;
     private final PreviewRepository previewRepository;
+    private final ResourceMapper resourceMapper;
 
 
     public GoogleDriveServiceImpl(AccountRepository accountRepository, ChallengerRepository challengerRepository,
                                   ChallengeRepository challengeRepository, ResourceRepository resourceRepository,
-                                  SecurityUtil securityUtil, PreviewRepository previewRepository) {
+                                  SecurityUtil securityUtil, PreviewRepository previewRepository,
+                                  ResourceMapper resourceMapper) {
         this.accountRepository = accountRepository;
         this.challengerRepository = challengerRepository;
         this.challengeRepository = challengeRepository;
         this.resourceRepository = resourceRepository;
         this.securityUtil = securityUtil;
         this.previewRepository = previewRepository;
+        this.resourceMapper = resourceMapper;
     }
 
     private static String getPathToGoogleCredentials() {
@@ -148,6 +162,8 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return uploadDesignImage(file, folderId,ErrorCode.IMAGE_TABLET,"tablet design");
     }
 
+
+
     private String uploadFileToDrive(File file, String folderId, String newFileName) throws IOException, GeneralSecurityException {
         Drive drive = createDriveService();
 
@@ -174,9 +190,49 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
     }
 
+    private String uploadFileToDrive(MultipartFile file, String folderId, String newFileName) throws IOException, GeneralSecurityException {
+        // Tạo dịch vụ Google Drive
+        Drive drive = createDriveService();
+
+        // Lưu file tạm thời với tên mới
+        java.io.File tempFile = java.io.File.createTempFile("temp-", "-" + newFileName);
+        file.transferTo(tempFile);
+
+        // Đổi tên file
+        java.io.File renamedFile = new java.io.File(tempFile.getParent(), newFileName);
+        if (!tempFile.renameTo(renamedFile)) {
+            throw new IOException("Failed to rename file to " + newFileName);
+        }
+
+        try {
+            // Metadata cho file Drive
+            com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+            fileMetaData.setName(newFileName);
+            fileMetaData.setParents(Collections.singletonList(folderId));
+
+            // Nội dung file
+            FileContent mediaContent = new FileContent(file.getContentType(), renamedFile);
+            com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                    .setFields("id").execute();
+
+            // Gán quyền truy cập công khai
+            Permission permission = new Permission();
+            permission.setType("anyone");
+            permission.setRole("reader");
+            drive.permissions().create(uploadedFile.getId(), permission).execute();
+
+            // Trả về URL file trên Google Drive
+            return "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+        } finally {
+            // Đảm bảo xóa file tạm ngay cả khi có lỗi
+            renamedFile.delete();
+        }
+    }
+
+
 
     @Override
-    public UploadAvatarResponse uploadCV(String accessToken , File file) {
+    public UploadAvatarResponse uploadCV( MultipartFile file) {
         UploadAvatarResponse response = new UploadAvatarResponse();
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -205,8 +261,23 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return response;
     }
 
+   @Override
+   @Async
+    public CompletableFuture<String> uploadCVString(MultipartFile file) throws GeneralSecurityException, IOException {
 
-    @Override public AssetsResponse uploadAssets(Long challengeId, File file) {
+        String folderId = "1sM4AJtU45u3Mg2X9Z0ZZozHXv7aNXIyi";
+        String fileName = file.getOriginalFilename();
+
+        return CompletableFuture.completedFuture(uploadFileToDrive(file, folderId, fileName));
+    }
+
+
+    @Override
+    public AssetsResponse uploadAssets(Long challengeId, File file) {
+
+        if (file == null || !file.exists() || file.length() == 0) {
+            throw new AppException(ErrorCode.ASSETS_UPLOAD_FAILED);
+        }
 
         AssetsResponse response = new AssetsResponse();
 
@@ -214,127 +285,131 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         try {
-            // ID của thư mục trên Google Drive
+
             String folderId = "1CUsNkMqDiH04F71zGUbdtgUosxPSQBpw";
 
-            // Tạo dịch vụ Google Drive
             Drive drive = createDriveService();
 
-            // Giữ nguyên tên file gốc
             String originalFileName = file.getName();
-
-            // Chuẩn bị metadata cho file
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(originalFileName); // Giữ nguyên tên gốc
+            fileMetaData.setName(originalFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            // Định nghĩa file content với loại file là zip
             FileContent mediaContent = new FileContent("application/zip", file);
 
-            // Upload file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files()
                     .create(fileMetaData, mediaContent)
                     .setFields("id,size")
                     .execute();
 
-            // Tạo link trực tiếp đến file trên Google Drive
             String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
-            System.out.println("File URL: " + fileUrl);
+            long fileSize = uploadedFile.getSize();
 
-            long fileSize = uploadedFile.getSize(); // Lấy kích thước file (bytes)
-            System.out.println("File Size: " + fileSize + " bytes");
-
-            // Đặt quyền chia sẻ công khai cho file
             Permission permission = new Permission();
             permission.setType("anyone");
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-            // Xóa file cục bộ sau khi upload thành công (nếu cần)
-            file.delete();
-            response.setAssetsUrl(fileUrl);
+            if (!file.delete()) {
+                throw new AppException(ErrorCode.DELETE_FAILED);
+            }
+
+            String assetsId = HelperUtil.getThreadLocalRandomId();
+
+            response.setAssetsId(assetsId);
             response.setAssetsName(originalFileName);
             response.setAssetsSize(fileSize);
+
+            resourceEntity.setAssetsId(assetsId);
             resourceEntity.setAssetsUrl(fileUrl);
             resourceEntity.setAssetsName(originalFileName);
             resourceEntity.setAssetsSize(fileSize);
+
+
+
             resourceRepository.save(resourceEntity);
 
-            // Thiết lập URL vào response
-        } catch (IOException | GeneralSecurityException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            throw new AppException(ErrorCode.GOOGLE_DRIVE_ERROR);
+        } catch (GeneralSecurityException e) {
+            throw new AppException(ErrorCode.GENERAL_SECURITY_ERROR);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+
         return response;
     }
 
-    @Override public AssetsResponse uploadFigma(Long challengeId, File file) {
-        AssetsResponse response = new AssetsResponse();
+    @Override
+    public FigmaResponse uploadFigma(Long challengeId, File file) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            throw new AppException(ErrorCode.ASSETS_UPLOAD_FAILED);
+        }
 
+        FigmaResponse response = new FigmaResponse();
         ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
         try {
-            // ID của thư mục trên Google Drive
             String folderId = "1TGDETb1gH0JACUMCbuXYHISKJerodAki";
-
-            // Tạo dịch vụ Google Drive
             Drive drive = createDriveService();
 
-            // Giữ nguyên tên file gốc
             String originalFileName = file.getName();
-
-            // Chuẩn bị metadata cho file
             com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
-            fileMetaData.setName(originalFileName); // Giữ nguyên tên gốc
+            fileMetaData.setName(originalFileName);
             fileMetaData.setParents(Collections.singletonList(folderId));
 
-            // Định nghĩa file content với loại file là zip
             FileContent mediaContent = new FileContent("application/zip", file);
 
-            // Upload file lên Google Drive
             com.google.api.services.drive.model.File uploadedFile = drive.files()
                     .create(fileMetaData, mediaContent)
                     .setFields("id,size")
                     .execute();
 
-            // Tạo link trực tiếp đến file trên Google Drive
             String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
-            System.out.println("File URL: " + fileUrl);
+            long fileSize = uploadedFile.getSize();
 
-            long fileSize = uploadedFile.getSize(); // Lấy kích thước file (bytes)
-            System.out.println("File Size: " + fileSize + " bytes");
-
-            // Đặt quyền chia sẻ công khai cho file
             Permission permission = new Permission();
             permission.setType("anyone");
             permission.setRole("reader");
             drive.permissions().create(uploadedFile.getId(), permission).execute();
 
-            // Xóa file cục bộ sau khi upload thành công (nếu cần)
-            file.delete();
-            response.setAssetsUrl(fileUrl);
-            response.setAssetsName(originalFileName);
-            response.setAssetsSize(fileSize);
+            if (!file.delete()) {
+                throw new AppException(ErrorCode.DELETE_FAILED);
+            }
+
+            String figmaId = HelperUtil.getThreadLocalRandomId();
+
+            response.setFigmaId(figmaId);
+            response.setFigmaName(originalFileName);
+            response.setFigmaSize(fileSize);
+
+            resourceEntity.setFigmaId(figmaId);
             resourceEntity.setFigmaUrl(fileUrl);
             resourceEntity.setFigmaName(originalFileName);
             resourceEntity.setFigmaSize(fileSize);
+
+
             resourceRepository.save(resourceEntity);
 
-            // Thiết lập URL vào response
-        } catch (IOException | GeneralSecurityException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            throw new AppException(ErrorCode.GOOGLE_DRIVE_ERROR);
+        } catch (GeneralSecurityException e) {
+            throw new AppException(ErrorCode.GENERAL_SECURITY_ERROR);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+
         return response;
     }
 
+    public InputStream downloadAssets(String assetsId) throws IOException, GeneralSecurityException {
 
+        String assetsUrl = resourceRepository.findAssetsUrlByAssetsId(assetsId)
+                .map(AssetsUrlProjection::getAssetsUrl)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_EXIST));
 
-    public InputStream downloadAssets(Long challengeId) throws IOException, GeneralSecurityException {
-
-        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
-                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
-
-        String fileId = resourceEntity.getAssetsUrl().replace("https://drive.google.com/uc?export=view&id=", "");
+        String fileId = assetsUrl.replace("https://drive.google.com/uc?export=view&id=", "");
 
         Drive drive = createDriveService();
 
@@ -344,33 +419,32 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         return inputStream;
     }
 
-    public InputStream downloadFigma(Long challengeId) throws IOException, GeneralSecurityException {
+    public InputStream downloadFigma(String figmaId) throws IOException, GeneralSecurityException {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challengerEntity = challengerRepository.findByAccountEmail(email)
+
+        boolean isPremium = challengerRepository.findIsPremiumProjectionByAccountEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-        ChallengeEntity challengeEntity = challengeRepository.findById(challengeId)
+
+        TypeChallenge typeChallenge = challengeRepository.findTypeChallengeByFigmaId(figmaId)
+                .map(TypeChallengeProjection::getTypeChallenge)
                 .orElseThrow(() -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
+        boolean isAllowedChallenge = typeChallenge == TypeChallenge.PREMIUM && isPremium
+                || typeChallenge == TypeChallenge.FREE_PLUS_PLUS;
 
-        Predicate<ChallengeEntity> isAllowedChallenge = challenge ->
-        {
-            TypeChallenge typeChallenge = challenge.getTypeChallenge();
-            return typeChallenge == TypeChallenge.PREMIUM || typeChallenge == TypeChallenge.FREE_PLUS_PLUS;
-        };
-
-        if (challengerEntity.isPremium() || !isAllowedChallenge.test(challengeEntity)) {
+        if (!isAllowedChallenge) {
             throw new AppException(ErrorCode.CHALLENGER_AND_CHALLENGE_NOT_PREMIUM);
         }
 
-        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
-                () -> new AppException(ErrorCode.CHALLENGE_NOT_EXIST));
 
+        String figmaUrl = resourceRepository.findFigmaUrlByFigmaId(figmaId)
+                .map(FigmaUrlProjection::getFigmaUrl)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_EXIST));
 
-
-        String fileId = resourceEntity.getFigmaUrl().replace("https://drive.google.com/uc?export=view&id=", "");
+        String fileId = figmaUrl.replace("https://drive.google.com/uc?export=view&id=", "");
 
         Drive drive = createDriveService();
 
@@ -378,5 +452,27 @@ public class GoogleDriveServiceImpl implements GoogleDriveService{
         inputStream = drive.files().get(fileId).executeMediaAsInputStream();
 
         return inputStream;
+    }
+
+    @Override public DownloadResourceResponse downloadResource(Long challengeId) {
+
+       String email =  SecurityUtil.getCurrentUserLogin().orElseThrow(()->new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+
+        if (!challengerRepository.checkChallengeIsJoined(email, challengeId)) {
+            throw new AppException(ErrorCode.CHALLENGER_NOT_JOIN_CHALLENGE);
+        }
+
+        DownloadResourceResponse downloadResourceResponse = new DownloadResourceResponse();
+
+        ResourceEntity resourceEntity = resourceRepository.findByChallengeId(challengeId).orElseThrow(
+                () -> new AppException(ErrorCode.RESOURCE_NOT_EXIST)
+        );
+        AssetsResponse assetsResponse = resourceMapper.toAssetsResponse(resourceEntity);
+        FigmaResponse figmaResponse = resourceMapper.toFigmaResponse(resourceEntity);
+
+        downloadResourceResponse.setAssets(assetsResponse);
+        downloadResourceResponse.setFigma(figmaResponse);
+
+        return downloadResourceResponse;
     }
 }

@@ -46,6 +46,7 @@ public enum ErrorCode {
     // error challenger
     CHALLENGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-201,"Challenger not exist","Bad Request","Challenger không tồn tại"),
     CHALLENGER_HAS_FOLLOWED_RECRUITER(RestAPIStatus.BAD_REQUEST,-202,"Challenger has followed this Recruiter","Bad Request","Challenger đã theo dõi Recruiter này rồi"),
+    CHALLENGER_NOT_JOIN_CHALLENGE(RestAPIStatus.BAD_REQUEST,-203,"Challenger not joined challenge","Bad Request","Challenger chưa tham gia thử thách này"),
 
     // error challenge
     CHALLENGE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-301 ,"Challenge not exist","Bad Request","Challenge không tồn tại"),
@@ -77,8 +78,12 @@ public enum ErrorCode {
     // error manager
     MANAGER_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-801,"Manager not exist","Bad Request","Manager không tồn tại"),
 
-    DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Not found","Xoá thất bại"),
+    // error resource
+    RESOURCE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-901,"Resource not exist","Bad Request","Tài nguyên không tồn tại"),
 
+    GENERAL_SECURITY_ERROR(RestAPIStatus.BAD_REQUEST,-9994,"Delete failed","Can not delete","Xoá thất bại"),
+    GOOGLE_DRIVE_ERROR(RestAPIStatus.BAD_REQUEST,-9995,"Google Drive operation failed.","Bad Request","Google Drive vận hành bị lỗi trên Google Cloud"),
+    DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Can not delete","Xoá thất bại"),
     UPDATE_FAILED(RestAPIStatus.BAD_REQUEST,-9997,"Update failed","Not found","Cập nhật thất bại"),
     QUERY_NOT_FOUND(RestAPIStatus.BAD_REQUEST,-9998,"Query not found","Not found","Truy vấn không thành công"),
     UNCATEGORIZED_EXCEPTION(RestAPIStatus.BAD_REQUEST,-9999,"Uncategorized error","Bad request","Lỗi chưa được định nghĩa");

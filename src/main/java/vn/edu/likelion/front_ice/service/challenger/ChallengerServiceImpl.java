@@ -2,32 +2,40 @@ package vn.edu.likelion.front_ice.service.challenger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import vn.edu.likelion.front_ice.common.enums.Gender;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.common.enums.ScoreAnswer;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
+import vn.edu.likelion.front_ice.common.utils.DateTimeUtil;
+import vn.edu.likelion.front_ice.dto.request.challenger.UpdateProfileChallengerRequest;
 import vn.edu.likelion.front_ice.dto.request.follow.FollowRequest;
 import vn.edu.likelion.front_ice.dto.request.challenger.CreateChallengerRequest;
-import vn.edu.likelion.front_ice.dto.request.challenger.UpdateChallengerRequest;
 import vn.edu.likelion.front_ice.dto.response.challenger.NextLevelResponse;
+import vn.edu.likelion.front_ice.dto.response.challenger.OverviewResponse;
 import vn.edu.likelion.front_ice.dto.response.follow.FollowResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.ChallengerMapper;
+import vn.edu.likelion.front_ice.projection.challenger.OverviewProjection;
 import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.dto.response.challenger.ChallengerResponse;
 import vn.edu.likelion.front_ice.entity.AccountEntity;
 import vn.edu.likelion.front_ice.entity.ChallengerEntity;
 import vn.edu.likelion.front_ice.entity.FollowEntity;
-import vn.edu.likelion.front_ice.entity.RecruiterEntity;
 import vn.edu.likelion.front_ice.repository.AccountRepository;
 import vn.edu.likelion.front_ice.repository.ChallengerRepository;
 import vn.edu.likelion.front_ice.repository.FollowRepository;
-import vn.edu.likelion.front_ice.repository.RecruiterRepository;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseService;
+import vn.edu.likelion.front_ice.service.firebase.FirebaseServiceImpl;
+import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveService;
+import vn.edu.likelion.front_ice.service.gdrive.GoogleDriveServiceImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -35,8 +43,6 @@ public class ChallengerServiceImpl implements ChallengerService {
 
     @Autowired
     private FollowRepository followRepository;
-    @Autowired
-    private RecruiterRepository recruiterRepository;
     @Autowired
     private ChallengerRepository challengerRepository;
     @Autowired
@@ -47,6 +53,9 @@ public class ChallengerServiceImpl implements ChallengerService {
     private ChallengerMapper challengerMapper;
     @Autowired
     private SolutionRepository solutionRepository;
+    @Autowired private GoogleDriveService googleDriveService;
+    @Autowired private FirebaseService firebaseService;
+
 
     @Override
     public Optional<ChallengerEntity> create(CreateChallengerRequest t) {
@@ -54,7 +63,7 @@ public class ChallengerServiceImpl implements ChallengerService {
     }
 
     @Override
-    public Optional<ChallengerEntity> updateInfo(Long id, UpdateChallengerRequest i) {
+    public Optional<ChallengerEntity> updateInfo(Long id, UpdateProfileChallengerRequest i) {
         return Optional.empty();
     }
 
@@ -83,184 +92,211 @@ public class ChallengerServiceImpl implements ChallengerService {
         return List.of();
     }
 
-    public Optional<FollowResponse> follow(FollowRequest t) {
-        AccountEntity challenger;
-        RecruiterEntity recruiter;
+//    public Optional<FollowResponse> follow(FollowRequest t) {
+//        AccountEntity challenger;
+//
+//        challenger = accountRepository.findById(
+//                        challengerRepository.findById(t.getChallengerId())
+//                                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
+//                                .getAccount().getId())
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//
+//        // check follow
+//        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
+////                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
+//                .ifPresent(follow -> {
+//                    throw new AppException(ErrorCode.CHALLENGER_HAS_FOLLOWED_RECRUITER);
+//                })
+//        ;
+//
+//        FollowEntity followEntity = FollowEntity.builder()
+//                .challengerId(t.getChallengerId())
+//                .recruiterId(t.getRecruiterId())
+//                .build();
+//
+//        followRepository.save(followEntity);
+//        FollowResponse response = new FollowResponse(challenger.getFirstName()
+//                + " " + challenger.getLastName(), recruiter.getName());
+//
+//        return Optional.of(response);
+//    }
 
-        challenger = accountRepository.findById(
-                        challengerRepository.findById(t.getChallengerId())
-                                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
-                                .getAccount().getId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//    public Optional<List<RecruiterEntity>> getFollow(Long challengerId) {
+//        List<RecruiterEntity> listResponse = new ArrayList<>();
+//
+//        List<FollowEntity> listFollow = followRepository.findByChallengerId(challengerId)
+//                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+//
+//        for (FollowEntity followEntity : listFollow) {
+//            listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
+//        }
+//        return Optional.empty();
+//    }
 
-        recruiter = recruiterRepository.findById(t.getRecruiterId())
-                .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_EXIST));
+    @Override public Optional<ChallengerResponse> getDetailsProfile(String accessToken) {
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        // check follow
-        followRepository.findByChallengerIdAndRecruiterId(t.getChallengerId(), t.getRecruiterId())
-//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST))
-                .ifPresent(follow -> {
-                    throw new AppException(ErrorCode.CHALLENGER_HAS_FOLLOWED_RECRUITER);
-                })
-        ;
+        ChallengerEntity challenger = accountRepository.findChallengerByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST)).getChallenger();
+        upLevel(challenger,challenger.getLevelId());
 
-        FollowEntity followEntity = FollowEntity.builder()
-                .challengerId(t.getChallengerId())
-                .recruiterId(t.getRecruiterId())
-                .build();
+            LevelEntity level = Optional.ofNullable(challenger.getLevelId())
+                    .map(levelId -> levelRepository.findById(levelId)
+                            .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
+                    .orElse(null);
 
-        followRepository.save(followEntity);
-        FollowResponse response = new FollowResponse(challenger.getFirstName()
-                + " " + challenger.getLastName(), recruiter.getName());
+        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger.getAccount(),challenger,level);
+        response.setIsPremium(challengerRepository.findIsPremiumProjectionByAccountEmail(email).orElse(false));
 
-        return Optional.of(response);
+        // sau khi làm xong submit thì hãy bỏ này vào
+        // challenger.setTotalJoinedChallenge(solutionRepository
+        //         .findByChallengerAndIsJoined(challenger, true).size());
+        // challenger.setTotalSubmittedChallenge(solutionRepository
+        //         .findByChallengerAndIsSubmitted(challenger, true).size());
+
+        // challengerRepository.save(challenger);
+
+            return Optional.of(response);
     }
 
-    public Optional<List<RecruiterEntity>> getFollow(Long challengerId) {
-        List<RecruiterEntity> listResponse = new ArrayList<>();
-
-        List<FollowEntity> listFollow = followRepository.findByChallengerId(challengerId)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
-
-        for (FollowEntity followEntity : listFollow) {
-            listResponse.add(recruiterRepository.findById(followEntity.getRecruiterId()).get());
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<ChallengerResponse> getDetailsProfile(String accessToken) {
+    @Transactional
+    @Override public Optional<OverviewResponse> getOverviewProfile() {
 
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-//        AccountEntity account = accountRepository.findByEmail(email)
-//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+        OverviewProjection account = accountRepository.findOverviewByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-        ChallengerEntity challenger = accountRepository.findChallengerByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST))
-                .getChallenger();
+        ChallengerEntity challenger = challengerRepository.findByAccount_Id(account.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
+
+        upLevel(challenger,challenger.getLevelId());
 
         LevelEntity level = Optional.ofNullable(challenger.getLevelId())
-                .map(levelId -> levelRepository.findById(levelId)
-                        .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
-                .orElse(null);
+                    .map(levelId -> levelRepository.findById(levelId)
+                            .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST)))
+                    .orElse(null);
 
-        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger.getAccount(), challenger, level);
-//        ChallengerResponse response = challengerMapper.toChallengerResponse(challenger, level);
+        // sau khi làm xong submit thì hãy bỏ này vào
+        // challenger.setTotalJoinedChallenge(solutionRepository
+        //         .findByChallengerAndIsJoined(challenger, true).size());
+        // challenger.setTotalSubmittedChallenge(solutionRepository
+        //         .findByChallengerAndIsSubmitted(challenger, true).size());
+        //     challengerRepository.save(challenger);
 
-        // lấy totalJoinedChallenge và totalSubmittedChallenge
-        challenger.setTotalJoinedChallenge(solutionRepository
-                .findByChallengerAndIsJoined(challenger, true).size());
-        challenger.setTotalSubmittedChallenge(solutionRepository
-                .findByChallengerAndIsSubmitted(challenger, true).size());
-        challengerRepository.save(challenger);
+        OverviewResponse response = challengerMapper.toOverviewResponse(account,level);
+        response.setIsPremium(challengerRepository.findIsPremiumProjectionByAccountEmail(email).orElse(false));
+        response.setLevelId(challenger.getLevelId());
+        response.setTotalJoinedChallenge(challenger.getTotalJoinedChallenge());
+        response.setTotalSubmittedChallenge(challenger.getTotalSubmittedChallenge());
+        challenger.setLevelId(challenger.getLevelId());
+        challengerRepository.updateLevelId(challenger.getId(), challenger.getLevelId());
 
-        // lấy nextLevel
-        int scoreNextLevel = level.getMaxScore() - challenger.getScore();
-        AtomicReference<String> nextRank = new AtomicReference<>();
-        levelRepository.findById(level.getNextLevelId()).ifPresentOrElse(
-                n -> nextRank.set(n.getLevel().getValue()),
-                () -> nextRank.set("not found")
-        );
+        double currentScore = challenger.getScore();
 
-        response.setNextLevel(NextLevelResponse.builder()
-                .score(scoreNextLevel)
-                .rank(nextRank.get())
-                .build());
+        assert level != null;
+        Long nextLevelId = level.getNextLevelId();
 
+        if (nextLevelId != null) {
+            LevelEntity nextLevel = levelRepository.findById(nextLevelId)
+                    .orElseThrow(() -> new AppException(ErrorCode.LEVEL_NOT_EXIST));
+
+            double nextScore = nextLevel.getMaxScore() - currentScore ;
+
+            nextScore = Math.max(0, nextScore);
+
+
+            response.setNextLevel(NextLevelResponse.builder()
+                    .score(nextScore)
+                    .rank(nextLevel.getLevel().getValue()) // Rank kế tiếp
+                    .build());
+        } else {
+            response.setNextLevel(NextLevelResponse.builder()
+                    .score(0.0)
+                    .rank("Diamond")
+                    .build());
+        }
         return Optional.of(response);
     }
 
-    /*public void updateScore(LevelTest levelTest, ChallengerDTO challengerDTO, ChallengerEntity challengerEntity) {
-        switch (levelTest) {
-            case EASY:
-                challengerEntity = ChallengerEntity.builder()
-                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "easy"))
-                        .build();
-                upLevel(challengerEntity, "newbie");
-                challengerRepository.save(challengerEntity);
-                break;
+    @Transactional
+    @Override public ChallengerEntity updateProfile(UpdateProfileChallengerRequest updateProfileChallengerRequest)
+            throws GeneralSecurityException, IOException {
 
-            case MEDIUM:
-                challengerEntity = ChallengerEntity.builder()
-                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "medium"))
-                        .build();
-                upLevel(challengerEntity, "newbie");
-                challengerRepository.save(challengerEntity);
-                break;
+        String email = SecurityUtil.getCurrentUserLogin().orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 
-            case HARD:
-                challengerEntity = ChallengerEntity.builder()
-                        .score(addScore(challengerDTO.getLevelChallenger(), challengerDTO.getScore(), "medium"))
-                        .build();
-                upLevel(challengerEntity, "newbie");
-                challengerRepository.save(challengerEntity);
-                break;
+        ChallengerEntity challenger = challengerRepository.findByAccountEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.CHALLENGER_NOT_EXIST));
 
-            default:
-                break;
-        }
-    }*/
+        AccountEntity account = challenger.getAccount();
 
-    public int addScore(Level levelChallenger, int score, String levelAnwser) {
-        switch (levelChallenger) {
-            case NEWBIE:
-                if (levelAnwser.equals("easy")) {
+        account.setFirstName(updateProfileChallengerRequest.getFirstName());
+        account.setLastName(updateProfileChallengerRequest.getLastName());
+        account.setPhone(updateProfileChallengerRequest.getPhone());
 
-                    score = ScoreAnswer.NEW_BIE_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
+        Gender gender = Gender.fromGender(updateProfileChallengerRequest.getGender());
+        challenger.setGender(gender);
 
-                    score = ScoreAnswer.NEW_BIE_MEDIUM.getScore() + score;
-                } else {
+        challenger.setBirthday(DateTimeUtil.convertSecondsToLocalDateTime(updateProfileChallengerRequest.getBirthday()));
+        challenger.setBio(updateProfileChallengerRequest.getBio());
 
-                    score = ScoreAnswer.NEW_BIE_HARD.getScore() + score;
-                }
-                break;
+        challenger.setUrlCodepen(updateProfileChallengerRequest.getUrlCodepen());
+        challenger.setUrlGitLab(updateProfileChallengerRequest.getUrlGitLab());
+        challenger.setUrlGithub(updateProfileChallengerRequest.getUrlGithub());
+        challenger.setUrlPortfolio(updateProfileChallengerRequest.getUrlPortfolio());
+        challenger.setUrlLinkedIn(updateProfileChallengerRequest.getUrlLinkedIn());
+        challenger.setUrlStackOverflow(updateProfileChallengerRequest.getUrlStackOverflow());
 
-            case SILVER:
-                if (levelAnwser.equals("easy")) {
+        // không tách API ra gọp chung upload CV và upload avatar banner lại
 
-                    score = ScoreAnswer.SILVER_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
+        // // Xử lý tải lên bất đồng bộ
+        // CompletableFuture<String> cvFuture = null;
+        // CompletableFuture<String> avatarFuture = null;
+        // CompletableFuture<String> bannerFuture = null;
+        //
+        // if (updateProfileChallengerRequest.getUrlCV() != null) {
+        //     cvFuture = googleDriveService.uploadCV(updateProfileChallengerRequest.getUrlCV());
+        // }
+        //
+        // if (updateProfileChallengerRequest.getAvatar()!= null) {
+        //     avatarFuture = firebaseService.uploadChallengerAvatar(updateProfileChallengerRequest.getAvatar(),account);
+        // }
+        // if (updateProfileChallengerRequest.getBanner()!= null) {
+        //     bannerFuture = firebaseService.uploadChallengerBanner(updateProfileChallengerRequest.getAvatar(),account);
+        // }
+        //
+        // if (cvFuture != null) {
+        //     String urlCV = cvFuture.join();
+        //     challenger.setUrlCV(urlCV);
+        // }
+        //
+        // if (avatarFuture != null) {
+        //     String urlAvatar = avatarFuture.join();
+        //     account.setAvatar(urlAvatar);
+        // }
+        //
+        // if (bannerFuture != null) {
+        //     String urlBanner = bannerFuture.join();
+        //     account.setBanner(urlBanner);
+        // }
 
-                    score = ScoreAnswer.SILVER_MEDIUM.getScore() + score;
-                } else {
-
-                    score = ScoreAnswer.SILVER_HARD.getScore() + score;
-                }
-
-                break;
-
-            case GOLD:
-                if (levelAnwser.equals("easy")) {
-
-                    score = ScoreAnswer.GOLD_EASY.getScore() + score;
-                } else if (levelAnwser.equals("medium")) {
-
-                    score = ScoreAnswer.GOLD_MEDIUM.getScore() + score;
-                } else {
-
-                    score = ScoreAnswer.GOLD_HARD.getScore() + score;
-                }
-
-                break;
-
-            default:
-                break;
-        }
-
-        return score;
+        return challengerRepository.save(challenger);
     }
+    
 
-//    public void upLevel(ChallengerEntity challengerEntity, String levelChallenger) {
-//        if (levelChallenger.equals("newbie") && challengerEntity.getScore() >= 150) {
-//            challengerEntity.setLevelId("silver");
-//        } else if (levelChallenger.equals("silver") && challengerEntity.getScore() >= 450) {
-//            challengerEntity.setLevelId("gold");
-//        } else if (levelChallenger.equals("gold") && challengerEntity.getScore() >= 1050) {
-//            challengerEntity.setLevelId("diamond");
-//        }
-//    }
+    public void upLevel(ChallengerEntity challengerEntity, Long levelChallenger) {
+       if (levelChallenger ==1 && challengerEntity.getScore() >= 10) {
+           challengerEntity.setLevelId(2L);
+       } else if (levelChallenger==2 && challengerEntity.getScore() >= 150) {
+           challengerEntity.setLevelId(3L);
+       } else if (levelChallenger==3 && challengerEntity.getScore() >= 450) {
+           challengerEntity.setLevelId(4L);
+       } else if (levelChallenger==4 && challengerEntity.getScore() >= 1050) {
+           challengerEntity.setLevelId(5L);
+       } else if(levelChallenger==5 && challengerEntity.getScore() >= 2100) {
+           challengerEntity.setLevelId(6L);
+       }
+   }
 
 
 }

@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.request.challenger;
+package vn.edu.likelion.front_ice.dto.response.resource;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * UpdateChallengerRequest -
+ * DownloadResourceResponse -
  *
  * @param
  * @return
@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateChallengerRequest {
-    String title;
+public class DownloadResourceResponse {
+    AssetsResponse assets;
+    FigmaResponse figma;
 }

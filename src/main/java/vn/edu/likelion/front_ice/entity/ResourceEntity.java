@@ -29,6 +29,9 @@ public class ResourceEntity extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     ChallengeEntity challenge;
 
+    @Column(name = "assets_id")
+    String assetsId;
+
     @Column(name = "assets_url", columnDefinition = "TEXT")
     String assetsUrl;
 
@@ -37,6 +40,9 @@ public class ResourceEntity extends BaseEntity {
 
     @Column(name = "assets_size")
     Long assetsSize;
+
+    @Column(name = "figma_id")
+    String figmaId;
 
     @Column(name = "figma_url", columnDefinition = "TEXT")
     String figmaUrl;

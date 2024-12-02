@@ -7,6 +7,7 @@ import vn.edu.likelion.front_ice.entity.AccountEntity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * FirebaseService -
@@ -18,6 +19,8 @@ import java.io.IOException;
 public interface FirebaseService {
     UploadAvatarResponse uploadChallengerAvatar(MultipartFile file);
 
+    UploadAvatarResponse uploadChallengerBanner(MultipartFile file);
+
     UploadAvatarResponse uploadManagerAvatar(MultipartFile file);
 
     UploadAvatarResponse uploadMentorAvatar(MultipartFile file);
@@ -27,4 +30,10 @@ public interface FirebaseService {
     UploadAvatarResponse uploadRecruiterAvatar(MultipartFile file);
 
     DesignImageResponse uploadDesignImage(String label,Long challengeId,MultipartFile file);
+
+    CompletableFuture<String> uploadChallengerAvatar(MultipartFile file, AccountEntity accountEntity);
+
+    CompletableFuture<String> uploadChallengerBanner(MultipartFile file, AccountEntity accountEntity);
+
+
 }

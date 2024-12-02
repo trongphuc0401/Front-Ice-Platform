@@ -6,7 +6,10 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 import vn.edu.likelion.front_ice.common.constants.SQLRestrictions;
+import vn.edu.likelion.front_ice.common.enums.Gender;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -44,6 +47,16 @@ public class ChallengerEntity extends BaseEntity {
 
     @Column
     int score;
+
+    @Column(columnDefinition = "TEXT")
+    String bio;
+
+    @Column
+    LocalDateTime birthday;
+
+    @Column(name = "gender",nullable = true)
+    @Enumerated(EnumType.ORDINAL)
+    Gender gender;
 
     @Column(name = "url_cv")
     String urlCV;

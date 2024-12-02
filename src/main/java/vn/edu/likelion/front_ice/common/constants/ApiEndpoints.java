@@ -30,9 +30,12 @@ public interface ApiEndpoints {
     String UPLOAD_CV = "/cv";
     String DOWNLOAD_CV = "/cv/{id}";
     String SEARCH = "/search";
+    String OTHER = "/other";
+    String SOLUTIONS = "/solutions";
 
     // Profile API
     String PROFILE_API = "/profile";
+    String OVERVIEW = "/overview";
     String GET_BY_ID = "/{id}"; // GET
     String UPDATE_INFO = "/{id}";  // PUT
     String UPLOAD_AVATAR = "/images";  // PUT
@@ -55,9 +58,12 @@ public interface ApiEndpoints {
 
     // Challenge API
     String CHALLENGE_API = BASE_API_URL + "/challenges";
+
+    String DOWNLOAD_RESOURCE = "/resource/{id}";
     String DOWNLOAD_ASSETS = "/assets/{id}";
     String DOWNLOAD_FIGMA = "/figma/{id}";
     String GET_CHALLENGE_DETAIL = "/{id}";
+    String JOINED = "/joined";
 
     // Solution API
     String SOLUTION_API = BASE_API_URL + "/solutions";

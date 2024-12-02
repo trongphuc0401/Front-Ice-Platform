@@ -1,10 +1,10 @@
-package vn.edu.likelion.front_ice.dto.request.recruiter;
+package vn.edu.likelion.front_ice.dto.response.resource;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * CreationRecruiter -
+ * AssetsResponse -
  *
  * @param
  * @return
@@ -15,6 +15,11 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateRecruiterRequest {
-    String name; // đặt cho có lệ nhớ thay đổi nha mấy anh
+public class AssetsResponse {
+
+    String assetsId;
+
+    String  assetsName;
+
+    long assetsSize;
 }
