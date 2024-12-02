@@ -8,16 +8,17 @@ import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionChallengerResponse;
+import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
 import vn.edu.likelion.front_ice.entity.*;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
-import vn.edu.likelion.front_ice.repository.AccountRepository;
-import vn.edu.likelion.front_ice.repository.ChallengeRepository;
-import vn.edu.likelion.front_ice.repository.ChallengerRepository;
-import vn.edu.likelion.front_ice.repository.SolutionRepository;
+import vn.edu.likelion.front_ice.repository.*;
 import vn.edu.likelion.front_ice.security.SecurityUtil;
+import vn.edu.likelion.front_ice.service.client.AccountService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SolutionServiceImpl implements SolutionService {
@@ -34,6 +35,12 @@ public class SolutionServiceImpl implements SolutionService {
     private ChallengeRepository challengeRepository;
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private LevelRepository levelRepository;
 
     @Override
     public Optional<SolutionEntity> create(CreateSolutionRequest t) {
@@ -113,5 +120,43 @@ public class SolutionServiceImpl implements SolutionService {
     @Override
     public List<SolutionEntity> findAll() {
         return List.of();
+    }
+
+    @Override
+    public List<OtherSolutionChallengerResponse> getSolutionsOfOtherChallengers() {
+        Optional<String> email = SecurityUtil.getCurrentUserLogin();
+        AccountEntity account = accountService.getAccountDetailsByEmail(email.get());
+        List<SolutionEntity> solutions = solutionRepository.findSolutionsOfOtherChallengers(account.getChallenger().getId());
+        return solutions.stream()
+                .map(solution -> {
+                    // Ánh xạ dữ liệu từ SolutionEntity vào DTO
+                    OtherSolutionChallengerResponse responseItem = solutionMapper.toOtherSolutionChallengerResponse(solution);
+
+                    // Lấy thông tin về challenger từ SolutionEntity
+                    ChallengerEntity challengerEntity = solution.getChallenger();  // Đã có trong SolutionEntity
+
+                    // Set thông tin về challenger vào DTO
+                    responseItem.setChallengerFirstName(challengerEntity.getAccount().getFirstName());
+                    responseItem.setChallengerLastName(challengerEntity.getAccount().getLastName());
+                    responseItem.setChallengerAvatar(challengerEntity.getAccount().getAvatar());
+
+                    // Lấy thông tin cấp độ của challenger từ LevelEntity
+                    LevelEntity levelEntity = levelRepository.findById(challengerEntity.getLevelId()).orElse(null);
+                    if (levelEntity != null) {
+                        responseItem.setChallengerLevel(levelEntity.getLevel());
+                    } else {
+                        responseItem.setChallengerLevel(null);
+                    }
+
+                    // Lấy thông tin về challenge từ ChallengeEntity
+//                    ChallengeEntity challengeEntity = solution.getChallenge(); // Đã có trong SolutionEntity
+//                    if (challengeEntity != null) {
+//                        responseItem.setTechnicals(challengeEntity.getTechnicals());
+//                        responseItem.setChallengePoint(challengeEntity.getChallengePoint());
+//                    }
+
+                    return responseItem;
+                })
+                .collect(Collectors.toList());
     }
 }

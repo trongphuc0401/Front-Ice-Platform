@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.entity.LevelEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,6 @@ public interface LevelRepository extends JpaRepository<LevelEntity, Long> {
 
     Optional<LevelEntity> findById(Long id);
 
+    @Query("SELECT l FROM LevelEntity l WHERE l.id IN :levelIds")
+    List<LevelEntity> findLevelsByIds(@Param("levelIds") List<Long> levelIds);
 }

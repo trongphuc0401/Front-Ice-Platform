@@ -11,10 +11,13 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionChallengerResponse;
+import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -62,4 +65,12 @@ public class SolutionController {
 
     }
 
+    @GetMapping("/others")
+    @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
+    public ResponseEntity<RestAPIResponse<Object>> getSolutionsOfOtherChallengers() {
+
+        List<OtherSolutionChallengerResponse> solutions = solutionService.getSolutionsOfOtherChallengers();
+
+        return responseUtil.successResponse(solutions);
+    }
 }
