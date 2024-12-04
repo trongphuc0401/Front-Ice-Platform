@@ -11,8 +11,8 @@ import vn.edu.likelion.front_ice.common.api.RestAPIResponse;
 import vn.edu.likelion.front_ice.common.constants.ApiEndpoints;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionChallengerResponse;
-import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.mapper.SolutionMapper;
 import vn.edu.likelion.front_ice.service.solution.SolutionService;
@@ -67,9 +67,13 @@ public class SolutionController {
 
     @GetMapping("/others")
     @PreAuthorize("hasAuthority('ROLE_CHALLENGER')")
-    public ResponseEntity<RestAPIResponse<Object>> getSolutionsOfOtherChallengers() {
+    public ResponseEntity<RestAPIResponse<Object>> getSolutionsOfOtherChallengers(
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
 
-        List<OtherSolutionChallengerResponse> solutions = solutionService.getSolutionsOfOtherChallengers();
+//        List<OtherSolutionChallengerResponse> solutions = solutionService.getSolutionsOfOtherChallengers();
+        ResultPaginationResponse solutions = solutionService.getSolutionsOfOtherChallengers(pageNo, pageSize);
 
         return responseUtil.successResponse(solutions);
     }

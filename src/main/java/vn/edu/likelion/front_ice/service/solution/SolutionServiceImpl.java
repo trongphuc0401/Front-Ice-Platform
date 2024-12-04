@@ -1,13 +1,18 @@
 package vn.edu.likelion.front_ice.service.solution;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.edu.likelion.front_ice.common.enums.StatusSolution;
 import vn.edu.likelion.front_ice.common.exceptions.AppException;
 import vn.edu.likelion.front_ice.common.exceptions.ErrorCode;
 import vn.edu.likelion.front_ice.common.utils.HelperUtil;
+import vn.edu.likelion.front_ice.common.utils.PaginationUtil;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
+import vn.edu.likelion.front_ice.dto.response.challenge.ResultPaginationResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionChallengerResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
 import vn.edu.likelion.front_ice.entity.*;
@@ -123,40 +128,29 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
-    public List<OtherSolutionChallengerResponse> getSolutionsOfOtherChallengers() {
+    public ResultPaginationResponse getSolutionsOfOtherChallengers(int pageNo, int pageSize) {
         Optional<String> email = SecurityUtil.getCurrentUserLogin();
         AccountEntity account = accountService.getAccountDetailsByEmail(email.get());
-        List<SolutionEntity> solutions = solutionRepository.findSolutionsOfOtherChallengers(account.getChallenger().getId());
-        return solutions.stream()
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<SolutionEntity> solutionsPage = solutionRepository.findSolutionsOfOtherChallengers(account.getChallenger().getId(), pageable);
+        List<OtherSolutionChallengerResponse> responseList = solutionsPage.stream()
                 .map(solution -> {
-                    // Ánh xạ dữ liệu từ SolutionEntity vào DTO
                     OtherSolutionChallengerResponse responseItem = solutionMapper.toOtherSolutionChallengerResponse(solution);
 
-                    // Lấy thông tin về challenger từ SolutionEntity
-                    ChallengerEntity challengerEntity = solution.getChallenger();  // Đã có trong SolutionEntity
-
-                    // Set thông tin về challenger vào DTO
-                    responseItem.setChallengerFirstName(challengerEntity.getAccount().getFirstName());
-                    responseItem.setChallengerLastName(challengerEntity.getAccount().getLastName());
-                    responseItem.setChallengerAvatar(challengerEntity.getAccount().getAvatar());
-
-                    // Lấy thông tin cấp độ của challenger từ LevelEntity
-                    LevelEntity levelEntity = levelRepository.findById(challengerEntity.getLevelId()).orElse(null);
+                    LevelEntity levelEntity = levelRepository.findById(solution.getChallenger().getLevelId()).orElse(null);
                     if (levelEntity != null) {
                         responseItem.setChallengerLevel(levelEntity.getLevel());
                     } else {
                         responseItem.setChallengerLevel(null);
                     }
 
-                    // Lấy thông tin về challenge từ ChallengeEntity
-//                    ChallengeEntity challengeEntity = solution.getChallenge(); // Đã có trong SolutionEntity
-//                    if (challengeEntity != null) {
-//                        responseItem.setTechnicals(challengeEntity.getTechnicals());
-//                        responseItem.setChallengePoint(challengeEntity.getChallengePoint());
-//                    }
-
                     return responseItem;
                 })
                 .collect(Collectors.toList());
+
+        ResultPaginationResponse.Meta meta = PaginationUtil.createPaginationMeta(solutionsPage);
+        ResultPaginationResponse result = new ResultPaginationResponse(meta, responseList);
+
+        return result;
     }
 }

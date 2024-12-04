@@ -3,6 +3,7 @@ package vn.edu.likelion.front_ice.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import vn.edu.likelion.front_ice.common.enums.Level;
 import vn.edu.likelion.front_ice.dto.request.solution.CreateSolutionRequest;
 import vn.edu.likelion.front_ice.dto.request.solution.UpdateSolutionRequest;
@@ -11,7 +12,11 @@ import vn.edu.likelion.front_ice.dto.response.solution.OtherSolutionResponse;
 import vn.edu.likelion.front_ice.dto.response.solution.SolutionResponse;
 import vn.edu.likelion.front_ice.entity.LevelEntity;
 import vn.edu.likelion.front_ice.entity.SolutionEntity;
+import vn.edu.likelion.front_ice.entity.TechnicalEntity;
 import vn.edu.likelion.front_ice.repository.LevelRepository;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface SolutionMapper {
@@ -34,5 +39,13 @@ public interface SolutionMapper {
     @Mapping(target = "challengerLastName", source = "challenger.account.lastName")
     @Mapping(target = "challengerAvatar", source = "challenger.account.avatar")
     @Mapping(target = "challengePoint", source = "challenge.challengePoint")
+    @Mapping(target = "technicals", source = "challenge.technicals", qualifiedByName = "mapTechnicals")
     OtherSolutionChallengerResponse toOtherSolutionChallengerResponse(SolutionEntity solution);
+
+    @Named("mapTechnicals")
+    default Set<String> mapTechnicals(Set<TechnicalEntity> technicals){
+        return technicals.stream()
+                .map(TechnicalEntity::getTitle)
+                .collect(Collectors.toSet());
+    }
 }
