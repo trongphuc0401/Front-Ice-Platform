@@ -24,14 +24,7 @@ import java.util.Base64;
 public class FirebaseConfig {
     @PostConstruct
     public void init() throws IOException {
-
-        String firebaseConfig = System.getenv("FIREBASE_CREDENTIALS");
-        if (firebaseConfig == null) {
-            throw new IllegalStateException("Environment variable FIREBASE_CREDENTIALS not set");
-        }
-
-        InputStream serviceAccount = new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8));
-
+        FileInputStream serviceAccount = new FileInputStream("firebase.json");
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setStorageBucket("front-15551.appspot.com") // Thay YOUR_PROJECT_ID bằng ID của Firebase Project.
