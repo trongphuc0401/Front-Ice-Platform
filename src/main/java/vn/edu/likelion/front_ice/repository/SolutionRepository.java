@@ -1,5 +1,7 @@
 package vn.edu.likelion.front_ice.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -99,13 +101,13 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
     """)
     List<SolutionEntity> findLimitedOtherSolutions(@Param("challengeId") Long challengeId);
 
+    @EntityGraph(attributePaths = {"challenger", "challenger.account", "challenge"})
     @Query("""
-           SELECT s FROM SolutionEntity s
-           JOIN FETCH s.challenger c
-           JOIN FETCH c.account a
-           WHERE s.isSubmitted = true
-             AND c.id != :currentChallengerId
-             AND s.challenge.id IN (SELECT sc.challenge.id FROM SolutionEntity sc WHERE sc.challenger.id = :currentChallengerId)
-           """)
-    List<SolutionEntity> findSolutionsOfOtherChallengers(@Param("currentChallengerId") Long currentChallengerId);
+    SELECT s FROM SolutionEntity s
+    JOIN SolutionEntity sc ON sc.challenge.id = s.challenge.id
+    WHERE s.isSubmitted = true
+      AND s.challenger.id != :currentChallengerId
+      AND sc.challenger.id = :currentChallengerId
+    """)
+    Page<SolutionEntity> findSolutionsOfOtherChallengers(@Param("currentChallengerId") Long currentChallengerId, Pageable pageable);
 }
