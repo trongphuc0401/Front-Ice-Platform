@@ -110,4 +110,8 @@ public interface SolutionRepository extends JpaRepository<SolutionEntity, Long> 
       AND sc.challenger.id = :currentChallengerId
     """)
     Page<SolutionEntity> findSolutionsOfOtherChallengers(@Param("currentChallengerId") Long currentChallengerId, Pageable pageable);
+
+    Optional<SolutionEntity> findBySolutionCode(String solutionCode);
+
+
 }

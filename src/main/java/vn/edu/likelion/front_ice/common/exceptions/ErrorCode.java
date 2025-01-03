@@ -65,6 +65,10 @@ public enum ErrorCode {
     SOLUTION_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -401,"Solution not exist","Bad Request","Solution không tồn tại"),
     YOU_HAVE_ALREADY_JOINED(RestAPIStatus.BAD_REQUEST, -402,"You have already joined","Bad Request","Bạn đã tham gia thử thách này rồi"),
     YOU_HAVE_ALREADY_SUBMITTED(RestAPIStatus.BAD_REQUEST, -403,"You have already submitted","Bad Request","Bạn đã hoàn thành thử thách này rồi"),
+    PARENT_COMMENT_NOT_FOUND(RestAPIStatus.BAD_REQUEST, -404,"Parent comment not found","Bad Request","Bình luận gốc không tìm thấy"),
+    PARENT_COMMENT_NOT_BELONG_SOLUTION(RestAPIStatus.BAD_REQUEST, -405,"Parent comment does not belong to the same solution.","Bad Request","Bình luận gốc không thuộc về cùng giải pháp."),
+
+
 
     // error level
     LEVEL_NOT_EXIST(RestAPIStatus.BAD_REQUEST, -501,"Level not exist","Bad Request","Level không tồn tại"),
@@ -81,6 +85,7 @@ public enum ErrorCode {
     // error resource
     RESOURCE_NOT_EXIST(RestAPIStatus.BAD_REQUEST,-901,"Resource not exist","Bad Request","Tài nguyên không tồn tại"),
 
+    CREATE_FAILED(RestAPIStatus.BAD_REQUEST,-9993,"Create failed","Bad Request","Tạo thất bại"),
     GENERAL_SECURITY_ERROR(RestAPIStatus.BAD_REQUEST,-9994,"Delete failed","Can not delete","Xoá thất bại"),
     GOOGLE_DRIVE_ERROR(RestAPIStatus.BAD_REQUEST,-9995,"Google Drive operation failed.","Bad Request","Google Drive vận hành bị lỗi trên Google Cloud"),
     DELETE_FAILED(RestAPIStatus.CAN_NOT_DELETE,-9996,"Delete failed","Can not delete","Xoá thất bại"),
