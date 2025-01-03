@@ -31,7 +31,17 @@ public enum SuccessCode {
 
     //success challenger
     UPDATE_CHALLENGER_SUCCESSFUL(RestAPIStatus.OK, 1401, "Update Profile Challenger Successful", "OK", "Cập nhật profile người dùng thành công"),
-            ;
+
+
+    // success Comment
+    CREATE_COMMENT_SUCCESSFUL(RestAPIStatus.OK, 1501, "Comment Successful", "OK", "Bình luận thành công"),
+    EDIT_COMMENT_SUCCESSFUL(RestAPIStatus.OK, 1502, "Update Comment Successful", "OK", "Cập nhật bình luận thành công"),
+    GET_ALL_COMMENT_SUCCESSFUL(RestAPIStatus.OK, 1503, "Get All Comment Successful", "OK", "Xem tất cả bình luận"),
+    DELETE_COMMENT_SUCCESSFUL(RestAPIStatus.OK, 1504, "Xóa Comment Successful", "OK", "Xóa bình luận thành công"),
+
+
+
+    ;
 
     private final int statusCode;
     private final int codeSuccess;

@@ -68,6 +68,10 @@ public interface ApiEndpoints {
     // Solution API
     String SOLUTION_API = BASE_API_URL + "/solutions";
 
+    // Comment API
+
+    String COMMENT_API = SOLUTION_API + "/comments";
+
     // Mentor API
     String MENTOR_API = BASE_API_URL + "/mentor";
 

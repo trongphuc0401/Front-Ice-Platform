@@ -62,8 +62,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Autowired
     private ChallengeAccessService challengeAccessService;
 
-    @Autowired
-    private ChallengeAccessHandlerFactory challengeAccessHandlerFactory;
+    @Autowired private ChallengeAccessHandlerFactory challengeAccessHandlerFactory;
     @Autowired private ChallengerRepository challengerRepository;
 
     @Override
@@ -72,7 +71,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         try {
             ChallengeEntity challengeEntity = challengeMapper.toChallenge(createChallengeRequest);
 
-            File tempFile = File.createTempFile("resource_"+challengeEntity
+            File tempFile = File.createTempFile("resource_"+ challengeEntity
                     .getTitle()
                     .toLowerCase()
                     .replace(" ", "-")
