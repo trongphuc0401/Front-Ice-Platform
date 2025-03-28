@@ -27,6 +27,9 @@ import java.util.List;
 @SQLRestriction(SQLRestrictions.SQL_DELETE_CONDITION)
 public class AccountEntity extends BaseEntity implements UserDetails {
 
+    @Column()
+    String username;
+
     @Column(unique = true, nullable = false, length = 50)
     String email;
 
@@ -60,8 +63,12 @@ public class AccountEntity extends BaseEntity implements UserDetails {
     @Column
     int isAuthenticated = 0;
 
+    @Column()
+    String company;
+
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     ChallengerEntity challenger;
+
 
     // Implementing UserDetails methods properly
     @Override

@@ -11,11 +11,13 @@ import vn.edu.likelion.front_ice.common.enums.Role;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterRequest {
 
+    String username;
     String firstName;
     String lastName;
     String email;
     String password;
     String confirmPassword;
+    String company;
     Role role;
 
 
