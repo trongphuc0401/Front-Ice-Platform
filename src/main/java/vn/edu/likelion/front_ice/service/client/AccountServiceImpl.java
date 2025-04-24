@@ -418,20 +418,6 @@ public class AccountServiceImpl implements AccountService {
 
                         if (listChallenge.isEmpty()) throw new AppException(ErrorCode.NOT_FOUND_CHALLENGE_SAMPLE);
 
-                        // create 2 record access challenge and its solution
-//                        listChallenge.forEach(challengeEntity -> {
-//                            accessChallengeRepository.save(
-//                                    AccessChallengeEntity.builder()
-//                                            .challenger(challengerEntity)
-//                                            .challenge(challengeEntity)
-//                                            .solution(solutionRepository.save(SolutionEntity.builder()
-//                                                    .statusSolution(StatusSolution.PROCESSING)
-//                                                    .build()))
-//                                            .status(ChallengeAccessStatus.JOINED)
-//                                            .build()
-//                            );
-//                        });
-
                         // create 2 records solution
                         listChallenge.forEach(challengeEntity -> {
                             solutionRepository.save(
